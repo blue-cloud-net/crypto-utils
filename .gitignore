@@ -233,3 +233,6 @@ _Pvt_Extensions
 
 .idea/
 wwwroot/
+
+test/data/keys/*.pem
+test/data/keys/*.der
