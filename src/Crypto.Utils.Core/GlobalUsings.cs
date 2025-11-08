@@ -1,0 +1,33 @@
+// global using 指令
+
+global using System.Text;
+global using Cert.Utils.BouncyCastle.ObjectIdentifiers;
+global using Cert.Utils.Common;
+global using Cert.Utils.Crypto;
+global using Cert.Utils.X509.Enums;
+global using Cert.Utils.X509.Extensions;
+global using Cert.Utils.X509.Models;
+global using Org.BouncyCastle.Asn1;
+global using Org.BouncyCastle.Asn1.GM;
+global using Org.BouncyCastle.Asn1.Pkcs;
+global using Org.BouncyCastle.Asn1.Sec;
+global using Org.BouncyCastle.Asn1.X509;
+global using Org.BouncyCastle.Asn1.X9;
+global using Org.BouncyCastle.Crypto;
+global using Org.BouncyCastle.Crypto.Digests;
+global using Org.BouncyCastle.Crypto.Engines;
+global using Org.BouncyCastle.Crypto.Generators;
+global using Org.BouncyCastle.Crypto.Modes;
+global using Org.BouncyCastle.Crypto.Operators;
+global using Org.BouncyCastle.Crypto.Paddings;
+global using Org.BouncyCastle.Crypto.Parameters;
+global using Org.BouncyCastle.Crypto.Signers;
+global using Org.BouncyCastle.Math;
+global using Org.BouncyCastle.OpenSsl;
+global using Org.BouncyCastle.Pkcs;
+global using Org.BouncyCastle.Security;
+global using Org.BouncyCastle.X509;
+global using Org.BouncyCastle.X509.Extension;
+global using System.Collections.Concurrent;
+global using System.ComponentModel.DataAnnotations;
+global using System.Security.Cryptography;
