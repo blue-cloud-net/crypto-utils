@@ -61,8 +61,8 @@
   </Target>
 
   <!-- 确保 wwwroot 中的文件被包含到发布输出中 -->
-  <ItemGroup>
+  <!-- <ItemGroup>
     <Content Include="wwwroot\**" CopyToPublishDirectory="PreserveNewest" />
-  </ItemGroup>
+  </ItemGroup> -->
   
 </Project>
