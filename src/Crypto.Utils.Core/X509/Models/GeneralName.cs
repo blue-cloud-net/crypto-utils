@@ -1,4 +1,6 @@
-namespace Cert.Utils.X509.Models;
+using Crypto.Utils.X509.Enums;
+
+namespace Crypto.Utils.X509.Models;
 
 /// <summary>
 /// X.509 通用名称（GeneralName）

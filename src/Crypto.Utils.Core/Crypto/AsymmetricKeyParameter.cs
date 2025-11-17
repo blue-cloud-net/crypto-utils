@@ -1,4 +1,6 @@
-namespace Cert.Utils.Crypto;
+using Crypto.Utils.X509.Extensions;
+
+namespace Crypto.Utils.Crypto;
 
 /// <summary>
 /// 非对称密钥参数基类
@@ -343,7 +345,7 @@ public abstract class AsymmetricKeyParameter
     /// <returns>证书指纹字符串，格式化时为 "XX:XX:XX:..."，否则为连续十六进制字符串</returns>
     public string ComputeFingerprint(string algorithm = "SHA-256", bool format = false)
     {
-        var derBytes = ToDer();
+        var derBytes = this.ToDer();
         return FingerprintHelper.ComputeFingerprint(derBytes, algorithm, format);
     }
 
@@ -353,9 +355,9 @@ public abstract class AsymmetricKeyParameter
     /// <returns>包含算法、密钥类型和大小的描述性字符串</returns>
     public override string ToString()
     {
-        var keyType = IsPrivate ? "Private Key" : "Public Key";
-        var keySize = KeySize.HasValue ? $" ({KeySize} bits)" : "";
-        return $"{AlgorithmName} {keyType}{keySize}";
+        var keyType = this.IsPrivate ? "Private Key" : "Public Key";
+        var keySize = this.KeySize.HasValue ? $" ({this.KeySize} bits)" : "";
+        return $"{this.AlgorithmName} {keyType}{keySize}";
     }
 
     /// <summary>

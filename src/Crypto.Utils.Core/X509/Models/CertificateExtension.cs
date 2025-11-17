@@ -1,4 +1,4 @@
-namespace Cert.Utils.X509;
+namespace Crypto.Utils.X509.Models;
 
 /// <summary>
 /// 证书扩展字段
@@ -38,7 +38,7 @@ public class CertificateExtension
     /// 扩展值（十六进制字符串）
     /// 便于显示和调试的格式。
     /// </summary>
-    public string ValueHex => Convert.ToHexString(Value);
+    public string ValueHex => Convert.ToHexString(this.Value);
 
     /// <summary>
     /// 常见扩展 OID 名称映射
@@ -74,16 +74,16 @@ public class CertificateExtension
     /// <param name="value">扩展值（字节数组）</param>
     public CertificateExtension(string oid, bool isCritical, byte[] value)
     {
-        Oid = oid;
-        IsCritical = isCritical;
-        Value = value;
+        this.Oid = oid;
+        this.IsCritical = isCritical;
+        this.Value = value;
 
         var derOid = new DerObjectIdentifier(oid);
-        Name = OidNames.TryGetValue(derOid, out var name) ? name : $"Unknown ({oid})";
+        this.Name = OidNames.TryGetValue(derOid, out var name) ? name : $"Unknown ({oid})";
     }
 
     public override string ToString()
     {
-        return $"{Name} (OID: {Oid}, Critical: {IsCritical})";
+        return $"{this.Name} (OID: {this.Oid}, Critical: {this.IsCritical})";
     }
 }

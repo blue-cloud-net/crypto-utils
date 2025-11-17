@@ -1,8 +1,12 @@
-﻿using ExtendedKeyUsage = Cert.Utils.X509.Enums.ExtendedKeyUsage;
-using GeneralName = Cert.Utils.X509.Models.GeneralName;
-using KeyUsage = Cert.Utils.X509.Enums.KeyUsage;
+﻿using Crypto.Utils.Crypto;
+using Crypto.Utils.X509.Enums;
+using Crypto.Utils.X509.Extensions;
+using Crypto.Utils.X509.Models;
+using ExtendedKeyUsage = Crypto.Utils.X509.Enums.ExtendedKeyUsage;
+using GeneralName = Crypto.Utils.X509.Models.GeneralName;
+using KeyUsage = Crypto.Utils.X509.Enums.KeyUsage;
 
-namespace Cert.Utils.X509;
+namespace Crypto.Utils.X509;
 
 /// <summary>
 /// X.509 数字证书
@@ -513,14 +517,14 @@ public class Certificate
     /// 证书有效期长度
     /// 从证书生效时间到过期时间的时间跨度。
     /// </summary>
-    public TimeSpan ValidityPeriod => NotAfter - NotBefore;
+    public TimeSpan ValidityPeriod => this.NotAfter - this.NotBefore;
 
     /// <summary>
     /// 距离证书到期的剩余时间
     /// 从当前时间（UTC）到证书过期时间的时间跨度。
     /// 如果证书已过期，返回负值。
     /// </summary>
-    public TimeSpan TimeUntilExpiry => NotAfter - DateTime.UtcNow;
+    public TimeSpan TimeUntilExpiry => this.NotAfter - DateTime.UtcNow;
 
     /// <summary>
     /// 证书是否即将过期
@@ -630,7 +634,7 @@ public class Certificate
     /// <returns>证书指纹字符串，格式化时为 "XX:XX:XX:..."，否则为连续十六进制字符串</returns>
     public string ComputeFingerprint(string algorithm = "SHA-256", bool format = false)
     {
-        var derBytes = ToDer();
+        var derBytes = this.ToDer();
         return FingerprintHelper.ComputeFingerprint(derBytes, algorithm, format);
     }
 

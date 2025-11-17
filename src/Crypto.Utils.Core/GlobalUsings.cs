@@ -1,12 +1,6 @@
 // global using 指令
 
 global using System.Text;
-global using Cert.Utils.BouncyCastle.ObjectIdentifiers;
-global using Cert.Utils.Common;
-global using Cert.Utils.Crypto;
-global using Cert.Utils.X509.Enums;
-global using Cert.Utils.X509.Extensions;
-global using Cert.Utils.X509.Models;
 global using Org.BouncyCastle.Asn1;
 global using Org.BouncyCastle.Asn1.GM;
 global using Org.BouncyCastle.Asn1.Pkcs;

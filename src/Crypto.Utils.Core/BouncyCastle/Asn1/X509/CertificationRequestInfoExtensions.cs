@@ -1,4 +1,4 @@
-namespace Cert.Utils.X509.Extensions;
+namespace Crypto.Utils.BouncyCastle.Asn1.X509;
 
 /// <summary>
 /// CertificationRequestInfo 扩展方法

@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace Cert.Utils.Common;
+namespace Crypto.Utils.Common;
 
 /// <summary>
 /// 枚举显示名称缓存工具类

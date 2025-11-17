@@ -1,6 +1,4 @@
-using System.ComponentModel.DataAnnotations;
-
-namespace Cert.Utils.X509.Enums;
+namespace Crypto.Utils.X509.Enums;
 
 /// <summary>
 /// X.509 证书扩展密钥用途（Extended Key Usage, EKU）

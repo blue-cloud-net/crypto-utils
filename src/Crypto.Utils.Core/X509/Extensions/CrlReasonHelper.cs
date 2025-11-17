@@ -1,7 +1,7 @@
-using Cert.Utils.Common;
-using CrlReason = Cert.Utils.X509.Enums.CrlReason;
+using Crypto.Utils.Common;
+using CrlReason = Crypto.Utils.X509.Enums.CrlReason;
 
-namespace Cert.Utils.X509.Extensions;
+namespace Crypto.Utils.X509.Extensions;
 
 /// <summary>
 /// CRL 吊销原因辅助类

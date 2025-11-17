@@ -1,6 +1,6 @@
-using Cert.Utils.Crypto.Sm;
+using Crypto.Utils.Crypto.Sm;
 
-namespace Cert.Utils.X509.Extensions;
+namespace Crypto.Utils.X509.Extensions;
 
 /// <summary>
 /// 指纹计算辅助类

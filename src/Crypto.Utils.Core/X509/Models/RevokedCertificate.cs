@@ -1,6 +1,7 @@
-using CrlReason = Cert.Utils.X509.Enums.CrlReason;
+using Crypto.Utils.X509.Extensions;
+using CrlReason = Crypto.Utils.X509.Enums.CrlReason;
 
-namespace Cert.Utils.X509.Models;
+namespace Crypto.Utils.X509.Models;
 
 /// <summary>
 /// 撤销证书信息

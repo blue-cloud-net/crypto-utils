@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace Cert.Utils.X509.Models;
+namespace Crypto.Utils.X509.Models;
 
 /// <summary>
 /// X.509 专有名称（Distinguished Name, DN）
@@ -20,44 +20,44 @@ public class X509DistinguishedName
     /// 国家/地区代码（C - Country）
     /// ISO 3166 标准的两字母国家代码，如 CN（中国）、US（美国）。
     /// </summary>
-    public string? Country => GetFirstValue(Org.BouncyCastle.Asn1.X509.X509Name.C);
+    public string? Country => this.GetFirstValue(Org.BouncyCastle.Asn1.X509.X509Name.C);
 
     /// <summary>
     /// 州/省名称（ST - State or Province）
     /// 实体所在的州或省的完整名称，如"北京市"、"California"。
     /// </summary>
-    public string? StateOrProvince => GetFirstValue(Org.BouncyCastle.Asn1.X509.X509Name.ST);
+    public string? StateOrProvince => this.GetFirstValue(Org.BouncyCastle.Asn1.X509.X509Name.ST);
 
     /// <summary>
     /// 地区/城市名称（L - Locality）
     /// 实体所在的城市或地区名称，如"海淀区"、"San Francisco"。
     /// </summary>
-    public string? Locality => GetFirstValue(Org.BouncyCastle.Asn1.X509.X509Name.L);
+    public string? Locality => this.GetFirstValue(Org.BouncyCastle.Asn1.X509.X509Name.L);
 
     /// <summary>
     /// 组织名称（O - Organization）
     /// 实体所属的组织或公司名称，如"某某科技有限公司"。
     /// </summary>
-    public string? Organization => GetFirstValue(Org.BouncyCastle.Asn1.X509.X509Name.O);
+    public string? Organization => this.GetFirstValue(Org.BouncyCastle.Asn1.X509.X509Name.O);
 
     /// <summary>
     /// 组织单位（OU - Organizational Unit）
     /// 组织内的部门或单位名称，如"研发部"、"IT Department"。
     /// </summary>
-    public string? OrganizationalUnit => GetFirstValue(Org.BouncyCastle.Asn1.X509.X509Name.OU);
+    public string? OrganizationalUnit => this.GetFirstValue(Org.BouncyCastle.Asn1.X509.X509Name.OU);
 
     /// <summary>
     /// 通用名称（CN - Common Name）
     /// 实体的通用标识名，对于网站证书通常是域名，对于个人证书是姓名。
     /// 这是 DN 中最重要的字段之一。
     /// </summary>
-    public string? CommonName => GetFirstValue(Org.BouncyCastle.Asn1.X509.X509Name.CN);
+    public string? CommonName => this.GetFirstValue(Org.BouncyCastle.Asn1.X509.X509Name.CN);
 
     /// <summary>
     /// 电子邮件地址（E - Email Address）
     /// 实体的电子邮件地址。
     /// </summary>
-    public string? EmailAddress => GetFirstValue(Org.BouncyCastle.Asn1.X509.X509Name.E);
+    public string? EmailAddress => this.GetFirstValue(Org.BouncyCastle.Asn1.X509.X509Name.E);
 
     /// <summary>
     /// 所有属性的字典，键为 OID 或常见名称，值为属性值列表
@@ -76,7 +76,7 @@ public class X509DistinguishedName
     public X509DistinguishedName(Org.BouncyCastle.Asn1.X509.X509Name bcName)
     {
         _bcName = bcName ?? throw new ArgumentNullException(nameof(bcName));
-        _attributes = ParseAttributes();
+        _attributes = this.ParseAttributes();
     }
 
     /// <summary>
@@ -128,7 +128,7 @@ public class X509DistinguishedName
             if (oid == null) continue;
 
             var value = values[i]?.ToString() ?? string.Empty;
-            var key = GetFriendlyName(oid);
+            var key = this.GetFriendlyName(oid);
 
             if (!attributes.ContainsKey(key))
             {
@@ -210,7 +210,7 @@ public class X509DistinguishedName
     /// </summary>
     public Org.BouncyCastle.Asn1.X509.X509Name GetBouncyCastleName() => _bcName;
 
-    public override string ToString() => DistinguishedName;
+    public override string ToString() => this.DistinguishedName;
 
     /// <summary>
     /// 获取格式化的属性字符串

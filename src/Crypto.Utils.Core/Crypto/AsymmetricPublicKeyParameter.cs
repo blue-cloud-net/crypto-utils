@@ -1,4 +1,4 @@
-namespace Cert.Utils.Crypto;
+namespace Crypto.Utils.Crypto;
 
 /// <summary>
 /// 非对称公钥参数

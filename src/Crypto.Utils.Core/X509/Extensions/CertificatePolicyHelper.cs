@@ -1,7 +1,8 @@
-using Cert.Utils.Common;
-using CertificatePolicy = Cert.Utils.X509.Enums.CertificatePolicy;
+using Crypto.Utils.BouncyCastle.ObjectIdentifiers;
+using Crypto.Utils.Common;
+using CertificatePolicy = Crypto.Utils.X509.Enums.CertificatePolicy;
 
-namespace Cert.Utils.X509.Extensions;
+namespace Crypto.Utils.X509.Extensions;
 
 /// <summary>
 /// 证书策略辅助类

@@ -1,4 +1,4 @@
-namespace Cert.Utils.X509.Enums;
+namespace Crypto.Utils.X509.Enums;
 
 /// <summary>
 /// X.509 证书吊销原因（CRL Reason Code）

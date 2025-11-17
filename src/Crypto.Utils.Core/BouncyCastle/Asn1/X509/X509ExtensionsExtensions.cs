@@ -1,5 +1,5 @@
 
-namespace Cert.Utils.X509.Extensions;
+namespace Crypto.Utils.BouncyCastle.Asn1.X509;
 
 public static class X509ExtensionsExtensions
 {

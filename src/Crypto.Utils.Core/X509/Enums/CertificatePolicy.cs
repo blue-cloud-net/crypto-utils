@@ -1,6 +1,4 @@
-using System.ComponentModel.DataAnnotations;
-
-namespace Cert.Utils.X509.Enums;
+namespace Crypto.Utils.X509.Enums;
 
 /// <summary>
 /// X.509 证书策略（Certificate Policies）

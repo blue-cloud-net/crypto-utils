@@ -1,8 +1,11 @@
-using ExtendedKeyUsage = Cert.Utils.X509.Enums.ExtendedKeyUsage;
-using GeneralName = Cert.Utils.X509.Models.GeneralName;
-using KeyUsage = Cert.Utils.X509.Enums.KeyUsage;
+using Crypto.Utils.BouncyCastle.Asn1.X509;
+using Crypto.Utils.Crypto;
+using Crypto.Utils.X509.Extensions;
+using ExtendedKeyUsage = Crypto.Utils.X509.Enums.ExtendedKeyUsage;
+using GeneralName = Crypto.Utils.X509.Models.GeneralName;
+using KeyUsage = Crypto.Utils.X509.Enums.KeyUsage;
 
-namespace Cert.Utils.X509;
+namespace Crypto.Utils.X509;
 
 /// <summary>
 /// X.509 证书签名请求（Certificate Signing Request, CSR）

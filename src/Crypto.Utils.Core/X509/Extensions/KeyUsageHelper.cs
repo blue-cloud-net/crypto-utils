@@ -1,7 +1,7 @@
-using Cert.Utils.Common;
-using KeyUsage = Cert.Utils.X509.Enums.KeyUsage;
+using Crypto.Utils.Common;
+using KeyUsage = Crypto.Utils.X509.Enums.KeyUsage;
 
-namespace Cert.Utils.X509.Extensions;
+namespace Crypto.Utils.X509.Extensions;
 
 /// <summary>
 /// 密钥用途辅助类

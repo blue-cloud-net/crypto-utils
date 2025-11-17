@@ -1,4 +1,4 @@
-namespace Cert.Utils.Crypto;
+namespace Crypto.Utils.Crypto;
 
 /// <summary>
 /// 非对称密钥对
@@ -91,7 +91,7 @@ public class AsymmetricKeyPair
     /// 获取密钥对的算法名称
     /// </summary>
     /// <value>密钥算法标识，如 RSA、EC、SM2、DSA 等</value>
-    public string Algorithm => PrivateKey.AlgorithmName;
+    public string Algorithm => this.PrivateKey.AlgorithmName;
 
     /// <summary>
     /// 获取密钥大小（仅对 RSA 密钥有效）
@@ -100,7 +100,7 @@ public class AsymmetricKeyPair
     /// <remarks>
     /// 密钥长度建议参考 <see href="https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-57pt1r5.pdf">NIST SP 800-57 Part 1</see>
     /// </remarks>
-    public int? KeySize => PrivateKey.KeySize;
+    public int? KeySize => this.PrivateKey.KeySize;
 
     /// <summary>
     /// 获取底层 BouncyCastle 密钥对对象
@@ -233,7 +233,7 @@ public class AsymmetricKeyPair
     /// PEM 格式参考 <see href="https://datatracker.ietf.org/doc/html/rfc7468">RFC 7468 (Textual Encodings of PKIX, PKCS, and CMS Structures)</see>，
     /// 私钥格式参考 <see href="https://datatracker.ietf.org/doc/html/rfc5208">RFC 5208 (PKCS#8)</see>
     /// </remarks>
-    public string ExportPrivateKeyPem() => PrivateKey.ToPem();
+    public string ExportPrivateKeyPem() => this.PrivateKey.ToPem();
 
     /// <summary>
     /// 将私钥导出为加密的 PEM 格式

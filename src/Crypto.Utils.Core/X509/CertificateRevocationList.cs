@@ -1,7 +1,9 @@
 
-using CrlReason = Cert.Utils.X509.Enums.CrlReason;
+using Crypto.Utils.Crypto;
+using Crypto.Utils.X509.Models;
+using CrlReason = Crypto.Utils.X509.Enums.CrlReason;
 
-namespace Cert.Utils.X509;
+namespace Crypto.Utils.X509;
 
 /// <summary>
 /// X.509 证书吊销列表（Certificate Revocation List, CRL）

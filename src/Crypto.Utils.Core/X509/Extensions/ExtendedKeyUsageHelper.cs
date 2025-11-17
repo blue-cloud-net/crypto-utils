@@ -1,7 +1,8 @@
-using Cert.Utils.Common;
-using ExtendedKeyUsage = Cert.Utils.X509.Enums.ExtendedKeyUsage;
+using Crypto.Utils.BouncyCastle.ObjectIdentifiers;
+using Crypto.Utils.Common;
+using ExtendedKeyUsage = Crypto.Utils.X509.Enums.ExtendedKeyUsage;
 
-namespace Cert.Utils.X509.Extensions;
+namespace Crypto.Utils.X509.Extensions;
 
 /// <summary>
 /// 扩展密钥用途辅助类

@@ -1,4 +1,4 @@
-namespace Cert.Utils.BouncyCastle.ObjectIdentifiers;
+namespace Crypto.Utils.BouncyCastle.ObjectIdentifiers;
 
 /// <summary>
 /// 证书策略 OID 常量

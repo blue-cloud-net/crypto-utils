@@ -1,4 +1,4 @@
-namespace Cert.Utils.X509.Utils;
+namespace Crypto.Utils.X509.Utils;
 
 /// <summary>
 /// X.509 证书工具类
