@@ -400,7 +400,7 @@ public abstract class AsymmetricKeyParameter
 
         var obj = pemReader.ReadObject();
 
-        Org.BouncyCastle.Crypto.AsymmetricKeyParameter? key = obj switch
+        var key = obj switch
         {
             Org.BouncyCastle.Crypto.AsymmetricCipherKeyPair keyPair => keyPair.Private,
             Org.BouncyCastle.Crypto.AsymmetricKeyParameter keyParam => keyParam,
@@ -418,16 +418,40 @@ public abstract class AsymmetricKeyParameter
     /// </summary>
     /// <param name="der">DER 格式的密钥字节数组</param>
     /// <returns>解析后的 <see cref="AsymmetricKeyParameter"/> 对象</returns>
+    /// <exception cref="InvalidOperationException">当无法解析 DER 格式时抛出</exception>
     /// <remarks>
-    /// 私钥格式参考 <see href="https://datatracker.ietf.org/doc/html/rfc5208">RFC 5208 (PKCS#8)</see>
+    /// <para>自动识别并解析私钥或公钥：</para>
+    /// <list type="bullet">
+    /// <item><description>私钥格式：<see href="https://datatracker.ietf.org/doc/html/rfc5208">RFC 5208 (PKCS#8 PrivateKeyInfo)</see></description></item>
+    /// <item><description>公钥格式：<see href="https://datatracker.ietf.org/doc/html/rfc5280#section-4.1.2.7">RFC 5280 Section 4.1.2.7 (SubjectPublicKeyInfo)</see></description></item>
+    /// </list>
     /// </remarks>
     public static AsymmetricKeyParameter FromDer(
         byte[] der)
     {
-        var asn1Object = Asn1Object.FromByteArray(der);
-        var privateKeyInfo = Org.BouncyCastle.Asn1.Pkcs.PrivateKeyInfo.GetInstance(asn1Object);
-        var key = Org.BouncyCastle.Security.PrivateKeyFactory.CreateKey(privateKeyInfo);
-        return FromBouncyCastleKey(key);
+        // 尝试解析为私钥 (PKCS#8 PrivateKeyInfo)
+        try
+        {
+            var key = Org.BouncyCastle.Security.PrivateKeyFactory.CreateKey(der);
+            return FromBouncyCastleKey(key);
+        }
+        catch
+        {
+            // 如果不是私钥，继续尝试公钥
+        }
+
+        // 尝试解析为公钥 (SubjectPublicKeyInfo)
+        try
+        {
+            var key = Org.BouncyCastle.Security.PublicKeyFactory.CreateKey(der);
+            return FromBouncyCastleKey(key);
+        }
+        catch
+        {
+            // 两种格式都失败
+        }
+
+        throw new InvalidOperationException("无法从 DER 中解析密钥，格式不是有效的。");
     }
 
     /// <summary>

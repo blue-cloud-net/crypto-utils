@@ -38,6 +38,57 @@ public class AsymmetricPrivateKeyParameter : AsymmetricKeyParameter
     }
 
     /// <summary>
+    /// 从私钥中提取对应的公钥
+    /// </summary>
+    /// <returns>提取的 <see cref="AsymmetricPublicKeyParameter"/> 公钥对象</returns>
+    /// <remarks>
+    /// <para>
+    /// 此方法从私钥中导出对应的公钥。对于不同的算法：
+    /// </para>
+    /// <list type="bullet">
+    /// <item><description><strong>RSA</strong>：从私钥的模数 (N) 和公钥指数 (E) 构造公钥</description></item>
+    /// <item><description><strong>EC/SM2</strong>：通过私钥标量 (D) 与基点 (G) 相乘计算公钥点 (Q = D × G)</description></item>
+    /// <item><description><strong>DSA</strong>：从私钥的参数 (P, Q, G) 和公钥值 (Y) 构造公钥</description></item>
+    /// </list>
+    /// <para>
+    /// <strong>算法参考：</strong>
+    /// </para>
+    /// <list type="bullet">
+    /// <item><description>RSA 公钥推导：<see href="https://datatracker.ietf.org/doc/html/rfc8017#section-3.2">RFC 8017 Section 3.2</see></description></item>
+    /// <item><description>EC 公钥推导：<see href="https://datatracker.ietf.org/doc/html/rfc5480#section-2">RFC 5480 Section 2</see></description></item>
+    /// <item><description>DSA 公钥推导：<see href="https://datatracker.ietf.org/doc/html/rfc3279#section-2.3.2">RFC 3279 Section 2.3.2</see></description></item>
+    /// </list>
+    /// </remarks>
+    public AsymmetricPublicKeyParameter GetPublicKey()
+    {
+        Org.BouncyCastle.Crypto.AsymmetricKeyParameter publicKey;
+
+        if (_key is RsaPrivateCrtKeyParameters rsaPrivateKey)
+        {
+            // RSA: 从私钥的模数和公钥指数构造公钥
+            publicKey = new RsaKeyParameters(false, rsaPrivateKey.Modulus, rsaPrivateKey.Exponent);
+        }
+        else if (_key is ECPrivateKeyParameters ecPrivateKey)
+        {
+            // EC/SM2: 计算公钥点 Q = D × G
+            var q = ecPrivateKey.Parameters.G.Multiply(ecPrivateKey.D).Normalize();
+            publicKey = new ECPublicKeyParameters(ecPrivateKey.AlgorithmName, q, ecPrivateKey.Parameters);
+        }
+        else if (_key is DsaPrivateKeyParameters dsaPrivateKey)
+        {
+            // DSA: 计算公钥 Y = G^X mod P
+            var y = dsaPrivateKey.Parameters.G.ModPow(dsaPrivateKey.X, dsaPrivateKey.Parameters.P);
+            publicKey = new DsaPublicKeyParameters(y, dsaPrivateKey.Parameters);
+        }
+        else
+        {
+            throw new NotSupportedException($"不支持从 {_key.GetType().Name} 类型的私钥提取公钥");
+        }
+
+        return new AsymmetricPublicKeyParameter(publicKey);
+    }
+
+    /// <summary>
     /// 将私钥导出为 PEM 格式（默认使用传统 PKCS#1/SEC1 格式）
     /// </summary>
     /// <returns>PEM 格式的私钥字符串</returns>
@@ -192,7 +243,7 @@ public class AsymmetricPrivateKeyParameter : AsymmetricKeyParameter
     public override byte[] ToDer()
     {
         var privateKeyInfo = PrivateKeyInfoFactory.CreatePrivateKeyInfo(_key);
-        return privateKeyInfo.GetEncoded();
+        return privateKeyInfo.GetDerEncoded();
     }
 
     /// <summary>
@@ -232,7 +283,7 @@ public class AsymmetricPrivateKeyParameter : AsymmetricKeyParameter
 
         var obj = pemReader.ReadObject();
 
-        Org.BouncyCastle.Crypto.AsymmetricKeyParameter? privateKey = obj switch
+        var privateKey = obj switch
         {
             Org.BouncyCastle.Crypto.AsymmetricCipherKeyPair keyPair => keyPair.Private,
             Org.BouncyCastle.Crypto.AsymmetricKeyParameter key => key,

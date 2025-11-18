@@ -76,7 +76,7 @@ public class AsymmetricPublicKeyParameter : AsymmetricKeyParameter
     public override byte[] ToDer()
     {
         var publicKeyInfo = SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(_key);
-        return publicKeyInfo.GetEncoded();
+        return publicKeyInfo.GetDerEncoded();
     }
 
     /// <summary>
@@ -115,7 +115,7 @@ public class AsymmetricPublicKeyParameter : AsymmetricKeyParameter
         var pemReader = new PemReader(reader);
         var obj = pemReader.ReadObject();
 
-        Org.BouncyCastle.Crypto.AsymmetricKeyParameter? publicKey = obj switch
+        var publicKey = obj switch
         {
             Org.BouncyCastle.Crypto.AsymmetricKeyParameter key when !key.IsPrivate => key,
             _ => throw new InvalidOperationException("无法从 PEM 中解析公钥")
