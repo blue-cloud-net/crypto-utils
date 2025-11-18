@@ -150,7 +150,7 @@ public class Certificate
     /// - CA 证书：KeyCertSign | CrlSign
     /// - 代码签名：DigitalSignature
     /// </example>
-    public KeyUsage KeyUsages => 
+    public KeyUsage KeyUsages =>
         KeyUsageHelper.FromBoolArray(_bcCertificate.GetKeyUsage());
 
     /// <summary>
@@ -169,7 +169,7 @@ public class Certificate
     /// - TimeStamping：时间戳
     /// - OcspSigning：OCSP 签名
     /// </example>
-    public ExtendedKeyUsage ExtendedKeyUsages => 
+    public ExtendedKeyUsage ExtendedKeyUsages =>
         ExtendedKeyUsageHelper.FromOids(_bcCertificate.GetExtendedKeyUsage());
 
     /// <summary>
@@ -194,7 +194,7 @@ public class Certificate
             var skiAsn1Obj = _bcCertificate.GetExtensionParsedValue(X509Extensions.SubjectKeyIdentifier);
             if (skiAsn1Obj is null)
                 return null;
-            
+
             var ski = Org.BouncyCastle.Asn1.X509.SubjectKeyIdentifier.GetInstance(skiAsn1Obj);
             return Convert.ToHexString(ski.GetKeyIdentifier());
         }
@@ -239,9 +239,9 @@ public class Certificate
         get
         {
             var crlDpExtension = _bcCertificate.GetExtensionValue(X509Extensions.CrlDistributionPoints);
-            if (crlDpExtension is null) 
+            if (crlDpExtension is null)
                 return null;
-            
+
             var asn1Object = X509ExtensionUtilities.FromExtensionValue(crlDpExtension);
             var crlDistPoint = CrlDistPoint.GetInstance(asn1Object);
             return crlDistPoint;
@@ -292,9 +292,9 @@ public class Certificate
         get
         {
             var aiaExtension = _bcCertificate.GetExtensionValue(X509Extensions.AuthorityInfoAccess);
-            if (aiaExtension is null) 
+            if (aiaExtension is null)
                 return null;
-            
+
             var asn1Object = X509ExtensionUtilities.FromExtensionValue(aiaExtension);
             var authorityInfoAccess = Org.BouncyCastle.Asn1.X509.AuthorityInformationAccess.GetInstance(asn1Object);
             return authorityInfoAccess;

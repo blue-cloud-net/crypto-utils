@@ -191,7 +191,7 @@ public class CertificateSigningRequest
     /// DER 是 ASN.1 的二进制编码方式，是 PKCS#10 的标准编码格式。
     /// </summary>
     /// <returns>DER 格式的 CSR 字节数组</returns>
-    public byte[] ToDer() => _bcCsr.GetEncoded();
+    public byte[] ToDer() => _bcCsr.GetDerEncoded();
 
     /// <summary>
     /// 从 PEM 字符串加载 CSR
