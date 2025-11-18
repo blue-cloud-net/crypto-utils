@@ -3,6 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36518.9
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionIntems", "SolutionIntems", "{EEB01C18-A223-4A7B-A1A5-045A97F65A40}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		Directory.Build.props = Directory.Build.props
+		README.md = README.md
+	EndProjectSection
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crypto.Utils.Api", "src\Crypto.Utils.Api\Crypto.Utils.Api.csproj", "{F2D49BC1-6C71-4B15-870C-0235A2E27557}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crypto.Utils.Core", "src\Crypto.Utils.Core\Crypto.Utils.Core.csproj", "{51871A1E-99ED-4678-A1EA-E7B10FD71FC8}"
