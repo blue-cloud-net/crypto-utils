@@ -1,0 +1,196 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+            
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    
+    <!-- CertificatePolicy -->
+    <data name="CertificatePolicy_None" xml:space="preserve">
+        <value>未指定策略</value>
+    </data>
+    <data name="CertificatePolicy_AnyPolicy" xml:space="preserve">
+        <value>任何策略</value>
+    </data>
+    <data name="CertificatePolicy_DomainValidated" xml:space="preserve">
+        <value>域名验证 (DV)</value>
+    </data>
+    <data name="CertificatePolicy_OrganizationValidated" xml:space="preserve">
+        <value>组织验证 (OV)</value>
+    </data>
+    <data name="CertificatePolicy_ExtendedValidation" xml:space="preserve">
+        <value>扩展验证 (EV)</value>
+    </data>
+    <data name="CertificatePolicy_MicrosoftDocumentSigning" xml:space="preserve">
+        <value>Microsoft 文档签名</value>
+    </data>
+    
+    <!-- CrlReason -->
+    <data name="CrlReason_Unspecified" xml:space="preserve">
+        <value>未指定原因</value>
+    </data>
+    <data name="CrlReason_KeyCompromise" xml:space="preserve">
+        <value>密钥泄露</value>
+    </data>
+    <data name="CrlReason_CACompromise" xml:space="preserve">
+        <value>CA 泄露</value>
+    </data>
+    <data name="CrlReason_AffiliationChanged" xml:space="preserve">
+        <value>从属关系变更</value>
+    </data>
+    <data name="CrlReason_Superseded" xml:space="preserve">
+        <value>被取代</value>
+    </data>
+    <data name="CrlReason_CessationOfOperation" xml:space="preserve">
+        <value>停止运营</value>
+    </data>
+    <data name="CrlReason_CertificateHold" xml:space="preserve">
+        <value>证书挂起</value>
+    </data>
+    <data name="CrlReason_RemoveFromCrl" xml:space="preserve">
+        <value>从 CRL 中移除</value>
+    </data>
+    <data name="CrlReason_PrivilegeWithdrawn" xml:space="preserve">
+        <value>特权撤销</value>
+    </data>
+    <data name="CrlReason_AACompromise" xml:space="preserve">
+        <value>AA 泄露</value>
+    </data>
+    
+    <!-- ExtendedKeyUsage -->
+    <data name="ExtendedKeyUsage_None" xml:space="preserve">
+        <value>无</value>
+    </data>
+    <data name="ExtendedKeyUsage_ServerAuthentication" xml:space="preserve">
+        <value>服务器身份验证</value>
+    </data>
+    <data name="ExtendedKeyUsage_ClientAuthentication" xml:space="preserve">
+        <value>客户端身份验证</value>
+    </data>
+    <data name="ExtendedKeyUsage_CodeSigning" xml:space="preserve">
+        <value>代码签名</value>
+    </data>
+    <data name="ExtendedKeyUsage_EmailProtection" xml:space="preserve">
+        <value>电子邮件保护</value>
+    </data>
+    <data name="ExtendedKeyUsage_IpsecEndSystem" xml:space="preserve">
+        <value>IPsec 终端系统</value>
+    </data>
+    <data name="ExtendedKeyUsage_IpsecTunnel" xml:space="preserve">
+        <value>IPsec 隧道</value>
+    </data>
+    <data name="ExtendedKeyUsage_IpsecUser" xml:space="preserve">
+        <value>IPsec 用户</value>
+    </data>
+    <data name="ExtendedKeyUsage_TimeStamping" xml:space="preserve">
+        <value>时间戳</value>
+    </data>
+    <data name="ExtendedKeyUsage_OcspSigning" xml:space="preserve">
+        <value>OCSP 签名</value>
+    </data>
+    <data name="ExtendedKeyUsage_Dvcs" xml:space="preserve">
+        <value>数据验证和认证服务</value>
+    </data>
+    <data name="ExtendedKeyUsage_SbgpCertificate" xml:space="preserve">
+        <value>安全 BGP 证书</value>
+    </data>
+    <data name="ExtendedKeyUsage_EapOverPpp" xml:space="preserve">
+        <value>PPP 上的 EAP</value>
+    </data>
+    <data name="ExtendedKeyUsage_EapOverLan" xml:space="preserve">
+        <value>LAN 上的 EAP</value>
+    </data>
+    <data name="ExtendedKeyUsage_SshClient" xml:space="preserve">
+        <value>SSH 客户端</value>
+    </data>
+    <data name="ExtendedKeyUsage_SshServer" xml:space="preserve">
+        <value>SSH 服务器</value>
+    </data>
+    <data name="ExtendedKeyUsage_DocumentSigning" xml:space="preserve">
+        <value>文档签名</value>
+    </data>
+    <data name="ExtendedKeyUsage_AnyPurpose" xml:space="preserve">
+        <value>任何目的</value>
+    </data>
+    <data name="ExtendedKeyUsage_SmartCardLogon" xml:space="preserve">
+        <value>智能卡登录</value>
+    </data>
+    
+    <!-- GeneralNameType -->
+    <data name="GeneralNameType_Unknown" xml:space="preserve">
+        <value>未知类型</value>
+    </data>
+    <data name="GeneralNameType_OtherName" xml:space="preserve">
+        <value>其他名称</value>
+    </data>
+    <data name="GeneralNameType_Rfc822Name" xml:space="preserve">
+        <value>RFC 822 名称</value>
+    </data>
+    <data name="GeneralNameType_DnsName" xml:space="preserve">
+        <value>DNS 名称</value>
+    </data>
+    <data name="GeneralNameType_X400Address" xml:space="preserve">
+        <value>X.400 地址</value>
+    </data>
+    <data name="GeneralNameType_DirectoryName" xml:space="preserve">
+        <value>目录名称</value>
+    </data>
+    <data name="GeneralNameType_EdiPartyName" xml:space="preserve">
+        <value>EDI 方名称</value>
+    </data>
+    <data name="GeneralNameType_UniformResourceIdentifier" xml:space="preserve">
+        <value>统一资源标识符</value>
+    </data>
+    <data name="GeneralNameType_IPAddress" xml:space="preserve">
+        <value>IP 地址</value>
+    </data>
+    <data name="GeneralNameType_RegisteredID" xml:space="preserve">
+        <value>注册 ID</value>
+    </data>
+    
+    <!-- KeyUsage -->
+    <data name="KeyUsage_None" xml:space="preserve">
+        <value>无</value>
+    </data>
+    <data name="KeyUsage_DigitalSignature" xml:space="preserve">
+        <value>数字签名</value>
+    </data>
+    <data name="KeyUsage_NonRepudiation" xml:space="preserve">
+        <value>不可否认性</value>
+    </data>
+    <data name="KeyUsage_KeyEncipherment" xml:space="preserve">
+        <value>密钥加密</value>
+    </data>
+    <data name="KeyUsage_DataEncipherment" xml:space="preserve">
+        <value>数据加密</value>
+    </data>
+    <data name="KeyUsage_KeyAgreement" xml:space="preserve">
+        <value>密钥协商</value>
+    </data>
+    <data name="KeyUsage_KeyCertSign" xml:space="preserve">
+        <value>证书签名</value>
+    </data>
+    <data name="KeyUsage_CrlSign" xml:space="preserve">
+        <value>CRL 签名</value>
+    </data>
+    <data name="KeyUsage_EncipherOnly" xml:space="preserve">
+        <value>仅用于加密</value>
+    </data>
+    <data name="KeyUsage_DecipherOnly" xml:space="preserve">
+        <value>仅用于解密</value>
+    </data>
+</root>

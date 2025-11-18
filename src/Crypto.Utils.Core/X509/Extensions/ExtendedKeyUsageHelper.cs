@@ -1,5 +1,4 @@
 using Crypto.Utils.BouncyCastle.ObjectIdentifiers;
-using Crypto.Utils.Common;
 using ExtendedKeyUsage = Crypto.Utils.X509.Enums.ExtendedKeyUsage;
 
 namespace Crypto.Utils.X509.Extensions;
@@ -121,55 +120,5 @@ public static class ExtendedKeyUsageHelper
                 oids.Add(kvp.Value.Id);
         }
         return oids;
-    }
-
-    /// <summary>
-    /// 获取扩展密钥用途的枚举名称列表
-    /// </summary>
-    /// <param name="usage">扩展密钥用途枚举值</param>
-    /// <returns>枚举名称列表</returns>
-    public static IEnumerable<string> GetUsageNames(ExtendedKeyUsage usage)
-    {
-        var names = new List<string>();
-
-        foreach (ExtendedKeyUsage flag in Enum.GetValues(typeof(ExtendedKeyUsage)))
-        {
-            if (flag == ExtendedKeyUsage.None)
-                break;
-
-            if (!usage.HasFlag(flag))
-                continue;
-
-            var name = Enum.GetName(flag);
-            if (!string.IsNullOrWhiteSpace(name))
-            {
-                names.Add(name);
-            }
-        }
-
-        return names;
-    }
-
-    /// <summary>
-    /// 获取扩展密钥用途的友好名称列表
-    /// </summary>
-    /// <param name="usage">扩展密钥用途枚举值</param>
-    /// <returns>用途名称列表</returns>
-    public static IEnumerable<string> GetUsageFriendlyNames(ExtendedKeyUsage usage)
-    {
-        var names = new List<string>();
-
-        foreach (ExtendedKeyUsage flag in Enum.GetValues(typeof(ExtendedKeyUsage)))
-        {
-            if (flag == ExtendedKeyUsage.None)
-                continue;
-
-            if (usage.HasFlag(flag))
-            {
-                names.Add(EnumDisplayNameCache<ExtendedKeyUsage>.GetDisplayName(flag));
-            }
-        }
-
-        return names;
     }
 }

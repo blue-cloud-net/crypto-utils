@@ -109,7 +109,7 @@ public class X509DistinguishedName
     public List<string> GetValues(DerObjectIdentifier oid)
     {
         var values = _bcName.GetValueList(oid);
-        return values?.Cast<object>().Select(v => v.ToString() ?? string.Empty).ToList() ?? new List<string>();
+        return values?.Cast<object>().Select(v => v.ToString() ?? string.Empty).ToList() ?? [];
     }
 
     /// <summary>
@@ -122,7 +122,7 @@ public class X509DistinguishedName
         var oids = _bcName.GetOidList();
         var values = _bcName.GetValueList();
 
-        for (int i = 0; i < oids.Count; i++)
+        for (var i = 0; i < oids.Count; i++)
         {
             var oid = oids[i] as DerObjectIdentifier;
             if (oid == null) continue;
@@ -132,7 +132,7 @@ public class X509DistinguishedName
 
             if (!attributes.ContainsKey(key))
             {
-                attributes[key] = new List<string>();
+                attributes[key] = [];
             }
             attributes[key].Add(value);
         }
@@ -148,7 +148,7 @@ public class X509DistinguishedName
         if (oid == null)
             return "Unknown";
 
-        string oidId = oid.Id;
+        var oidId = oid.Id;
 
         // 先查找缓存
         lock (_cacheLock)

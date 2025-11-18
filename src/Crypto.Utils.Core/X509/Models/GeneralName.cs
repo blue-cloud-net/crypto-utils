@@ -1,5 +1,3 @@
-using Crypto.Utils.X509.Enums;
-
 namespace Crypto.Utils.X509.Models;
 
 /// <summary>
@@ -128,8 +126,5 @@ public record struct GeneralName
     /// 格式为 "类型: 值"，便于日志记录和调试。
     /// </summary>
     /// <returns>格式化的字符串，如 "DnsName: www.example.com" 或 "IPAddress: 192.168.1.1"</returns>
-    public override string ToString()
-    {
-        return $"{this.Type}: {this.Value}";
-    }
+    public override string ToString() => $"{this.Type}: {this.Value}";
 }

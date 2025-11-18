@@ -265,8 +265,5 @@ public class AsymmetricKeyPair
     /// 返回表示当前密钥对的字符串
     /// </summary>
     /// <returns>包含算法、私钥和公钥信息的描述性字符串</returns>
-    public override string ToString()
-    {
-        return $"{this.Algorithm} Key Pair ({this.PrivateKey}, {this.PublicKey})";
-    }
+    public override string ToString() => $"{this.Algorithm} Key Pair ({this.PrivateKey}, {this.PublicKey})";
 }

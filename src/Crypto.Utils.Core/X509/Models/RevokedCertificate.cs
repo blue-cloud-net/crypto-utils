@@ -1,4 +1,3 @@
-using Crypto.Utils.X509.Extensions;
 using CrlReason = Crypto.Utils.X509.Enums.CrlReason;
 
 namespace Crypto.Utils.X509.Models;

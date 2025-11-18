@@ -9,60 +9,60 @@ namespace Crypto.Utils.X509.Enums;
 [Flags]
 public enum ExtendedKeyUsage
 {
-    [Display(Name = "无")]
+    [Display(Name = "ExtendedKeyUsage_None", ResourceType = typeof(EnumResources))]
     None = 0,
 
-    [Display(Name = "服务器身份验证")]
+    [Display(Name = "ExtendedKeyUsage_ServerAuthentication", ResourceType = typeof(EnumResources))]
     ServerAuthentication = 1 << 0,
 
-    [Display(Name = "客户端身份验证")]
+    [Display(Name = "ExtendedKeyUsage_ClientAuthentication", ResourceType = typeof(EnumResources))]
     ClientAuthentication = 1 << 1,
 
-    [Display(Name = "代码签名")]
+    [Display(Name = "ExtendedKeyUsage_CodeSigning", ResourceType = typeof(EnumResources))]
     CodeSigning = 1 << 2,
 
-    [Display(Name = "电子邮件保护")]
+    [Display(Name = "ExtendedKeyUsage_EmailProtection", ResourceType = typeof(EnumResources))]
     EmailProtection = 1 << 3,
 
-    [Display(Name = "IPsec 端系统")]
+    [Display(Name = "ExtendedKeyUsage_IpsecEndSystem", ResourceType = typeof(EnumResources))]
     IpsecEndSystem = 1 << 4,
 
-    [Display(Name = "IPsec 隧道")]
+    [Display(Name = "ExtendedKeyUsage_IpsecTunnel", ResourceType = typeof(EnumResources))]
     IpsecTunnel = 1 << 5,
 
-    [Display(Name = "IPsec 用户")]
+    [Display(Name = "ExtendedKeyUsage_IpsecUser", ResourceType = typeof(EnumResources))]
     IpsecUser = 1 << 6,
 
-    [Display(Name = "时间戳")]
+    [Display(Name = "ExtendedKeyUsage_TimeStamping", ResourceType = typeof(EnumResources))]
     TimeStamping = 1 << 7,
 
-    [Display(Name = "OCSP 签名")]
+    [Display(Name = "ExtendedKeyUsage_OcspSigning", ResourceType = typeof(EnumResources))]
     OcspSigning = 1 << 8,
 
-    [Display(Name = "数据验证和认证服务")]
+    [Display(Name = "ExtendedKeyUsage_Dvcs", ResourceType = typeof(EnumResources))]
     Dvcs = 1 << 9,
 
-    [Display(Name = "SBGP 证书")]
+    [Display(Name = "ExtendedKeyUsage_SbgpCertificate", ResourceType = typeof(EnumResources))]
     SbgpCertificate = 1 << 10,
 
-    [Display(Name = "EAP over PPP")]
+    [Display(Name = "ExtendedKeyUsage_EapOverPpp", ResourceType = typeof(EnumResources))]
     EapOverPpp = 1 << 11,
 
-    [Display(Name = "EAP over LAN")]
+    [Display(Name = "ExtendedKeyUsage_EapOverLan", ResourceType = typeof(EnumResources))]
     EapOverLan = 1 << 12,
 
-    [Display(Name = "SSH 客户端")]
+    [Display(Name = "ExtendedKeyUsage_SshClient", ResourceType = typeof(EnumResources))]
     SshClient = 1 << 13,
 
-    [Display(Name = "SSH 服务器")]
+    [Display(Name = "ExtendedKeyUsage_SshServer", ResourceType = typeof(EnumResources))]
     SshServer = 1 << 14,
 
-    [Display(Name = "文档签名")]
+    [Display(Name = "ExtendedKeyUsage_DocumentSigning", ResourceType = typeof(EnumResources))]
     DocumentSigning = 1 << 15,
 
-    [Display(Name = "任意用途")]
+    [Display(Name = "ExtendedKeyUsage_AnyPurpose", ResourceType = typeof(EnumResources))]
     AnyPurpose = 1 << 16,
 
-    [Display(Name = "智能卡登录")]
+    [Display(Name = "ExtendedKeyUsage_SmartCardLogon", ResourceType = typeof(EnumResources))]
     SmartCardLogon = 1 << 17
 }

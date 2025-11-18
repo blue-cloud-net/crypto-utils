@@ -1,6 +1,5 @@
 using Crypto.Utils.BouncyCastle.Asn1.X509;
 using Crypto.Utils.Crypto;
-using Crypto.Utils.X509.Extensions;
 using ExtendedKeyUsage = Crypto.Utils.X509.Enums.ExtendedKeyUsage;
 using GeneralName = Crypto.Utils.X509.Models.GeneralName;
 using KeyUsage = Crypto.Utils.X509.Enums.KeyUsage;
@@ -192,10 +191,7 @@ public class CertificateSigningRequest
     /// DER 是 ASN.1 的二进制编码方式，是 PKCS#10 的标准编码格式。
     /// </summary>
     /// <returns>DER 格式的 CSR 字节数组</returns>
-    public byte[] ToDer()
-    {
-        return _bcCsr.GetEncoded();
-    }
+    public byte[] ToDer() => _bcCsr.GetEncoded();
 
     /// <summary>
     /// 从 PEM 字符串加载 CSR
@@ -240,10 +236,7 @@ public class CertificateSigningRequest
     /// 包含 CSR 的主题和签名算法等关键信息，便于日志记录和调试。
     /// </summary>
     /// <returns>格式化的 CSR 信息字符串</returns>
-    public override string ToString()
-    {
-        return $"Subject: {this.Subject}, Algorithm: {this.SignatureAlgorithmName}";
-    }
+    public override string ToString() => $"Subject: {this.Subject}, Algorithm: {this.SignatureAlgorithmName}";
 
     /// <summary>
     /// 生成证书签名请求（CSR）
@@ -257,10 +250,8 @@ public class CertificateSigningRequest
     public static CertificateSigningRequest Generate(
         string subjectDN,
         AsymmetricKeyPair keyPair,
-        string signatureAlgorithm = "SHA256WITHRSA")
-    {
-        return Generate(subjectDN, keyPair.PublicKey, keyPair.PrivateKey, signatureAlgorithm);
-    }
+        string signatureAlgorithm = "SHA256WITHRSA") =>
+        Generate(subjectDN, keyPair.PublicKey, keyPair.PrivateKey, signatureAlgorithm);
 
     /// <summary>
     /// 生成证书签名请求（CSR）

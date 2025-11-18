@@ -1,4 +1,3 @@
-using Crypto.Utils.Common;
 using KeyUsage = Crypto.Utils.X509.Enums.KeyUsage;
 
 namespace Crypto.Utils.X509.Extensions;
@@ -108,49 +107,5 @@ public static class KeyUsageHelper
         if ((keyUsageInt & Org.BouncyCastle.Asn1.X509.KeyUsage.DecipherOnly) != 0) usages |= KeyUsage.DecipherOnly;
 
         return usages;
-    }
-
-    /// <summary>
-    /// 获取密钥用途的枚举名称列表
-    /// </summary>
-    /// <param name="usage">密钥用途枚举值</param>
-    /// <returns>枚举名称列表</returns>
-    public static IEnumerable<string> GetUsageNames(KeyUsage usage)
-    {
-        var names = new List<string>();
-
-        foreach (KeyUsage flag in Enum.GetValues(typeof(KeyUsage)))
-        {
-            if (!usage.HasFlag(flag))
-                continue;
-
-            var name = Enum.GetName(flag);
-            if (!string.IsNullOrWhiteSpace(name))
-            {
-                names.Add(name);
-            }
-        }
-
-        return names;
-    }
-
-    /// <summary>
-    /// 获取密钥用途的友好名称列表
-    /// </summary>
-    /// <param name="usage">密钥用途枚举值</param>
-    /// <returns>用途名称列表</returns>
-    public static IEnumerable<string> GetUsageFriendlyNames(KeyUsage usage)
-    {
-        var names = new List<string>();
-
-        foreach (KeyUsage flag in Enum.GetValues(typeof(KeyUsage)))
-        {
-            if (usage.HasFlag(flag))
-            {
-                names.Add(EnumDisplayNameCache<KeyUsage>.GetDisplayName(flag));
-            }
-        }
-
-        return names;
     }
 }

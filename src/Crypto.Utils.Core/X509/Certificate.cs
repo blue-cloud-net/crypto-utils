@@ -1,6 +1,4 @@
 ﻿using Crypto.Utils.Crypto;
-using Crypto.Utils.X509.Enums;
-using Crypto.Utils.X509.Extensions;
 using Crypto.Utils.X509.Models;
 using ExtendedKeyUsage = Crypto.Utils.X509.Enums.ExtendedKeyUsage;
 using GeneralName = Crypto.Utils.X509.Models.GeneralName;
@@ -48,19 +46,6 @@ public class Certificate
     public string SignatureAlgorithmName => _bcCertificate.SigAlgName.Replace("-", String.Empty);
 
     /// <summary>
-    /// 证书主题（Subject）
-    /// 证书所有者的身份信息，包含 CN、O、OU、C 等字段。
-    /// RFC 参考 <see href="https://datatracker.ietf.org/doc/html/rfc5280#section-4.1.2.6"/>
-    /// </summary>
-    public string Subject => _bcCertificate.SubjectDN.ToString();
-
-    /// <summary>
-    /// 证书主题（Subject）详细信息
-    /// 以结构化方式访问主题的各个组成部分。
-    /// </summary>
-    public X509DistinguishedName SubjectDN => new(_bcCertificate.SubjectDN);
-
-    /// <summary>
     /// 证书颁发者（Issuer）
     /// 签发该证书的 CA（证书颁发机构）的身份信息。
     /// RFC 参考 <see href="https://datatracker.ietf.org/doc/html/rfc5280#section-4.1.2.4"/>
@@ -72,6 +57,19 @@ public class Certificate
     /// 以结构化方式访问颁发者的各个组成部分。
     /// </summary>
     public X509DistinguishedName IssuerDN => new(_bcCertificate.IssuerDN);
+
+    /// <summary>
+    /// 证书主题（Subject）
+    /// 证书所有者的身份信息，包含 CN、O、OU、C 等字段。
+    /// RFC 参考 <see href="https://datatracker.ietf.org/doc/html/rfc5280#section-4.1.2.6"/>
+    /// </summary>
+    public string Subject => _bcCertificate.SubjectDN.ToString();
+
+    /// <summary>
+    /// 证书主题（Subject）详细信息
+    /// 以结构化方式访问主题的各个组成部分。
+    /// </summary>
+    public X509DistinguishedName SubjectDN => new(_bcCertificate.SubjectDN);
 
     /// <summary>
     /// 证书生效时间（Not Before）
@@ -241,13 +239,12 @@ public class Certificate
         get
         {
             var crlDpExtension = _bcCertificate.GetExtensionValue(X509Extensions.CrlDistributionPoints);
-            if (crlDpExtension is not null)
-            {
-                var asn1Object = X509ExtensionUtilities.FromExtensionValue(crlDpExtension);
-                var crlDistPoint = CrlDistPoint.GetInstance(asn1Object);
-                return crlDistPoint;
-            }
-            return null;
+            if (crlDpExtension is null) 
+                return null;
+            
+            var asn1Object = X509ExtensionUtilities.FromExtensionValue(crlDpExtension);
+            var crlDistPoint = CrlDistPoint.GetInstance(asn1Object);
+            return crlDistPoint;
         }
     }
 
@@ -295,13 +292,12 @@ public class Certificate
         get
         {
             var aiaExtension = _bcCertificate.GetExtensionValue(X509Extensions.AuthorityInfoAccess);
-            if (aiaExtension is not null)
-            {
-                var asn1Object = X509ExtensionUtilities.FromExtensionValue(aiaExtension);
-                var authorityInfoAccess = Org.BouncyCastle.Asn1.X509.AuthorityInformationAccess.GetInstance(asn1Object);
-                return authorityInfoAccess;
-            }
-            return null;
+            if (aiaExtension is null) 
+                return null;
+            
+            var asn1Object = X509ExtensionUtilities.FromExtensionValue(aiaExtension);
+            var authorityInfoAccess = Org.BouncyCastle.Asn1.X509.AuthorityInformationAccess.GetInstance(asn1Object);
+            return authorityInfoAccess;
         }
     }
     public IEnumerable<string>? AuthorityInformationAccessOscp
@@ -577,10 +573,7 @@ public class Certificate
     /// 通常用于二进制文件存储和某些编程接口。
     /// </summary>
     /// <returns>DER 格式的证书字节数组</returns>
-    public byte[] ToDer()
-    {
-        return _bcCertificate.GetEncoded();
-    }
+    public byte[] ToDer() => _bcCertificate.GetEncoded();
 
     /// <summary>
     /// 从 PEM 字符串加载证书
@@ -643,10 +636,7 @@ public class Certificate
     /// 包含证书的主体、颁发者和有效期等关键信息，便于日志记录和调试。
     /// </summary>
     /// <returns>格式化的证书信息字符串</returns>
-    public override string ToString()
-    {
-        return $"Subject: {this.Subject}, Issuer: {this.Issuer}, Valid: {this.NotBefore:yyyy-MM-dd} to {this.NotAfter:yyyy-MM-dd}";
-    }
+    public override string ToString() => $"Subject: {this.Subject}, Issuer: {this.Issuer}, Valid: {this.NotBefore:yyyy-MM-dd} to {this.NotAfter:yyyy-MM-dd}";
 
     /// <summary>
     /// 生成自签名证书

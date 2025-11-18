@@ -1,5 +1,4 @@
 using Crypto.Utils.BouncyCastle.ObjectIdentifiers;
-using Crypto.Utils.Common;
 using CertificatePolicy = Crypto.Utils.X509.Enums.CertificatePolicy;
 
 namespace Crypto.Utils.X509.Extensions;
@@ -47,7 +46,7 @@ public static class CertificatePolicyHelper
     /// <param name="oid">OID 对象</param>
     /// <returns>证书策略枚举值，如果未找到则返回 None</returns>
     public static CertificatePolicy FromOid(DerObjectIdentifier oid)
-        => _oidToEnum.TryGetValue(oid, out var policy) ? policy : CertificatePolicy.None;
+        => _oidToEnum.GetValueOrDefault(oid, CertificatePolicy.None);
 
     /// <summary>
     /// 从多个 OID 对象获取第一个匹配的证书策略枚举值
@@ -95,15 +94,5 @@ public static class CertificatePolicyHelper
             }
         }
         return oids;
-    }
-
-    /// <summary>
-    /// 获取证书策略的友好名称（使用 Display 特性）
-    /// </summary>
-    /// <param name="policy">证书策略枚举值</param>
-    /// <returns>Display 特性中定义的名称，如果没有则返回枚举名</returns>
-    public static string GetFriendlyName(CertificatePolicy policy)
-    {
-        return EnumDisplayNameCache<CertificatePolicy>.GetDisplayName(policy);
     }
 }

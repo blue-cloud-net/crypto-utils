@@ -61,8 +61,5 @@ public static class FingerprintHelper
     /// 输入: [0x01, 0x23, 0xAB, 0xCD]
     /// 输出: "01:23:AB:CD"
     /// </example>
-    public static string FormatFingerprint(byte[] hash)
-    {
-        return string.Join(":", hash.Select(b => b.ToString("X2")));
-    }
+    public static string FormatFingerprint(byte[] hash) => string.Join(":", hash.Select(b => b.ToString("X2")));
 }

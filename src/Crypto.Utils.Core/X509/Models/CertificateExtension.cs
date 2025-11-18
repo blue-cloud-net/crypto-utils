@@ -82,8 +82,5 @@ public class CertificateExtension
         this.Name = OidNames.TryGetValue(derOid, out var name) ? name : $"Unknown ({oid})";
     }
 
-    public override string ToString()
-    {
-        return $"{this.Name} (OID: {this.Oid}, Critical: {this.IsCritical})";
-    }
+    public override string ToString() => $"{this.Name} (OID: {this.Oid}, Critical: {this.IsCritical})";
 }

@@ -1,0 +1,189 @@
+﻿<root>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    
+    <!-- CertificatePolicy -->
+    <data name="CertificatePolicy_None" xml:space="preserve">
+        <value>None</value>
+    </data>
+    <data name="CertificatePolicy_AnyPolicy" xml:space="preserve">
+        <value>Any Policy</value>
+    </data>
+    <data name="CertificatePolicy_DomainValidated" xml:space="preserve">
+        <value>Domain Validated (DV)</value>
+    </data>
+    <data name="CertificatePolicy_OrganizationValidated" xml:space="preserve">
+        <value>Organization Validated (OV)</value>
+    </data>
+    <data name="CertificatePolicy_ExtendedValidation" xml:space="preserve">
+        <value>Extended Validation (EV)</value>
+    </data>
+    <data name="CertificatePolicy_MicrosoftDocumentSigning" xml:space="preserve">
+        <value>Microsoft Document Signing</value>
+    </data>
+    
+    <!-- CrlReason -->
+    <data name="CrlReason_Unspecified" xml:space="preserve">
+        <value>Unspecified</value>
+    </data>
+    <data name="CrlReason_KeyCompromise" xml:space="preserve">
+        <value>Key Compromise</value>
+    </data>
+    <data name="CrlReason_CACompromise" xml:space="preserve">
+        <value>CA Compromise</value>
+    </data>
+    <data name="CrlReason_AffiliationChanged" xml:space="preserve">
+        <value>Affiliation Changed</value>
+    </data>
+    <data name="CrlReason_Superseded" xml:space="preserve">
+        <value>Superseded</value>
+    </data>
+    <data name="CrlReason_CessationOfOperation" xml:space="preserve">
+        <value>Cessation of Operation</value>
+    </data>
+    <data name="CrlReason_CertificateHold" xml:space="preserve">
+        <value>Certificate Hold</value>
+    </data>
+    <data name="CrlReason_RemoveFromCrl" xml:space="preserve">
+        <value>Remove from CRL</value>
+    </data>
+    <data name="CrlReason_PrivilegeWithdrawn" xml:space="preserve">
+        <value>Privilege Withdrawn</value>
+    </data>
+    <data name="CrlReason_AACompromise" xml:space="preserve">
+        <value>AA Compromise</value>
+    </data>
+    
+    <!-- ExtendedKeyUsage -->
+    <data name="ExtendedKeyUsage_None" xml:space="preserve">
+        <value>None</value>
+    </data>
+    <data name="ExtendedKeyUsage_ServerAuthentication" xml:space="preserve">
+        <value>Server Authentication</value>
+    </data>
+    <data name="ExtendedKeyUsage_ClientAuthentication" xml:space="preserve">
+        <value>Client Authentication</value>
+    </data>
+    <data name="ExtendedKeyUsage_CodeSigning" xml:space="preserve">
+        <value>Code Signing</value>
+    </data>
+    <data name="ExtendedKeyUsage_EmailProtection" xml:space="preserve">
+        <value>Email Protection</value>
+    </data>
+    <data name="ExtendedKeyUsage_IpsecEndSystem" xml:space="preserve">
+        <value>IPsec End System</value>
+    </data>
+    <data name="ExtendedKeyUsage_IpsecTunnel" xml:space="preserve">
+        <value>IPsec Tunnel</value>
+    </data>
+    <data name="ExtendedKeyUsage_IpsecUser" xml:space="preserve">
+        <value>IPsec User</value>
+    </data>
+    <data name="ExtendedKeyUsage_TimeStamping" xml:space="preserve">
+        <value>Time Stamping</value>
+    </data>
+    <data name="ExtendedKeyUsage_OcspSigning" xml:space="preserve">
+        <value>OCSP Signing</value>
+    </data>
+    <data name="ExtendedKeyUsage_Dvcs" xml:space="preserve">
+        <value>Data Validation and Certification Server</value>
+    </data>
+    <data name="ExtendedKeyUsage_SbgpCertificate" xml:space="preserve">
+        <value>Secure BGP Certificate</value>
+    </data>
+    <data name="ExtendedKeyUsage_EapOverPpp" xml:space="preserve">
+        <value>EAP over PPP</value>
+    </data>
+    <data name="ExtendedKeyUsage_EapOverLan" xml:space="preserve">
+        <value>EAP over LAN</value>
+    </data>
+    <data name="ExtendedKeyUsage_SshClient" xml:space="preserve">
+        <value>SSH Client</value>
+    </data>
+    <data name="ExtendedKeyUsage_SshServer" xml:space="preserve">
+        <value>SSH Server</value>
+    </data>
+    <data name="ExtendedKeyUsage_DocumentSigning" xml:space="preserve">
+        <value>Document Signing</value>
+    </data>
+    <data name="ExtendedKeyUsage_AnyPurpose" xml:space="preserve">
+        <value>Any Purpose</value>
+    </data>
+    <data name="ExtendedKeyUsage_SmartCardLogon" xml:space="preserve">
+        <value>Smart Card Logon</value>
+    </data>
+    
+    <!-- GeneralNameType -->
+    <data name="GeneralNameType_Unknown" xml:space="preserve">
+        <value>Unknown</value>
+    </data>
+    <data name="GeneralNameType_OtherName" xml:space="preserve">
+        <value>Other Name</value>
+    </data>
+    <data name="GeneralNameType_Rfc822Name" xml:space="preserve">
+        <value>RFC 822 Name</value>
+    </data>
+    <data name="GeneralNameType_DnsName" xml:space="preserve">
+        <value>DNS Name</value>
+    </data>
+    <data name="GeneralNameType_X400Address" xml:space="preserve">
+        <value>X.400 Address</value>
+    </data>
+    <data name="GeneralNameType_DirectoryName" xml:space="preserve">
+        <value>Directory Name</value>
+    </data>
+    <data name="GeneralNameType_EdiPartyName" xml:space="preserve">
+        <value>EDI Party Name</value>
+    </data>
+    <data name="GeneralNameType_UniformResourceIdentifier" xml:space="preserve">
+        <value>Uniform Resource Identifier</value>
+    </data>
+    <data name="GeneralNameType_IPAddress" xml:space="preserve">
+        <value>IP Address</value>
+    </data>
+    <data name="GeneralNameType_RegisteredID" xml:space="preserve">
+        <value>Registered ID</value>
+    </data>
+    
+    <!-- KeyUsage -->
+    <data name="KeyUsage_None" xml:space="preserve">
+        <value>None</value>
+    </data>
+    <data name="KeyUsage_DigitalSignature" xml:space="preserve">
+        <value>Digital Signature</value>
+    </data>
+    <data name="KeyUsage_NonRepudiation" xml:space="preserve">
+        <value>Non Repudiation</value>
+    </data>
+    <data name="KeyUsage_KeyEncipherment" xml:space="preserve">
+        <value>Key Encipherment</value>
+    </data>
+    <data name="KeyUsage_DataEncipherment" xml:space="preserve">
+        <value>Data Encipherment</value>
+    </data>
+    <data name="KeyUsage_KeyAgreement" xml:space="preserve">
+        <value>Key Agreement</value>
+    </data>
+    <data name="KeyUsage_KeyCertSign" xml:space="preserve">
+        <value>Key Cert Sign</value>
+    </data>
+    <data name="KeyUsage_CrlSign" xml:space="preserve">
+        <value>CRL Sign</value>
+    </data>
+    <data name="KeyUsage_EncipherOnly" xml:space="preserve">
+        <value>Encipher Only</value>
+    </data>
+    <data name="KeyUsage_DecipherOnly" xml:space="preserve">
+        <value>Decipher Only</value>
+    </data>
+</root>
