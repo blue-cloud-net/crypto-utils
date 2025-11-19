@@ -5,7 +5,7 @@ namespace Crypto.Utils.X509.Enums;
 /// 定义证书被吊销的具体原因,用于 CRL 扩展中的 Reason Code 字段。
 /// RFC 标准参考 <see href="https://datatracker.ietf.org/doc/html/rfc5280#section-5.3.1"/>
 /// </summary>
-public enum CrlReason
+public enum CertificateRevocationReason
 {
     /// <summary>
     /// 未指定原因（Unspecified）

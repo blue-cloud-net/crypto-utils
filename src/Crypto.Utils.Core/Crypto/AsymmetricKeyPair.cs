@@ -59,14 +59,15 @@ public class AsymmetricKeyPair
     /// <exception cref="ArgumentNullException">当 <paramref name="privateKey"/> 或 <paramref name="publicKey"/> 为 null 时抛出</exception>
     public AsymmetricKeyPair(
         AsymmetricPrivateKeyParameter privateKey,
-         AsymmetricPublicKeyParameter publicKey)
+        AsymmetricPublicKeyParameter publicKey)
     {
         ArgumentNullException.ThrowIfNull(privateKey, nameof(privateKey));
         ArgumentNullException.ThrowIfNull(publicKey, nameof(publicKey));
 
         _keyPair = new(
             publicKey.GetBouncyCastleKey(),
-            privateKey.GetBouncyCastleKey());
+            privateKey.GetBouncyCastleKey()
+        );
     }
 
     /// <summary>

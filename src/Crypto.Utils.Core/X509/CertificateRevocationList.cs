@@ -1,7 +1,7 @@
 
 using Crypto.Utils.Crypto;
 using Crypto.Utils.X509.Models;
-using CrlReason = Crypto.Utils.X509.Enums.CrlReason;
+using CertificateRevocationReason = Crypto.Utils.X509.Enums.CertificateRevocationReason;
 
 namespace Crypto.Utils.X509;
 
@@ -271,7 +271,7 @@ public class CertificateRevocationList
     public static CertificateRevocationList Generate(
         string issuerDN,
         AsymmetricPrivateKeyParameter caPrivateKey,
-        List<(string SerialNumber, DateTime RevocationDate, CrlReason? Reason)> revokedCertificates,
+        List<(string SerialNumber, DateTime RevocationDate, CertificateRevocationReason? Reason)> revokedCertificates,
         DateTime thisUpdate,
         DateTime? nextUpdate,
         string signatureAlgorithm = "SHA256WITHRSA")
@@ -290,7 +290,7 @@ public class CertificateRevocationList
         foreach (var (serialNumber, revocationDate, reason) in revokedCertificates)
         {
             var serial = new Org.BouncyCastle.Math.BigInteger(serialNumber, 16);
-            crlGen.AddCrlEntry(serial, revocationDate, (int)(reason ?? CrlReason.Unspecified));
+            crlGen.AddCrlEntry(serial, revocationDate, (int)(reason ?? CertificateRevocationReason.Unspecified));
         }
 
         var signatureFactory = new Org.BouncyCastle.Crypto.Operators.Asn1SignatureFactory(

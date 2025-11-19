@@ -1,4 +1,4 @@
-using CrlReason = Crypto.Utils.X509.Enums.CrlReason;
+using CertificateRevocationReason = Crypto.Utils.X509.Enums.CertificateRevocationReason;
 
 namespace Crypto.Utils.X509.Models;
 
@@ -48,7 +48,7 @@ public class RevokedCertificateInfo
     /// - 9: PrivilegeWithdrawn（权限撤销）
     /// - 10: AACompromise（属性授权泄露）
     /// </example>
-    public CrlReason? RevocationReason
+    public CertificateRevocationReason? RevocationReason
     {
         get
         {
@@ -56,7 +56,7 @@ public class RevokedCertificateInfo
             if (reasonExtension is null)
                 return null;
             var reason = DerInteger.GetInstance(reasonExtension);
-            return CrlReasonHelper.FromInt(reason.IntValueExact);
+            return CertificateRevocationReasonHelper.FromInt(reason.IntValueExact);
 
         }
     }
