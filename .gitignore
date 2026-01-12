@@ -236,3 +236,5 @@ wwwroot/
 
 test/data/keys/*.pem
 test/data/keys/*.der
+
+**/.vshistory/

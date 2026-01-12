@@ -1,0 +1,22 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/SolutionIntems/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Crypto.Utils.Api/Crypto.Utils.Api.csproj" />
+    <Project Path="src/Crypto.Utils.Core/Crypto.Utils.Core.csproj" />
+    <Project Path="src/Crypto.Utils.Host/Crypto.Utils.Host.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/Crypto.Utils.Core.Tests/Crypto.Utils.Core.Tests.csproj" />
+    <Project Path="test/Crypto.Utils.TestUtils/Crypto.Utils.TestUtils.csproj" />
+  </Folder>
+</Solution>
