@@ -9,60 +9,60 @@ namespace Crypto.Utils.X509.Enums;
 [Flags]
 public enum ExtendedKeyUsage
 {
-    [Display(Name = "ExtendedKeyUsage_None", ResourceType = typeof(CryptoUtilCore))]
+    [Display(Name = "ExtendedKeyUsage_None", ResourceType = typeof(RS))]
     None = 0,
 
-    [Display(Name = "ExtendedKeyUsage_ServerAuthentication", ResourceType = typeof(CryptoUtilCore))]
+    [Display(Name = "ExtendedKeyUsage_ServerAuthentication", ResourceType = typeof(RS))]
     ServerAuthentication = 1 << 0,
 
-    [Display(Name = "ExtendedKeyUsage_ClientAuthentication", ResourceType = typeof(CryptoUtilCore))]
+    [Display(Name = "ExtendedKeyUsage_ClientAuthentication", ResourceType = typeof(RS))]
     ClientAuthentication = 1 << 1,
 
-    [Display(Name = "ExtendedKeyUsage_CodeSigning", ResourceType = typeof(CryptoUtilCore))]
+    [Display(Name = "ExtendedKeyUsage_CodeSigning", ResourceType = typeof(RS))]
     CodeSigning = 1 << 2,
 
-    [Display(Name = "ExtendedKeyUsage_EmailProtection", ResourceType = typeof(CryptoUtilCore))]
+    [Display(Name = "ExtendedKeyUsage_EmailProtection", ResourceType = typeof(RS))]
     EmailProtection = 1 << 3,
 
-    [Display(Name = "ExtendedKeyUsage_IpsecEndSystem", ResourceType = typeof(CryptoUtilCore))]
+    [Display(Name = "ExtendedKeyUsage_IpsecEndSystem", ResourceType = typeof(RS))]
     IpsecEndSystem = 1 << 4,
 
-    [Display(Name = "ExtendedKeyUsage_IpsecTunnel", ResourceType = typeof(CryptoUtilCore))]
+    [Display(Name = "ExtendedKeyUsage_IpsecTunnel", ResourceType = typeof(RS))]
     IpsecTunnel = 1 << 5,
 
-    [Display(Name = "ExtendedKeyUsage_IpsecUser", ResourceType = typeof(CryptoUtilCore))]
+    [Display(Name = "ExtendedKeyUsage_IpsecUser", ResourceType = typeof(RS))]
     IpsecUser = 1 << 6,
 
-    [Display(Name = "ExtendedKeyUsage_TimeStamping", ResourceType = typeof(CryptoUtilCore))]
+    [Display(Name = "ExtendedKeyUsage_TimeStamping", ResourceType = typeof(RS))]
     TimeStamping = 1 << 7,
 
-    [Display(Name = "ExtendedKeyUsage_OcspSigning", ResourceType = typeof(CryptoUtilCore))]
+    [Display(Name = "ExtendedKeyUsage_OcspSigning", ResourceType = typeof(RS))]
     OcspSigning = 1 << 8,
 
-    [Display(Name = "ExtendedKeyUsage_Dvcs", ResourceType = typeof(CryptoUtilCore))]
+    [Display(Name = "ExtendedKeyUsage_Dvcs", ResourceType = typeof(RS))]
     Dvcs = 1 << 9,
 
-    [Display(Name = "ExtendedKeyUsage_SbgpCertificate", ResourceType = typeof(CryptoUtilCore))]
+    [Display(Name = "ExtendedKeyUsage_SbgpCertificate", ResourceType = typeof(RS))]
     SbgpCertificate = 1 << 10,
 
-    [Display(Name = "ExtendedKeyUsage_EapOverPpp", ResourceType = typeof(CryptoUtilCore))]
+    [Display(Name = "ExtendedKeyUsage_EapOverPpp", ResourceType = typeof(RS))]
     EapOverPpp = 1 << 11,
 
-    [Display(Name = "ExtendedKeyUsage_EapOverLan", ResourceType = typeof(CryptoUtilCore))]
+    [Display(Name = "ExtendedKeyUsage_EapOverLan", ResourceType = typeof(RS))]
     EapOverLan = 1 << 12,
 
-    [Display(Name = "ExtendedKeyUsage_SshClient", ResourceType = typeof(CryptoUtilCore))]
+    [Display(Name = "ExtendedKeyUsage_SshClient", ResourceType = typeof(RS))]
     SshClient = 1 << 13,
 
-    [Display(Name = "ExtendedKeyUsage_SshServer", ResourceType = typeof(CryptoUtilCore))]
+    [Display(Name = "ExtendedKeyUsage_SshServer", ResourceType = typeof(RS))]
     SshServer = 1 << 14,
 
-    [Display(Name = "ExtendedKeyUsage_DocumentSigning", ResourceType = typeof(CryptoUtilCore))]
+    [Display(Name = "ExtendedKeyUsage_DocumentSigning", ResourceType = typeof(RS))]
     DocumentSigning = 1 << 15,
 
-    [Display(Name = "ExtendedKeyUsage_AnyPurpose", ResourceType = typeof(CryptoUtilCore))]
+    [Display(Name = "ExtendedKeyUsage_AnyPurpose", ResourceType = typeof(RS))]
     AnyPurpose = 1 << 16,
 
-    [Display(Name = "ExtendedKeyUsage_SmartCardLogon", ResourceType = typeof(CryptoUtilCore))]
+    [Display(Name = "ExtendedKeyUsage_SmartCardLogon", ResourceType = typeof(RS))]
     SmartCardLogon = 1 << 17
 }

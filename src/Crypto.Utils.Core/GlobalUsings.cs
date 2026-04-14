@@ -1,7 +1,9 @@
 // global using 指令
 
 global using Crypto.Utils.Common;
-global using System.Text;
+global using Crypto.Utils.Resources;
+global using Crypto.Utils.X509.Enums;
+global using Crypto.Utils.X509.Extensions;
 global using Org.BouncyCastle.Asn1;
 global using Org.BouncyCastle.Asn1.GM;
 global using Org.BouncyCastle.Asn1.Pkcs;
@@ -26,6 +28,5 @@ global using Org.BouncyCastle.X509.Extension;
 global using System.Collections.Concurrent;
 global using System.ComponentModel.DataAnnotations;
 global using System.Security.Cryptography;
-global using Crypto.Utils.Resources;
-global using Crypto.Utils.X509.Enums;
-global using Crypto.Utils.X509.Extensions;
+global using System.Text;
+global using RS = Crypto.Utils.Resources.CryptoUtilCore;

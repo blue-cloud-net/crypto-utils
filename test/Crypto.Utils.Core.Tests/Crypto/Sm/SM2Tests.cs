@@ -1,7 +1,7 @@
-using System.Security.Cryptography;
 using Crypto.Utils.Crypto.Sm;
 using FluentAssertions;
 using NUnit.Framework;
+using System.Security.Cryptography;
 
 namespace Crypto.Utils.Core.Tests.Crypto.Sm;
 

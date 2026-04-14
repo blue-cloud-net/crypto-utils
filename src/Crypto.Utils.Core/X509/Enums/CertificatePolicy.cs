@@ -32,7 +32,7 @@ public enum CertificatePolicy
     /// <summary>
     /// 未指定策略
     /// </summary>
-    [Display(Name = "CertificatePolicy_None", ResourceType = typeof(CryptoUtilCore))]
+    [Display(Name = "CertificatePolicy_None", ResourceType = typeof(RS))]
     None = 0,
 
     /// <summary>
@@ -41,7 +41,7 @@ public enum CertificatePolicy
     /// 表示证书可用于任何目的，通常用于策略映射和路径验证。
     /// RFC 参考 <see href="https://datatracker.ietf.org/doc/html/rfc5280#section-4.2.1.4"/>
     /// </summary>
-    [Display(Name = "CertificatePolicy_AnyPolicy", ResourceType = typeof(CryptoUtilCore))]
+    [Display(Name = "CertificatePolicy_AnyPolicy", ResourceType = typeof(RS))]
     AnyPolicy,
 
     /// <summary>
@@ -52,7 +52,7 @@ public enum CertificatePolicy
     /// 证书中不包含组织信息，仅显示域名。
     /// CA/Browser Forum 基线要求定义
     /// </summary>
-    [Display(Name = "CertificatePolicy_DomainValidated", ResourceType = typeof(CryptoUtilCore))]
+    [Display(Name = "CertificatePolicy_DomainValidated", ResourceType = typeof(RS))]
     DomainValidated,
 
     /// <summary>
@@ -64,7 +64,7 @@ public enum CertificatePolicy
     /// 适合企业网站、电子商务平台等。
     /// CA/Browser Forum 基线要求定义
     /// </summary>
-    [Display(Name = "CertificatePolicy_OrganizationValidated", ResourceType = typeof(CryptoUtilCore))]
+    [Display(Name = "CertificatePolicy_OrganizationValidated", ResourceType = typeof(RS))]
     OrganizationValidated,
 
     /// <summary>
@@ -76,7 +76,7 @@ public enum CertificatePolicy
     /// 提供最高级别的信任保障，适合金融机构、大型电商等高安全要求场景。
     /// CA/Browser Forum EV 准则定义
     /// </summary>
-    [Display(Name = "CertificatePolicy_ExtendedValidation", ResourceType = typeof(CryptoUtilCore))]
+    [Display(Name = "CertificatePolicy_ExtendedValidation", ResourceType = typeof(RS))]
     ExtendedValidation,
 
     /// <summary>
@@ -85,6 +85,6 @@ public enum CertificatePolicy
     /// Microsoft 定义的文档签名证书策略，用于 Office 文档、PDF 等的数字签名。
     /// 表示证书可用于签署和验证电子文档的完整性和来源。
     /// </summary>
-    [Display(Name = "CertificatePolicy_MicrosoftDocumentSigning", ResourceType = typeof(CryptoUtilCore))]
+    [Display(Name = "CertificatePolicy_MicrosoftDocumentSigning", ResourceType = typeof(RS))]
     MicrosoftDocumentSigning
 }

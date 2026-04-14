@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+        <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0;net10.0</TargetFrameworks>
     </PropertyGroup>
 
     <ItemGroup>
@@ -9,20 +9,20 @@
     </ItemGroup>
 
     <ItemGroup>
-      <EmbeddedResource Update="Resources\CryptoUtil.Core.resx">
+      <EmbeddedResource Update="Resources\CryptoUtilCore.resx">
         <Generator>ResXFileCodeGenerator</Generator>
         <LastGenOutput>CryptoUtil.Core.Designer.cs</LastGenOutput>
       </EmbeddedResource>
-      <EmbeddedResource Update="Resources\CryptoUtil.Core.en-us.resx">
+      <EmbeddedResource Update="Resources\CryptoUtilCore.en-us.resx">
         <DependentUpon>CryptoUtil.Core.resx</DependentUpon>
       </EmbeddedResource>
-      <EmbeddedResource Update="Resources\CryptoUtil.Core.zh-hans.resx">
+      <EmbeddedResource Update="Resources\CryptoUtilCore.zh-hans.resx">
         <DependentUpon>CryptoUtil.Core.resx</DependentUpon>
       </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="Resources\CryptoUtil.Core.Designer.cs">
+      <Compile Update="Resources\CryptoUtilCore.Designer.cs">
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
         <DependentUpon>CryptoUtil.Core.resx</DependentUpon>
