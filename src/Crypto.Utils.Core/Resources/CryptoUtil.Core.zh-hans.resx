@@ -1,11 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-
-<root>
-    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-        <xsd:element name="root" msdata:IsDataSet="true">
-            
-        </xsd:element>
-    </xsd:schema>
+﻿<root>
     <resheader name="resmimetype">
         <value>text/microsoft-resx</value>
     </resheader>
@@ -192,5 +185,136 @@
     </data>
     <data name="KeyUsage_DecipherOnly" xml:space="preserve">
         <value>仅用于解密</value>
+    </data>
+    
+    <!-- Exception Messages: InvalidOperationException -->
+    <data name="Error_CannotParsePemKey" xml:space="preserve">
+        <value>无法从 PEM 中解析密钥</value>
+    </data>
+    <data name="Error_InvalidKeyInPem" xml:space="preserve">
+        <value>PEM 中不包含有效的密钥</value>
+    </data>
+    <data name="Error_CannotParsePrivateKeyFromDer" xml:space="preserve">
+        <value>无法从 DER 中解析密钥，格式不是有效的。</value>
+    </data>
+    <data name="Error_CannotParsePrivateKeyFromPem" xml:space="preserve">
+        <value>无法从 PEM 中解析私钥</value>
+    </data>
+    <data name="Error_InvalidPrivateKeyInPem" xml:space="preserve">
+        <value>PEM 中不包含有效的私钥</value>
+    </data>
+    <data name="Error_CannotParsePublicKeyFromPem" xml:space="preserve">
+        <value>无法从 PEM 中解析公钥</value>
+    </data>
+    <data name="Error_InvalidPublicKeyInPem" xml:space="preserve">
+        <value>PEM 中不包含有效的公钥</value>
+    </data>
+    <data name="Error_CannotParseCsrFromPem" xml:space="preserve">
+        <value>无法解析PEM格式的CSR。</value>
+    </data>
+    <data name="Error_CannotParseCrlFromPem" xml:space="preserve">
+        <value>无法解析PEM格式的CRL。</value>
+    </data>
+    <data name="Error_CannotParseCertificateFromPem" xml:space="preserve">
+        <value>无法解析 PEM 格式的证书</value>
+    </data>
+    
+    <!-- Exception Messages: ArgumentException -->
+    <data name="Error_KeyNotPrivate" xml:space="preserve">
+        <value>提供的密钥不是私钥。</value>
+    </data>
+    <data name="Error_UnknownEcCurve" xml:space="preserve">
+        <value>未知的EC曲线: {0}</value>
+    </data>
+    <data name="Error_KeyNotPublic" xml:space="preserve">
+        <value>提供的密钥不是公钥</value>
+    </data>
+    <data name="Error_UnsupportedHashAlgorithm" xml:space="preserve">
+        <value>不支持的哈希算法: {0}</value>
+    </data>
+    <data name="Error_InputDataCannotBeEmpty" xml:space="preserve">
+        <value>Input data cannot be empty.</value>
+    </data>
+    <data name="Error_DestinationBufferTooShort" xml:space="preserve">
+        <value>Destination buffer is too short.</value>
+    </data>
+    <data name="Error_StreamDoesNotSupportReading" xml:space="preserve">
+        <value>Stream does not support reading.</value>
+    </data>
+    <data name="Error_InvalidKeySize" xml:space="preserve">
+        <value>Specified key is not a valid size for this algorithm. Expected {0} bytes.</value>
+    </data>
+    <data name="Error_InvalidIVSize" xml:space="preserve">
+        <value>Specified initialization vector (IV) does not match the block size for this algorithm. Expected {0} bytes.</value>
+    </data>
+    <data name="Error_InvalidCiphertextLength" xml:space="preserve">
+        <value>Invalid ciphertext length</value>
+    </data>
+    <data name="Error_InvalidC1PointFormat" xml:space="preserve">
+        <value>Invalid C1 point format</value>
+    </data>
+    <data name="Error_InvalidAsn1SM2CiphertextStructure" xml:space="preserve">
+        <value>Invalid ASN.1 SM2 ciphertext structure</value>
+    </data>
+    <data name="Error_InputBufferTooSmall" xml:space="preserve">
+        <value>Input buffer too small</value>
+    </data>
+    <data name="Error_OutputBufferTooSmall" xml:space="preserve">
+        <value>Output buffer too small</value>
+    </data>
+    <data name="Error_SignatureCannotBeEmpty" xml:space="preserve">
+        <value>Signature cannot be empty.</value>
+    </data>
+    
+    <!-- Exception Messages: CryptographicException -->
+    <data name="Error_InvalidCipherMode" xml:space="preserve">
+        <value>Specified cipher mode is not valid for this algorithm: {0}</value>
+    </data>
+    <data name="Error_InvalidPaddingMode" xml:space="preserve">
+        <value>Specified padding mode is not valid for this algorithm: {0}</value>
+    </data>
+    <data name="Error_PublicKeyNotInitialized" xml:space="preserve">
+        <value>Key pair not initialized or public key not imported.</value>
+    </data>
+    <data name="Error_PrivateKeyNotInitialized" xml:space="preserve">
+        <value>Key pair not initialized or private key not imported.</value>
+    </data>
+    <data name="Error_NotSm2PublicKey" xml:space="preserve">
+        <value>Not an SM2 public key.</value>
+    </data>
+    <data name="Error_NotSm2PrivateKey" xml:space="preserve">
+        <value>Not an SM2 private key.</value>
+    </data>
+    <data name="Error_PrivateKeyNotAvailableForSigning" xml:space="preserve">
+        <value>Private key not available for signing.</value>
+    </data>
+    <data name="Error_PublicKeyNotAvailableForVerification" xml:space="preserve">
+        <value>Public key not available for verification.</value>
+    </data>
+    <data name="Error_PublicKeyNotAvailableForEncryption" xml:space="preserve">
+        <value>Public key not available for encryption.</value>
+    </data>
+    <data name="Error_PrivateKeyNotAvailableForDecryption" xml:space="preserve">
+        <value>Private key not available for decryption.</value>
+    </data>
+    <data name="Error_CipherModeNotSupported" xml:space="preserve">
+        <value>Cipher mode not supported: {0}</value>
+    </data>
+    <data name="Error_PaddingModeNotSupported" xml:space="preserve">
+        <value>Padding mode not supported: {0}</value>
+    </data>
+    <data name="Error_KeyNotSet" xml:space="preserve">
+        <value>Key is not set.</value>
+    </data>
+    <data name="Error_CryptographicOperationFailed" xml:space="preserve">
+        <value>Error occurred during cryptographic operation.</value>
+    </data>
+    
+    <!-- Exception Messages: NotSupportedException -->
+    <data name="Error_CannotExtractPublicKeyFromPrivateKeyType" xml:space="preserve">
+        <value>不支持从 {0} 类型的私钥提取公钥</value>
+    </data>
+    <data name="Error_UnsupportedPrivateKeyType" xml:space="preserve">
+        <value>不支持的私钥类型: {0}</value>
     </data>
 </root>

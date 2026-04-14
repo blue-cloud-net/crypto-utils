@@ -9,23 +9,23 @@
     </ItemGroup>
 
     <ItemGroup>
-      <EmbeddedResource Update="Resources\EnumResources.resx">
+      <EmbeddedResource Update="Resources\CryptoUtil.Core.resx">
         <Generator>ResXFileCodeGenerator</Generator>
-        <LastGenOutput>EnumResources.Designer.cs</LastGenOutput>
+        <LastGenOutput>CryptoUtil.Core.Designer.cs</LastGenOutput>
       </EmbeddedResource>
-      <EmbeddedResource Update="Resources\EnumResources.en-us.resx">
-        <DependentUpon>EnumResources.resx</DependentUpon>
+      <EmbeddedResource Update="Resources\CryptoUtil.Core.en-us.resx">
+        <DependentUpon>CryptoUtil.Core.resx</DependentUpon>
       </EmbeddedResource>
-      <EmbeddedResource Update="Resources\EnumResources.zh-hans.resx">
-        <DependentUpon>EnumResources.resx</DependentUpon>
+      <EmbeddedResource Update="Resources\CryptoUtil.Core.zh-hans.resx">
+        <DependentUpon>CryptoUtil.Core.resx</DependentUpon>
       </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="Resources\EnumResources.Designer.cs">
+      <Compile Update="Resources\CryptoUtil.Core.Designer.cs">
         <DesignTime>True</DesignTime>
         <AutoGen>True</AutoGen>
-        <DependentUpon>EnumResources.resx</DependentUpon>
+        <DependentUpon>CryptoUtil.Core.resx</DependentUpon>
       </Compile>
     </ItemGroup>
 

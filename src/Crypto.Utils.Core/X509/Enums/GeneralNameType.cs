@@ -43,7 +43,7 @@ public enum GeneralNameType
     /// 未知类型
     /// 表示无法识别的 GeneralName 类型，通常用于错误处理。
     /// </summary>
-    [Display(Name = "GeneralNameType_Unknown", ResourceType = typeof(EnumResources))]
+    [Display(Name = "GeneralNameType_Unknown", ResourceType = typeof(CryptoUtilCore))]
     Unknown = -1,
 
     /// <summary>
@@ -57,7 +57,7 @@ public enum GeneralNameType
     /// Microsoft UPN (User Principal Name): id-on-Microsoft-UPN (1.3.6.1.4.1.311.20.2.3)
     /// Kerberos Principal Name: id-pkinit-san (1.3.6.1.5.2.2)
     /// </example>
-    [Display(Name = "GeneralNameType_OtherName", ResourceType = typeof(EnumResources))]
+    [Display(Name = "GeneralNameType_OtherName", ResourceType = typeof(CryptoUtilCore))]
     OtherName = 0,
 
     /// <summary>
@@ -73,7 +73,7 @@ public enum GeneralNameType
     /// <remarks>
     /// RFC 822 标准：<see href="https://datatracker.ietf.org/doc/html/rfc822"/>
     /// </remarks>
-    [Display(Name = "GeneralNameType_Rfc822Name", ResourceType = typeof(EnumResources))]
+    [Display(Name = "GeneralNameType_Rfc822Name", ResourceType = typeof(CryptoUtilCore))]
     Rfc822Name = 1,
 
     /// <summary>
@@ -92,7 +92,7 @@ public enum GeneralNameType
     /// 通配符仅匹配一级子域名，不匹配多级子域名。
     /// 例如：*.example.com 匹配 www.example.com，但不匹配 sub.www.example.com
     /// </remarks>
-    [Display(Name = "GeneralNameType_DnsName", ResourceType = typeof(EnumResources))]
+    [Display(Name = "GeneralNameType_DnsName", ResourceType = typeof(CryptoUtilCore))]
     DnsName = 2,
 
     /// <summary>
@@ -105,7 +105,7 @@ public enum GeneralNameType
     /// X.400 标准由 ITU-T 定义，参考 ITU-T X.400 系列建议。
     /// 在现代互联网中，SMTP/RFC 822 邮件系统更为普及。
     /// </remarks>
-    [Display(Name = "GeneralNameType_X400Address", ResourceType = typeof(EnumResources))]
+    [Display(Name = "GeneralNameType_X400Address", ResourceType = typeof(CryptoUtilCore))]
     X400Address = 3,
 
     /// <summary>
@@ -120,7 +120,7 @@ public enum GeneralNameType
     /// <remarks>
     /// DN 结构参考：<see href="https://datatracker.ietf.org/doc/html/rfc4514">RFC 4514 (LDAP: String Representation of Distinguished Names)</see>
     /// </remarks>
-    [Display(Name = "GeneralNameType_DirectoryName", ResourceType = typeof(EnumResources))]
+    [Display(Name = "GeneralNameType_DirectoryName", ResourceType = typeof(CryptoUtilCore))]
     DirectoryName = 4,
 
     /// <summary>
@@ -133,7 +133,7 @@ public enum GeneralNameType
     /// EDI 标准包括 ANSI X12、UN/EDIFACT 等。
     /// 此名称类型在 PKI 中相对少见，主要用于特定的 B2B 应用场景。
     /// </remarks>
-    [Display(Name = "GeneralNameType_EdiPartyName", ResourceType = typeof(EnumResources))]
+    [Display(Name = "GeneralNameType_EdiPartyName", ResourceType = typeof(CryptoUtilCore))]
     EdiPartyName = 5,
 
     /// <summary>
@@ -150,7 +150,7 @@ public enum GeneralNameType
     /// <remarks>
     /// URI 语法参考：<see href="https://datatracker.ietf.org/doc/html/rfc3986">RFC 3986 (Uniform Resource Identifier)</see>
     /// </remarks>
-    [Display(Name = "GeneralNameType_UniformResourceIdentifier", ResourceType = typeof(EnumResources))]
+    [Display(Name = "GeneralNameType_UniformResourceIdentifier", ResourceType = typeof(CryptoUtilCore))]
     UniformResourceIdentifier = 6,
 
     /// <summary>
@@ -172,7 +172,7 @@ public enum GeneralNameType
     /// IP 地址范围可以通过附加网络掩码来表示（但实际中较少使用）。
     /// </para>
     /// </remarks>
-    [Display(Name = "GeneralNameType_IPAddress", ResourceType = typeof(EnumResources))]
+    [Display(Name = "GeneralNameType_IPAddress", ResourceType = typeof(CryptoUtilCore))]
     IPAddress = 7,
 
     /// <summary>
@@ -194,6 +194,6 @@ public enum GeneralNameType
     /// OID 参考：<see href="http://www.oid-info.com/">OID Repository</see>
     /// </para>
     /// </remarks>
-    [Display(Name = "GeneralNameType_RegisteredID", ResourceType = typeof(EnumResources))]
+    [Display(Name = "GeneralNameType_RegisteredID", ResourceType = typeof(CryptoUtilCore))]
     RegisteredID = 8
 }

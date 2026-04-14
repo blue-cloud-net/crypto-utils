@@ -12,7 +12,7 @@ public enum KeyUsage
     /// <summary>
     /// 无
     /// </summary>
-    [Display(Name = "KeyUsage_None", ResourceType = typeof(EnumResources))]
+    [Display(Name = "KeyUsage_None", ResourceType = typeof(CryptoUtilCore))]
     None = 0,
 
     /// <summary>
@@ -20,7 +20,7 @@ public enum KeyUsage
     /// 用于验证数字签名，不包括证书和 CRL 签名。
     /// 适用场景：TLS 客户端认证、电子邮件签名、代码签名等。
     /// </summary>
-    [Display(Name = "KeyUsage_DigitalSignature", ResourceType = typeof(EnumResources))]
+    [Display(Name = "KeyUsage_DigitalSignature", ResourceType = typeof(CryptoUtilCore))]
     DigitalSignature = 1 << 0,
 
     /// <summary>
@@ -28,7 +28,7 @@ public enum KeyUsage
     /// 提供防止签名者否认的证据，用于需要法律效力的场景。
     /// 适用场景：电子合同、重要文档签名等。
     /// </summary>
-    [Display(Name = "KeyUsage_NonRepudiation", ResourceType = typeof(EnumResources))]
+    [Display(Name = "KeyUsage_NonRepudiation", ResourceType = typeof(CryptoUtilCore))]
     NonRepudiation = 1 << 1,
 
     /// <summary>
@@ -36,7 +36,7 @@ public enum KeyUsage
     /// 用于加密密钥或密钥材料，常用于密钥传输。
     /// 适用场景：TLS 握手中的 RSA 密钥交换。
     /// </summary>
-    [Display(Name = "KeyUsage_KeyEncipherment", ResourceType = typeof(EnumResources))]
+    [Display(Name = "KeyUsage_KeyEncipherment", ResourceType = typeof(CryptoUtilCore))]
     KeyEncipherment = 1 << 2,
 
     /// <summary>
@@ -44,7 +44,7 @@ public enum KeyUsage
     /// 直接用于加密用户数据，而非密钥。
     /// 注意：现代实践中较少使用，通常使用密钥加密方式。
     /// </summary>
-    [Display(Name = "KeyUsage_DataEncipherment", ResourceType = typeof(EnumResources))]
+    [Display(Name = "KeyUsage_DataEncipherment", ResourceType = typeof(CryptoUtilCore))]
     DataEncipherment = 1 << 3,
 
     /// <summary>
@@ -52,7 +52,7 @@ public enum KeyUsage
     /// 用于密钥协商协议，如 Diffie-Hellman 或 ECDH。
     /// 适用场景：TLS 中的 ECDHE 密钥交换。
     /// </summary>
-    [Display(Name = "KeyUsage_KeyAgreement", ResourceType = typeof(EnumResources))]
+    [Display(Name = "KeyUsage_KeyAgreement", ResourceType = typeof(CryptoUtilCore))]
     KeyAgreement = 1 << 4,
 
     /// <summary>
@@ -60,7 +60,7 @@ public enum KeyUsage
     /// 用于签发和验证其他证书，仅限 CA 证书使用。
     /// 适用场景：根证书、中间证书。
     /// </summary>
-    [Display(Name = "KeyUsage_KeyCertSign", ResourceType = typeof(EnumResources))]
+    [Display(Name = "KeyUsage_KeyCertSign", ResourceType = typeof(CryptoUtilCore))]
     KeyCertSign = 1 << 5,
 
     /// <summary>
@@ -68,20 +68,20 @@ public enum KeyUsage
     /// 用于签发和验证证书吊销列表（CRL）。
     /// 适用场景：CA 签发 CRL。
     /// </summary>
-    [Display(Name = "KeyUsage_CrlSign", ResourceType = typeof(EnumResources))]
+    [Display(Name = "KeyUsage_CrlSign", ResourceType = typeof(CryptoUtilCore))]
     CrlSign = 1 << 6,
 
     /// <summary>
     /// 仅用于加密（Encipher Only）
     /// 仅当 KeyAgreement 也设置时有效，表示只能用于加密操作。
     /// </summary>
-    [Display(Name = "KeyUsage_EncipherOnly", ResourceType = typeof(EnumResources))]
+    [Display(Name = "KeyUsage_EncipherOnly", ResourceType = typeof(CryptoUtilCore))]
     EncipherOnly = 1 << 7,
 
     /// <summary>
     /// 仅用于解密（Decipher Only）
     /// 仅当 KeyAgreement 也设置时有效，表示只能用于解密操作。
     /// </summary>
-    [Display(Name = "KeyUsage_DecipherOnly", ResourceType = typeof(EnumResources))]
+    [Display(Name = "KeyUsage_DecipherOnly", ResourceType = typeof(CryptoUtilCore))]
     DecipherOnly = 1 << 8
 }
