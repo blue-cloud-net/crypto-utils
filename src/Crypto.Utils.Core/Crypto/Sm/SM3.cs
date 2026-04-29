@@ -8,7 +8,6 @@ namespace Crypto.Utils.Crypto.Sm;
 /// </summary>
 public sealed class SM3 : HashAlgorithm
 {
-
     /// <summary>
     /// SM3 算法产生的哈希大小（字节）
     /// </summary>
@@ -61,52 +60,47 @@ public sealed class SM3 : HashAlgorithm
     protected override void HashCore(byte[] array, int ibStart, int cbSize) =>
         _digest.BlockUpdate(array, ibStart, cbSize);
 
+#if NETSTANDARD2_1_OR_GREATER
     /// <summary>
-    /// 支持 Span 的哈希核心方法
+    /// 哈希核心方法
     /// </summary>
     protected override void HashCore(ReadOnlySpan<byte> source)
     {
         if (source.Length == 0)
-            return;
-
-        var pool = ArrayPool<byte>.Shared;
-        var data = pool.Rent(source.Length);
-        try
-        {
-            source.CopyTo(data);
-            _digest.BlockUpdate(data, 0, source.Length);
-        }
-        finally
-        {
-            pool.Return(data);
-        }
+            throw new ArgumentException("Source is empty.", nameof(source));
+        
+        _digest.BlockUpdate(source);
     }
+#endif
 
     /// <summary>
     /// 完成哈希计算并返回结果
     /// </summary>
     protected override byte[] HashFinal()
     {
-        var result = new byte[this.OutputBlockSize];
-        _ = _digest.DoFinal(result, 0);
+        var result = new byte[HashSizeInBytes];
+        var bytesWritten = _digest.DoFinal(result, 0);
+        
+        Debug.Assert(bytesWritten == HashSizeInBytes,  "Unexpected hash length from SM3Digest.DoFinal");
+        
         return result;
     }
 
+#if NETSTANDARD2_1_OR_GREATER
     /// <summary>
     /// 尝试完成哈希计算
     /// </summary>
     protected override bool TryHashFinal(Span<byte> destination, out int bytesWritten)
     {
         if (destination.Length < this.OutputBlockSize)
-        {
-            bytesWritten = 0;
-            return false;
-        }
+            throw new ArgumentException("Destination buffer is too short.", nameof(destination));
 
-        _ = _digest.DoFinal(destination);
-        bytesWritten = HashSizeInBytes;
+        bytesWritten = _digest.DoFinal(destination);
+        Debug.Assert(bytesWritten == HashSizeInBytes, "Unexpected hash length from SM3Digest.DoFinal");
+        
         return true;
     }
+#endif
 
     #endregion
 
@@ -121,6 +115,7 @@ public sealed class SM3 : HashAlgorithm
         {
             _digest = null!;
         }
+
         base.Dispose(disposing);
     }
 
@@ -132,7 +127,7 @@ public sealed class SM3 : HashAlgorithm
     /// 创建 SM3 的默认实现实例
     /// </summary>
     /// <returns>SM3 的新实例</returns>
-    public static new SM3 Create() => new();
+    public new static SM3 Create() => new();
 
     #endregion
 
@@ -148,11 +143,20 @@ public sealed class SM3 : HashAlgorithm
     /// </exception>
     public static byte[] HashData(byte[] source)
     {
-        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(source, nameof(source));
 
-        return HashData(new ReadOnlySpan<byte>(source));
+#if NETSTANDARD2_1_OR_GREATER
+        return HashData(source.AsSpan());
+#else
+        var digest = new SM3Digest();
+        digest.BlockUpdate(source, 0, source.Length);
+        var result = new byte[HashSizeInBytes];
+        digest.DoFinal(result, 0);
+        return result;
+#endif
     }
 
+#if NETSTANDARD2_1_OR_GREATER
     /// <summary>
     /// 使用 SM3 算法计算数据的哈希值
     /// </summary>
@@ -161,10 +165,7 @@ public sealed class SM3 : HashAlgorithm
     public static byte[] HashData(ReadOnlySpan<byte> source)
     {
         var buffer = GC.AllocateUninitializedArray<byte>(HashSizeInBytes);
-
-        var written = HashData(source, buffer.AsSpan());
-        Debug.Assert(written == buffer.Length);
-
+        _ = HashData(source, buffer);
         return buffer;
     }
 
@@ -210,21 +211,11 @@ public sealed class SM3 : HashAlgorithm
 
         if (source.Length > 0)
         {
-            var pool = ArrayPool<byte>.Shared;
-            var sourceArray = pool.Rent(source.Length);
-            try
-            {
-                source.CopyTo(sourceArray);
-                digest.BlockUpdate(sourceArray, 0, source.Length);
-            }
-            finally
-            {
-                pool.Return(sourceArray);
-            }
+            digest.BlockUpdate(source);
         }
 
         bytesWritten = digest.DoFinal(destination);
-        Debug.Assert(bytesWritten == HashSizeInBytes);
+        Debug.Assert(bytesWritten == HashSizeInBytes, "Unexpected hash length from SM3Digest.DoFinal");
 
         return true;
     }
@@ -276,6 +267,7 @@ public sealed class SM3 : HashAlgorithm
             pool.Return(buffer);
         }
     }
+#endif
 
     /// <summary>
     /// 使用 SM3 算法计算流的哈希值
@@ -290,14 +282,30 @@ public sealed class SM3 : HashAlgorithm
     /// </exception>
     public static byte[] HashData(Stream source)
     {
-        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(source, nameof(source));
 
         if (!source.CanRead)
             throw new ArgumentException("Stream does not support reading.", nameof(source));
 
-        var buffer = new byte[HashSizeInBytes];
-        HashData(source, buffer);
-        return buffer;
+        var digest = new SM3Digest();
+        var pool = ArrayPool<byte>.Shared;
+        var buffer = pool.Rent(4096);
+        try
+        {
+            int bytesRead;
+            while ((bytesRead = source.Read(buffer, 0, 4096)) > 0)
+            {
+                digest.BlockUpdate(buffer, 0, bytesRead);
+            }
+
+            var result = GC.AllocateUninitializedArray<byte>(HashSizeInBytes);
+            digest.DoFinal(result, 0);
+            return result;
+        }
+        finally
+        {
+            pool.Return(buffer);
+        }
     }
 
     /// <summary>
@@ -315,9 +323,9 @@ public sealed class SM3 : HashAlgorithm
     /// <exception cref="ArgumentException">
     ///   <paramref name="source" /> 不支持读取。
     /// </exception>
-    public static async ValueTask<byte[]> HashDataAsync(Stream source, CancellationToken cancellationToken = default)
+    public static async Task<byte[]> HashDataAsync(Stream source, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(source, nameof(source));
 
         if (!source.CanRead)
             throw new ArgumentException("Stream does not support reading.", nameof(source));
@@ -328,12 +336,13 @@ public sealed class SM3 : HashAlgorithm
         try
         {
             int bytesRead;
-            while ((bytesRead = await source.ReadAsync(buffer.AsMemory(0, 4096), cancellationToken).ConfigureAwait(false)) > 0)
+            while ((bytesRead =
+                       await source.ReadAsync(buffer.AsMemory(0, 4096), cancellationToken).ConfigureAwait(false)) > 0)
             {
                 digest.BlockUpdate(buffer, 0, bytesRead);
             }
 
-            var result = new byte[HashSizeInBytes];
+            var result = GC.AllocateUninitializedArray<byte>(HashSizeInBytes);
             digest.DoFinal(result, 0);
             return result;
         }
@@ -343,6 +352,7 @@ public sealed class SM3 : HashAlgorithm
         }
     }
 
+#if !NETSTANDARD2_0
     /// <summary>
     /// 异步计算流的 SM3 哈希值
     /// </summary>
@@ -371,7 +381,7 @@ public sealed class SM3 : HashAlgorithm
         Memory<byte> destination,
         CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(source, nameof(source));
 
         if (destination.Length < HashSizeInBytes)
             throw new ArgumentException("Destination buffer is too short.", nameof(destination));
@@ -385,7 +395,8 @@ public sealed class SM3 : HashAlgorithm
         try
         {
             int bytesRead;
-            while ((bytesRead = await source.ReadAsync(buffer.AsMemory(0, 4096), cancellationToken).ConfigureAwait(false)) > 0)
+            while ((bytesRead =
+                       await source.ReadAsync(buffer.AsMemory(0, 4096), cancellationToken).ConfigureAwait(false)) > 0)
             {
                 digest.BlockUpdate(buffer, 0, bytesRead);
             }
@@ -397,6 +408,7 @@ public sealed class SM3 : HashAlgorithm
             pool.Return(buffer);
         }
     }
+#endif
 
     #endregion
 }

@@ -509,7 +509,7 @@ public sealed class SM4 : SymmetricAlgorithm
     /// 创建用于执行对称算法的加密对象
     /// </summary>
     /// <returns>用于执行对称算法的加密对象</returns>
-    public static new SM4 Create() => new();
+    public new static SM4 Create() => new();
 
     #endregion
 

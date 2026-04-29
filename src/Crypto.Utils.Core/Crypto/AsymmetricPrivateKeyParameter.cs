@@ -274,7 +274,7 @@ public class AsymmetricPrivateKeyParameter : AsymmetricKeyParameter
     /// <item><description>传统加密：<see href="https://datatracker.ietf.org/doc/html/rfc1423">RFC 1423</see></description></item>
     /// </list>
     /// </remarks>
-    public static new AsymmetricPrivateKeyParameter FromPem(string pem, string? password = null)
+    public new static AsymmetricPrivateKeyParameter FromPem(string pem, string? password = null)
     {
         using var reader = new StringReader(pem);
         var pemReader = password != null
@@ -325,7 +325,7 @@ public class AsymmetricPrivateKeyParameter : AsymmetricKeyParameter
     /// <item><description>ASN.1：<see href="https://www.itu.int/rec/T-REC-X.680">ITU-T X.680</see></description></item>
     /// </list>
     /// </remarks>
-    public static new AsymmetricPrivateKeyParameter FromDer(byte[] der)
+    public new static AsymmetricPrivateKeyParameter FromDer(byte[] der)
     {
         var privateKeyInfo = PrivateKeyInfo.GetInstance(der);
         var privateKey = PrivateKeyFactory.CreateKey(privateKeyInfo);

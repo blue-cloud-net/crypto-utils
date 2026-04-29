@@ -47,7 +47,11 @@ public static class EnumDisplayNameCache<TEnum> where TEnum : struct, Enum
     /// <param name="enumValue">枚举值</param>
     /// <param name="displayName">输出的显示名称</param>
     /// <returns>如果成功获取返回 true,否则返回 false</returns>
+#if NETSTANDARD2_1_OR_GREATER
     public static bool TryGetDisplayName(TEnum enumValue, [MaybeNullWhen(false)] out string? displayName)
+#else
+    public static bool TryGetDisplayName(TEnum enumValue, out string? displayName)
+#endif
     {
         if (_displayAttributes.TryGetValue(enumValue, out var displayAttribute))
         {

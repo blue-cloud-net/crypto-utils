@@ -290,5 +290,5 @@ public sealed class SM2 : AsymmetricAlgorithm
     /// <summary>
     /// 创建默认实现
     /// </summary>
-    public static new SM2 Create() => new();
+    public new static SM2 Create() => new();
 }

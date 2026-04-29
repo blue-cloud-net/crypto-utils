@@ -156,7 +156,7 @@ public class AsymmetricPublicKeyParameter : AsymmetricKeyParameter
     /// <item><description>ASN.1：<see href="https://www.itu.int/rec/T-REC-X.680">ITU-T X.680</see></description></item>
     /// </list>
     /// </remarks>
-    public static new AsymmetricPublicKeyParameter FromDer(byte[] der)
+    public new static AsymmetricPublicKeyParameter FromDer(byte[] der)
     {
         var publicKeyInfo = SubjectPublicKeyInfo.GetInstance(der);
         var publicKey = PublicKeyFactory.CreateKey(publicKeyInfo);

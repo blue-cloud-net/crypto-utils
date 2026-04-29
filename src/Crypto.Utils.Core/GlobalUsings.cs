@@ -30,3 +30,4 @@ global using System.ComponentModel.DataAnnotations;
 global using System.Security.Cryptography;
 global using System.Text;
 global using RS = Crypto.Utils.Resources.CryptoUtilCore;
+global using Crypto.Utils.Extensions;
