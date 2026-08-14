@@ -122,4 +122,65 @@ public class CsrOpenSslInteropTests : IDisposable
         csr.SubjectAlternativeNames.Should().Contain(n => n.Value == "multi.example.com");
         csr.Verify().Should().BeTrue();
     }
+
+    [Fact]
+    public async Task TongsuoGeneratedSm2Csr_ShouldBeParsedByCode()
+    {
+        CliToolGuard.EnsureToolAvailable(TongsuoCli.BinaryPath);
+
+        // Arrange - tongsuo 运行时生成 SM2 密钥与 CSR
+        var keyPath = Path.Combine(_tempDir, "sm2-key.pem");
+        var csrPath = Path.Combine(_tempDir, "sm2-req.csr");
+        var genKey = await TongsuoCli.GenerateSm2KeyPairAsync(keyPath);
+        genKey.IsSuccess.Should().BeTrue(genKey.FullOutput);
+
+        var genCsr = await TongsuoCli.GenerateSm2CsrAsync(
+            keyPath,
+            csrPath,
+            "/C=CN/O=SM2 Corp/CN=sm2-csr-interop.example.cn",
+            subjectAlternativeNames: "DNS:sm2-csr-interop.example.cn",
+            keyUsage: "critical,digitalSignature");
+        genCsr.IsSuccess.Should().BeTrue(genCsr.FullOutput);
+
+        // Act - 代码解析
+        var csr = CertificateSigningRequest.FromPem(await File.ReadAllTextAsync(csrPath));
+
+        // Assert
+        csr.Subject.Should().Contain("CN=sm2-csr-interop.example.cn");
+        csr.SignatureAlgorithmName.Should().BeEquivalentTo("SM3WITHSM2");
+        csr.Verify().Should().BeTrue();
+        csr.KeyUsages.Should().NotBeNull();
+        csr.KeyUsages!.Value.Should().HaveFlag(KeyUsage.DigitalSignature);
+        csr.SubjectAlternativeNames.Should().Contain(n => n.Value == "sm2-csr-interop.example.cn");
+    }
+
+    [Fact]
+    public async Task CodeGeneratedSm2Csr_ShouldBeParsedByTongsuo()
+    {
+        CliToolGuard.EnsureToolAvailable(TongsuoCli.BinaryPath);
+
+        // Arrange - 代码生成 SM2 含扩展 CSR
+        var keyPair = AsymmetricKeyPair.GenerateSm2();
+        var csr = CertificateSigningRequest.Generate(
+            "/C=CN/O=SM2 Corp/CN=sm2-b2o-csr.example.cn",
+            keyPair,
+            "SM3WITHSM2",
+            new X509ExtensionOptions
+            {
+                KeyUsages = KeyUsage.DigitalSignature,
+                SubjectAlternativeNames = [new GeneralName(GeneralNameType.DnsName, "sm2-b2o-csr.example.cn")],
+            });
+
+        var csrPath = Path.Combine(_tempDir, "sm2-b2o.csr");
+        await File.WriteAllTextAsync(csrPath, csr.ToPem());
+
+        // Act - tongsuo 解析并验证
+        var result = await TongsuoCli.ReqInfoAsync(csrPath);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue(result.FullOutput);
+        result.StandardOutput.Should().Contain("sm2-b2o-csr.example.cn");
+        result.StandardOutput.Should().Contain("DNS:sm2-b2o-csr.example.cn");
+        result.FullOutput.Should().Contain("verify OK");
+    }
 }
