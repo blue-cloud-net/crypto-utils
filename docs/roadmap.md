@@ -33,13 +33,48 @@
 
 ---
 
-## Phase 1：后端完善 + 前端基础（进行中）
+## Phase 1：Core 功能补全（Core 已完成，宿主待办）
 
-### 后端
+> Core 模块的独立计划与进度详见 [core-roadmap.md](core-roadmap.md) 与 [core-development-plan.md](core-development-plan.md)。
+> 测试框架已切换为 xUnit + FluentAssertions；互操作测试 SM 走 tongsuo、RSA/EC/DSA 走 openssl。
 
-- [ ] 补全 Service 实现逻辑（当前为骨架，核心业务调用 Core 库待接入）
+### 测试（优先）
+
+- [x] RSA / EC / DSA 密钥单元测试（生成、PEM/DER 往返、参数提取）
+- [x] RSA 加解密单元测试（OAEP-SHA256 + PKCS#1 v1.5）
+- [x] RSA 签名/验签单元测试（PSS + PKCS#1 v1.5）
+- [x] ECDSA 签名/验签单元测试；ECDH 密钥协商单元测试
+- [x] DSA 签名/验签单元测试
+- [x] `Certificate` 单元测试（自签名含扩展、SignCsr、SignPublicKey、PFX 往返）
+- [x] `CertificateSigningRequest` 单元测试（生成含扩展、解析、验签）
+- [x] `CertificateRevocationList` 单元测试（生成、解析、IsRevoked）
+- [x] RSA / ECDSA OpenSSL 互操作测试（加解密 + 签名交叉验证）
+
+### Crypto.Utils.Core 补全
+
+- [x] `RsaCrypto`：RSA 加密/解密（OAEP-SHA256 默认 / PKCS#1 v1.5 可选）、签名/验签（PSS 默认 / PKCS#1 v1.5 可选）
+- [x] `EcdsaCrypto`：ECDSA 签名/验签（DER 编码）、ECDH 共享密钥计算
+- [x] `DsaCrypto`：DSA 签名/验签
+- [x] `AesCrypto`：AES-CBC / AES-GCM 封装（含自动 IV 生成，禁用 ECB 模式）
+- [x] `X509ExtensionOptions`：证书/CSR 扩展字段参数值对象
+- [x] `Certificate.GenerateSelfSigned` / `SignCsr` / `SignPublicKey` 新增扩展字段参数（`KeyUsage`、`ExtendedKeyUsage`、`SubjectAlternativeNames`、`BasicConstraints`、SKI、AKI、CRL 分发点）
+- [x] `CertificateSigningRequest.Generate` 新增扩展属性参数（SAN、KeyUsage、EKU）
+- [x] `PfxUtils.ToPfx` / `FromPfx`：PFX/PKCS#12 导入导出（含密码保护与证书链）
+
+### Crypto.Utils.Api 补全
+
+- [ ] `KeyService.ConvertPkcsFormatAsync`：PKCS#1 ↔ PKCS#8 格式转换
+- [ ] `KeyService.EncryptPrivateKeyAsync` / `DecryptPrivateKeyAsync`：私钥加密/解密
+- [ ] 补全其余 Service 实现逻辑（接入 Core 新增能力）
+
+### 宿主
+
 - [ ] Host `Program.cs` 正式注册中间件与 Swagger
 - [ ] Docker 容器化部署
+
+---
+
+## Phase 2：前端基础
 
 ### 前端（全部待建）
 
@@ -49,23 +84,23 @@
 - [ ] Pinia 状态管理
 - [ ] Axios HTTP 客户端封装（`CloudApiClient`）
 - [ ] `ServiceFactory` 双模式工厂
-- [ ] 密钥管理页面（生成 / 解析 / 格式转换）
+- [ ] 密钥管理页面（生成 / 解析 / 格式转换 / 加解密 / 签名验签）
 - [ ] 证书页面（解析 / 自签名生成）
 
 ---
 
-## Phase 2：核心功能完整化
+## Phase 3：核心功能完整化
 
-- [ ] CSR 完整支持（生成 / 解析 / 验证页面）
+- [ ] CSR 完整支持（生成含扩展 / 解析 / 验证页面）
 - [ ] CA 签发证书三种模式（CSR 签发 / 公钥签发 / 直接生成）
-- [ ] PFX / PKCS#12 支持（合成 / 提取 / 密码保护）
+- [ ] PFX / PKCS#12 支持页面（合成 / 提取 / 密码保护）
 - [ ] 证书链构建与验证页面
 - [ ] HTTPS 证书在线检测与提取
 - [ ] 开发工具集（JWT / 哈希 / 编解码 / UUID）
 
 ---
 
-## Phase 3：扩展功能（按需）
+## Phase 4：扩展功能（按需）
 
 - [ ] CRL 完整支持（生成 / 解析 / 吊销检查页面）
 - [ ] 批量操作
@@ -81,4 +116,7 @@
 - **无认证**：纯工具 API，网络层安全由部署方决定
 - **商密支持**：完整支持 SM2 / SM3 / SM4
 - **算法范围**：RSA、EC、DSA、SM2；PEM / DER / PFX 格式
+- **加密 padding**：RSA 加密默认 OAEP-SHA256，签名默认 PSS；保留 PKCS#1 v1.5 可选项
+- **ECDH**：返回原始共享密钥字节，KDF 由调用方决定
+- **DSA**：仅支持签名/验签，不支持加密（算法限制）
 - **暂不支持**：HSM、EdDSA、JKS、时间戳服务

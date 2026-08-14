@@ -141,15 +141,17 @@ POST /api/{module}/{action}
 
 ### OpenSSL 互操作测试
 
-使用 `Crypto.Utils.TestUtils.OpenSslWrapper` 封装 OpenSSL CLI 调用（基于 `CliWrap`），用于验证本项目生成的密钥/证书与 OpenSSL 的互操作性。
+使用 `Crypto.Utils.TestSupport.OpenSslCli` / `TongsuoCli` 静态类封装 OpenSSL / tongsuo CLI 调用（基于 `CliWrap`），用于验证本项目生成的密钥/证书与 OpenSSL / tongsuo 的互操作性。`TongsuoCli` 默认使用 `/opt/tongsuo/bin/tongsuo`（可通过环境变量 `TONGSUO_PATH` 覆盖），用于国密 SM2/SM3/SM4 相关互操作。
 
-测试数据文件放在 `test/data/`：
+测试数据文件放在 `tests/data/`：
 
 ```
-test/data/
+tests/data/
 ├── keys/     # 测试用密钥文件
 ├── csrs/     # 测试用 CSR 文件
-└── certs/    # 测试用证书文件
+├── certs/    # 测试用证书文件
+├── crls/     # 测试用 CRL 文件
+└── pfx/      # 测试用 PFX 文件
 ```
 
 ---
