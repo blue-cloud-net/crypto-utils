@@ -204,10 +204,21 @@ if [ -f "$KEYS_DIR/sm2-pkcs8.pem" ]; then
 
     # 带 SAN 的 CSR - SM2
     echo "  - 带 SAN 的 CSR (SM2, 多个国密域名)"
-    generate_config "sm2-multi.example.cn" "国密科技公司" "研发中心" "CN" "北京" "北京" "sm2-multi@example.cn" \
-"subjectAltName = DNS:sm2-multi.example.cn,DNS:www.sm2-multi.example.cn,DNS:api.sm2-multi.example.cn"
+    # 注意：tongsuo 的 SM2 签名使用 SM3 摘要，配置中不能使用 default_md=sha256（会导致签名失败）
+    cat > "$OUTPUT_DIR/temp_openssl.cnf" <<EOF
+[req]
+distinguished_name = dn
+prompt = no
+req_extensions = req_ext
+
+[dn]
+
+[req_ext]
+subjectAltName = DNS:sm2-multi.example.cn,DNS:www.sm2-multi.example.cn,DNS:api.sm2-multi.example.cn
+EOF
     if "$TONGSUO" req -new -key "$KEYS_DIR/sm2-pkcs8.pem" \
         -out "$OUTPUT_DIR/sm2-san.csr" \
+        -subj "/C=CN/ST=Beijing/L=Beijing/O=国密科技公司/OU=研发中心/CN=sm2-multi.example.cn/emailAddress=sm2-multi@example.cn" \
         -config "$OUTPUT_DIR/temp_openssl.cnf" 2>/dev/null; then
         echo -e "    ${GREEN}✓${NC} sm2-san.csr"
     else
