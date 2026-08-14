@@ -1,6 +1,7 @@
 // global using 指令
 
 global using Crypto.Utils.Common;
+global using Crypto.Utils.Extensions;
 global using Crypto.Utils.Resources;
 global using Crypto.Utils.X509.Enums;
 global using Crypto.Utils.X509.Extensions;
@@ -30,4 +31,3 @@ global using System.ComponentModel.DataAnnotations;
 global using System.Security.Cryptography;
 global using System.Text;
 global using RS = Crypto.Utils.Resources.CryptoUtilCore;
-global using Crypto.Utils.Extensions;

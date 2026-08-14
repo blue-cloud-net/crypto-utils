@@ -60,7 +60,7 @@ public sealed class SM3 : HashAlgorithm
     protected override void HashCore(byte[] array, int ibStart, int cbSize) =>
         _digest.BlockUpdate(array, ibStart, cbSize);
 
-#if NETSTANDARD2_1_OR_GREATER
+#if NET5_0_OR_GREATER
     /// <summary>
     /// 哈希核心方法
     /// </summary>
@@ -86,7 +86,7 @@ public sealed class SM3 : HashAlgorithm
         return result;
     }
 
-#if NETSTANDARD2_1_OR_GREATER
+#if NET5_0_OR_GREATER
     /// <summary>
     /// 尝试完成哈希计算
     /// </summary>
@@ -145,7 +145,7 @@ public sealed class SM3 : HashAlgorithm
     {
         ArgumentNullException.ThrowIfNull(source, nameof(source));
 
-#if NETSTANDARD2_1_OR_GREATER
+#if NET5_0_OR_GREATER
         return HashData(source.AsSpan());
 #else
         var digest = new SM3Digest();
@@ -156,7 +156,7 @@ public sealed class SM3 : HashAlgorithm
 #endif
     }
 
-#if NETSTANDARD2_1_OR_GREATER
+#if NET5_0_OR_GREATER
     /// <summary>
     /// 使用 SM3 算法计算数据的哈希值
     /// </summary>

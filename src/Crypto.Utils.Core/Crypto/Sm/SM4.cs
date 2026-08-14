@@ -441,7 +441,7 @@ public sealed class SM4 : SymmetricAlgorithm
             _ => throw new CryptographicException($"Padding mode not supported: {paddingMode}")
         };
 
-        BufferedBlockCipher cipher = padding != null
+        var cipher = padding != null
             ? new PaddedBufferedBlockCipher(cbcCipher, padding)
             : new BufferedBlockCipher(cbcCipher);
 
@@ -480,7 +480,7 @@ public sealed class SM4 : SymmetricAlgorithm
             _ => throw new CryptographicException($"Padding mode not supported: {paddingMode}")
         };
 
-        BufferedBlockCipher cipher = padding != null
+        var cipher = padding != null
             ? new PaddedBufferedBlockCipher(cbcCipher, padding)
             : new BufferedBlockCipher(cbcCipher);
 
