@@ -1,5 +1,7 @@
 using Crypto.Utils.BouncyCastle.Asn1.X509;
 using Crypto.Utils.Crypto;
+using Crypto.Utils.X509.Models;
+using Crypto.Utils.X509.Utils;
 using ExtendedKeyUsage = Crypto.Utils.X509.Enums.ExtendedKeyUsage;
 using GeneralName = Crypto.Utils.X509.Models.GeneralName;
 using KeyUsage = Crypto.Utils.X509.Enums.KeyUsage;
@@ -210,7 +212,7 @@ public class CertificateSigningRequest
         var csr = pemReader.ReadObject() as Org.BouncyCastle.Pkcs.Pkcs10CertificationRequest;
         if (csr is null)
         {
-            throw new InvalidOperationException("无法解析PEM格式的CSR。");
+            throw new InvalidOperationException("Unable to parse the CSR from PEM.");
         }
 
         return new(csr);
@@ -250,8 +252,9 @@ public class CertificateSigningRequest
     public static CertificateSigningRequest Generate(
         string subjectDN,
         AsymmetricKeyPair keyPair,
-        string signatureAlgorithm = "SHA256WITHRSA") =>
-        Generate(subjectDN, keyPair.PublicKey, keyPair.PrivateKey, signatureAlgorithm);
+        string signatureAlgorithm = "SHA256WITHRSA",
+        X509ExtensionOptions? extensions = null) =>
+        Generate(subjectDN, keyPair.PublicKey, keyPair.PrivateKey, signatureAlgorithm, extensions);
 
     /// <summary>
     /// 生成证书签名请求（CSR）
@@ -267,17 +270,30 @@ public class CertificateSigningRequest
         string subjectDN,
         AsymmetricPublicKeyParameter publicKey,
         AsymmetricPrivateKeyParameter privateKey,
-        string signatureAlgorithm = "SHA256WITHRSA")
+        string signatureAlgorithm = "SHA256WITHRSA",
+        X509ExtensionOptions? extensions = null)
     {
-        var subject = new X509Name(subjectDN);
+        var subject = X509NameParser.Parse(subjectDN);
         var bcPublicKey = publicKey.GetBouncyCastleKey();
         var bcPrivateKey = privateKey.GetBouncyCastleKey();
 
         // 创建 SubjectPublicKeyInfo
         var publicKeyInfo = Org.BouncyCastle.X509.SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(bcPublicKey);
 
-        // 创建 CertificationRequestInfo
-        var csrInfo = new CertificationRequestInfo(subject, publicKeyInfo, null);
+        // 创建 CertificationRequestInfo（含可选扩展属性，经 extensionRequest 携带）
+        CertificationRequestInfo csrInfo;
+        if (extensions is not null)
+        {
+            var x509Extensions = X509ExtensionBuilder.BuildX509Extensions(extensions, bcPublicKey);
+            var extensionRequest = new AttributePkcs(
+                PkcsObjectIdentifiers.Pkcs9AtExtensionRequest,
+                new DerSet(x509Extensions));
+            csrInfo = new CertificationRequestInfo(subject, publicKeyInfo, new DerSet(extensionRequest));
+        }
+        else
+        {
+            csrInfo = new CertificationRequestInfo(subject, publicKeyInfo, null);
+        }
 
         // 对 CSR 信息进行签名
         var signatureAlgorithmOid = Org.BouncyCastle.Security.SignerUtilities.GetObjectIdentifier(signatureAlgorithm);

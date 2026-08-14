@@ -25,8 +25,11 @@ public static class CertificationRequestInfoExtensions
 
         try
         {
-            foreach (AttributePkcs attribute in certificationRequestInfo.Attributes)
+            foreach (var obj in certificationRequestInfo.Attributes)
             {
+                // 属性元素为原始 ASN.1 结构（DLSequence），需经 GetInstance 转换。
+                var attribute = AttributePkcs.GetInstance(obj);
+
                 // 检查是否为扩展请求属性 (OID: 1.2.840.113549.1.9.14)
                 if (attribute.AttrType.Equals(PkcsObjectIdentifiers.Pkcs9AtExtensionRequest))
                 {
@@ -38,9 +41,9 @@ public static class CertificationRequestInfoExtensions
                 }
             }
         }
-        catch
+        catch (Exception ex) when (ex is not InvalidCastException)
         {
-            // 如果解析失败，返回 null
+            // 解析失败视为无扩展。
         }
 
         return null;

@@ -55,9 +55,9 @@ public class RevokedCertificateInfo
             var reasonExtension = _entry.GetExtension(X509Extensions.ReasonCode);
             if (reasonExtension is null)
                 return null;
-            var reason = DerInteger.GetInstance(reasonExtension);
-            return CertificateRevocationReasonHelper.FromInt(reason.IntValueExact);
-
+            var asn1Object = X509ExtensionUtilities.FromExtensionValue(reasonExtension.Value);
+            var reason = DerEnumerated.GetInstance(asn1Object);
+            return CertificateRevocationReasonHelper.FromInt(reason.Value.IntValue);
         }
     }
 

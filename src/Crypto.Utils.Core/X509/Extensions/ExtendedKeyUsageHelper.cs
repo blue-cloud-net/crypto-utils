@@ -67,19 +67,24 @@ public static class ExtendedKeyUsageHelper
     /// <summary>
     /// 从 OID 字符串集合转换为扩展密钥用途枚举值
     /// </summary>
-    /// <param name="oids">OID 字符串集合</param>
+    /// <param name="oids">OID 字符串集合（可为 <see langword="null"/>，返回 <see cref="ExtendedKeyUsage.None"/>）</param>
     /// <returns>扩展密钥用途枚举值（可能包含多个标志）</returns>
-    public static ExtendedKeyUsage FromOids(IEnumerable<string> oids) =>
-        FromOids(oids.Select(oid => new DerObjectIdentifier(oid)));
+    public static ExtendedKeyUsage FromOids(IEnumerable<string>? oids) =>
+        oids is null ? ExtendedKeyUsage.None : FromOids(oids.Select(oid => new DerObjectIdentifier(oid)));
 
     /// <summary>
     /// 从 OID 对象集合转换为扩展密钥用途枚举值
     /// </summary>
-    /// <param name="oids">OID 对象集合</param>
+    /// <param name="oids">OID 对象集合（可为 <see langword="null"/>，返回 <see cref="ExtendedKeyUsage.None"/>）</param>
     /// <returns>扩展密钥用途枚举值（可能包含多个标志）</returns>
-    public static ExtendedKeyUsage FromOids(IEnumerable<DerObjectIdentifier> oids)
+    public static ExtendedKeyUsage FromOids(IEnumerable<DerObjectIdentifier>? oids)
     {
         var usages = ExtendedKeyUsage.None;
+        if (oids is null)
+        {
+            return usages;
+        }
+
         foreach (var oid in oids)
         {
             if (_oIdToEnum.TryGetValue(oid, out var usage))

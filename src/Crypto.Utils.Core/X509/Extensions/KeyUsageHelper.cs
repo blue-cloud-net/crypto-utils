@@ -68,8 +68,13 @@ public static class KeyUsageHelper
     /// </summary>
     /// <param name="keyUsage">BouncyCastle KeyUsage bool 数组</param>
     /// <returns>密钥用途枚举值</returns>
-    public static KeyUsage FromBoolArray(bool[] keyUsage)
+    public static KeyUsage FromBoolArray(bool[]? keyUsage)
     {
+        if (keyUsage is null || keyUsage.Length == 0)
+        {
+            return KeyUsage.None;
+        }
+
         var usages = KeyUsage.None;
 
         if (keyUsage.Length > 0 && keyUsage[0]) usages |= KeyUsage.DigitalSignature;

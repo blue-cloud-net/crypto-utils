@@ -107,7 +107,7 @@ public record struct GeneralName
     public GeneralName(Org.BouncyCastle.Asn1.X509.GeneralName bcGeneralName)
     {
         this.Type = (GeneralNameType)bcGeneralName.TagNo;
-        this.Value = bcGeneralName.Name.ToString() ?? string.Empty;
+        this.Value = DecodeValue(bcGeneralName);
     }
 
     /// <summary>
@@ -119,7 +119,47 @@ public record struct GeneralName
     /// 返回的对象可用于 BouncyCastle 的证书生成器、CSR 生成器等 API。
     /// </remarks>
     public Org.BouncyCastle.Asn1.X509.GeneralName GetBouncyCastleGeneralName()
-        => new Org.BouncyCastle.Asn1.X509.GeneralName((int)this.Type, this.Value);
+    {
+        if (this.Type == GeneralNameType.IPAddress)
+        {
+            // 将 "192.168.1.100" 编码为 DER OctetString，符合 RFC 5280 IP 地址表示。
+            var ip = System.Net.IPAddress.Parse(this.Value);
+            return new Org.BouncyCastle.Asn1.X509.GeneralName(
+                Org.BouncyCastle.Asn1.X509.GeneralName.IPAddress,
+                new DerOctetString(ip.GetAddressBytes()));
+        }
+
+        return new Org.BouncyCastle.Asn1.X509.GeneralName((int)this.Type, this.Value);
+    }
+
+    /// <summary>
+    /// 解码 BouncyCastle GeneralName 值；IP 地址（DER OctetString，形如 "#c0a80164"）转为点分十进制。
+    /// </summary>
+    private static string DecodeValue(Org.BouncyCastle.Asn1.X509.GeneralName name)
+    {
+        if (name.TagNo == Org.BouncyCastle.Asn1.X509.GeneralName.IPAddress)
+        {
+            if (name.Name is Asn1OctetString octets)
+            {
+                return new System.Net.IPAddress(octets.GetOctets()).ToString();
+            }
+        }
+
+        var text = name.Name?.ToString();
+        if (!string.IsNullOrEmpty(text) && text.StartsWith('#'))
+        {
+            try
+            {
+                return new System.Net.IPAddress(Convert.FromHexString(text[1..])).ToString();
+            }
+            catch (FormatException)
+            {
+                // 无法解码时回退到原始文本。
+            }
+        }
+
+        return text ?? string.Empty;
+    }
 
     /// <summary>
     /// 返回 GeneralName 的字符串表示形式

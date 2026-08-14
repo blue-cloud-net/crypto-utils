@@ -1,5 +1,6 @@
 ﻿using Crypto.Utils.Crypto;
 using Crypto.Utils.X509.Models;
+using Crypto.Utils.X509.Utils;
 using ExtendedKeyUsage = Crypto.Utils.X509.Enums.ExtendedKeyUsage;
 using GeneralName = Crypto.Utils.X509.Models.GeneralName;
 using KeyUsage = Crypto.Utils.X509.Enums.KeyUsage;
@@ -216,7 +217,8 @@ public class Certificate
             {
                 var asn1Object = X509ExtensionUtilities.FromExtensionValue(akiExtension);
                 var aki = Org.BouncyCastle.Asn1.X509.AuthorityKeyIdentifier.GetInstance(asn1Object);
-                return Convert.ToHexString(aki.GetKeyIdentifier());
+                var keyId = aki.GetKeyIdentifier();
+                return keyId is null ? null : Convert.ToHexString(keyId);
             }
             return null;
         }
@@ -595,7 +597,7 @@ public class Certificate
         var cert = pemReader.ReadObject() as Org.BouncyCastle.X509.X509Certificate;
         if (cert is null)
         {
-            throw new InvalidOperationException("无法解析 PEM 格式的证书");
+            throw new InvalidOperationException("Unable to parse the certificate from PEM.");
         }
         return new(cert);
     }
@@ -656,10 +658,11 @@ public class Certificate
         DateTime validFrom,
         DateTime validTo,
         string serialNumber,
-        string signatureAlgorithm = "SHA256WITHRSA")
+        string signatureAlgorithm = "SHA256WITHRSA",
+        X509ExtensionOptions? extensions = null)
     {
         var certGen = new X509V3CertificateGenerator();
-        var dnName = new X509Name(subjectDN);
+        var dnName = X509NameParser.Parse(subjectDN);
         var serial = new BigInteger(serialNumber, 16);
         var bcPrivateKey = privateKey.GetBouncyCastleKey();
 
@@ -676,7 +679,7 @@ public class Certificate
         }
         else
         {
-            throw new NotSupportedException($"不支持的私钥类型: {bcPrivateKey.GetType().Name}");
+            throw new NotSupportedException($"Unsupported private key type: {bcPrivateKey.GetType().Name}.");
         }
 
         certGen.SetSerialNumber(serial);
@@ -686,11 +689,19 @@ public class Certificate
         certGen.SetNotAfter(validTo);
         certGen.SetPublicKey(bcPublicKey);
 
-        // 添加基本约束扩展（CA 证书）
-        certGen.AddExtension(
-            X509Extensions.BasicConstraints,
-            true,
-            new BasicConstraints(true));
+        if (extensions is not null)
+        {
+            // 应用调用方指定的扩展；自签名证书的 SKI/AKI 均使用证书自身公钥计算。
+            X509ExtensionBuilder.Apply(certGen, extensions, bcPublicKey, bcPublicKey);
+        }
+        else
+        {
+            // 兼容旧行为：默认添加 CA 基本约束扩展。
+            certGen.AddExtension(
+                X509Extensions.BasicConstraints,
+                true,
+                new BasicConstraints(true));
+        }
 
         var signatureFactory = new Asn1SignatureFactory(signatureAlgorithm, bcPrivateKey, new SecureRandom());
         var bcCert = certGen.Generate(signatureFactory);
@@ -717,7 +728,8 @@ public class Certificate
         DateTime validFrom,
         DateTime validTo,
         string serialNumber,
-        string? signatureAlgorithm = null)
+        string? signatureAlgorithm = null,
+        X509ExtensionOptions? extensions = null)
     {
         var certGen = new X509V3CertificateGenerator();
         var bcCsr = csr.GetBouncyCastleRequest();
@@ -728,7 +740,14 @@ public class Certificate
         certGen.SetIssuerDN(caCertificate.GetBouncyCastleCertificate().SubjectDN);
         certGen.SetNotBefore(validFrom);
         certGen.SetNotAfter(validTo);
-        certGen.SetPublicKey(bcCsr.GetPublicKey());
+        var subjectPublicKey = bcCsr.GetPublicKey();
+        certGen.SetPublicKey(subjectPublicKey);
+
+        if (extensions is not null)
+        {
+            var caPublicKey = caCertificate.GetBouncyCastleCertificate().GetPublicKey();
+            X509ExtensionBuilder.Apply(certGen, extensions, subjectPublicKey, caPublicKey);
+        }
 
         var sigAlg = signatureAlgorithm ?? caCertificate.SignatureAlgorithmName;
         var signatureFactory = new Asn1SignatureFactory(sigAlg, caPrivateKey.GetBouncyCastleKey(), new SecureRandom());
@@ -758,10 +777,11 @@ public class Certificate
         DateTime validFrom,
         DateTime validTo,
         string serialNumber,
-        string? signatureAlgorithm = null)
+        string? signatureAlgorithm = null,
+        X509ExtensionOptions? extensions = null)
     {
         var certGen = new X509V3CertificateGenerator();
-        var subjectName = new X509Name(subjectDN);
+        var subjectName = X509NameParser.Parse(subjectDN);
         var serial = new BigInteger(serialNumber, 16);
 
         certGen.SetSerialNumber(serial);
@@ -769,7 +789,14 @@ public class Certificate
         certGen.SetIssuerDN(caCertificate.GetBouncyCastleCertificate().SubjectDN);
         certGen.SetNotBefore(validFrom);
         certGen.SetNotAfter(validTo);
-        certGen.SetPublicKey(publicKey.GetBouncyCastleKey());
+        var bcPublicKey = publicKey.GetBouncyCastleKey();
+        certGen.SetPublicKey(bcPublicKey);
+
+        if (extensions is not null)
+        {
+            var caPublicKey = caCertificate.GetBouncyCastleCertificate().GetPublicKey();
+            X509ExtensionBuilder.Apply(certGen, extensions, bcPublicKey, caPublicKey);
+        }
 
         var sigAlg = signatureAlgorithm ?? caCertificate.SignatureAlgorithmName;
         var signatureFactory = new Asn1SignatureFactory(sigAlg, caPrivateKey.GetBouncyCastleKey(), new SecureRandom());

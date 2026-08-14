@@ -1,5 +1,6 @@
 using Crypto.Utils.Crypto;
 using Crypto.Utils.X509.Models;
+using Crypto.Utils.X509.Utils;
 using CertificateRevocationReason = Crypto.Utils.X509.Enums.CertificateRevocationReason;
 
 namespace Crypto.Utils.X509;
@@ -50,7 +51,9 @@ public class CertificateRevocationList
     public DateTime? NextUpdate => _bcCrl.NextUpdate;
 
     /// <summary>
-    ///    
+    /// 签名算法 OID
+    /// 用于签名此 CRL 的算法 OID 字符串。
+    /// </summary>
     public string SignatureAlgorithmOid => _bcCrl.SigAlgOid;
 
     /// <summary>
@@ -66,17 +69,7 @@ public class CertificateRevocationList
     /// CRL 中包含的已撤销证书条目总数。
     /// 大型 CA 的 CRL 可能包含数千甚至数万条记录。
     /// </summary>
-    public long? RevokedCertificatesCount
-    {
-        get
-        {
-            var crlNumberAsn1Object = _bcCrl.GetExtensionParsedValue(X509Extensions.CrlNumber);
-            if (crlNumberAsn1Object is null)
-                return null;
-            var crlNumber = DerInteger.GetInstance(crlNumberAsn1Object).PositiveValue;
-            return crlNumber.LongValueExact;
-        }
-    }
+    public long? RevokedCertificatesCount => _bcCrl.GetRevokedCertificates()?.Count;
 
     /// <summary>
     /// 撤销的证书列表
@@ -115,8 +108,7 @@ public class CertificateRevocationList
     /// <exception cref="ArgumentNullException">当 certificate 为 null 时抛出</exception>
     public bool IsRevoked(Certificate certificate)
     {
-        if (certificate == null)
-            throw new ArgumentNullException(nameof(certificate));
+        ArgumentNullException.ThrowIfNull(certificate);
 
         var bcCert = certificate.GetBouncyCastleCertificate();
         return _bcCrl.IsRevoked(bcCert);
@@ -223,7 +215,7 @@ public class CertificateRevocationList
         var crl = pemReader.ReadObject() as Org.BouncyCastle.X509.X509Crl;
         if (crl is null)
         {
-            throw new InvalidOperationException("无法解析PEM格式的CRL。");
+            throw new InvalidOperationException("Unable to parse the CRL from PEM.");
         }
         return new(crl);
     }
@@ -275,7 +267,7 @@ public class CertificateRevocationList
         DateTime? nextUpdate,
         string signatureAlgorithm = "SHA256WITHRSA")
     {
-        var issuer = new Org.BouncyCastle.Asn1.X509.X509Name(issuerDN);
+        var issuer = X509NameParser.Parse(issuerDN);
         var crlGen = new X509V2CrlGenerator();
 
         crlGen.SetIssuerDN(issuer);
