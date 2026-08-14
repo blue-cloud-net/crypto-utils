@@ -15,7 +15,7 @@ NC='\033[0m' # No Color
 # 脚本目录和输出目录
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
-OUTPUT_DIR="$PROJECT_ROOT/test/data/certs"
+OUTPUT_DIR="$PROJECT_ROOT/tests/data/certs"
 
 # 默认网站列表
 WEBSITES=(
@@ -257,20 +257,20 @@ cat > "$OUTPUT_DIR/README.md" << 'EOF'
 
 ```bash
 cd /path/to/crypto-utils
-./cmd/pull-website-certs.sh
+./scripts/pull-website-certs.sh
 ```
 
 拉取特定网站证书:
 
 ```bash
-./cmd/pull-website-certs.sh example.com
-./cmd/pull-website-certs.sh example.com:8443
+./scripts/pull-website-certs.sh example.com
+./scripts/pull-website-certs.sh example.com:8443
 ```
 
 拉取多个网站:
 
 ```bash
-./cmd/pull-website-certs.sh site1.com site2.com site3.com
+./scripts/pull-website-certs.sh site1.com site2.com site3.com
 ```
 
 ## 查看证书信息
@@ -315,7 +315,7 @@ openssl verify -CAfile <hostname>_<port>_chain.pem <hostname>_<port>_cert.pem
 ---
 
 更新日期: $(date '+%Y-%m-%d %H:%M:%S')
-生成脚本: cmd/pull-website-certs.sh
+生成脚本: scripts/pull-website-certs.sh
 EOF
 
 echo -e "${GREEN}✓${NC} README.md"

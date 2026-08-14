@@ -14,7 +14,7 @@ NC='\033[0m' # No Color
 # 脚本目录和输出目录
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
-OUTPUT_DIR="$PROJECT_ROOT/test/data/keys"
+OUTPUT_DIR="$PROJECT_ROOT/tests/data/keys"
 
 echo -e "${BLUE}=====================================${NC}"
 echo -e "${BLUE}密钥生成脚本${NC}"
@@ -255,7 +255,7 @@ cat > "$OUTPUT_DIR/README.md" << 'EOF'
 
 ```bash
 cd /path/to/crypto-utils
-./cmd/generate-test-keys.sh
+./scripts/generate-test-keys.sh
 ```
 
 ## 查看密钥信息
@@ -297,7 +297,7 @@ openssl dsa -in dsa-2048-private.pem -text -noout
 ---
 
 生成日期: $(date '+%Y-%m-%d %H:%M:%S')
-生成脚本: cmd/generate-test-keys.sh
+生成脚本: scripts/generate-test-keys.sh
 EOF
 
 echo -e "${GREEN}✓${NC} README.md"

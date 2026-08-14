@@ -16,8 +16,8 @@ NC='\033[0m' # No Color
 # 脚本目录和输出目录
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
-KEYS_DIR="$PROJECT_ROOT/test/data/keys"
-OUTPUT_DIR="$PROJECT_ROOT/test/data/csrs"
+KEYS_DIR="$PROJECT_ROOT/tests/data/keys"
+OUTPUT_DIR="$PROJECT_ROOT/tests/data/csrs"
 
 echo -e "${BLUE}=====================================${NC}"
 echo -e "${BLUE}CSR 生成脚本${NC}"
@@ -357,7 +357,7 @@ cat > "$OUTPUT_DIR/README.md" << 'EOF'
 
 ```bash
 cd /path/to/crypto-utils
-./cmd/generate-test-csrs.sh
+./scripts/generate-test-csrs.sh
 ```
 
 ## 查看 CSR 信息
@@ -441,8 +441,8 @@ openssl req -in rsa-2048-san.csr -text -noout | grep -A 1 "Subject Alternative N
 ---
 
 生成日期: $(date '+%Y-%m-%d %H:%M:%S')
-生成脚本: cmd/generate-test-csrs.sh
-依赖脚本: cmd/generate-test-keys.sh
+生成脚本: scripts/generate-test-csrs.sh
+依赖脚本: scripts/generate-test-keys.sh
 EOF
 
 echo -e "${GREEN}✓${NC} README.md"
