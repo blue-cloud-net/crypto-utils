@@ -158,7 +158,7 @@ public class AsymmetricKeyPair
     {
         var keyPairGenerator = new ECKeyPairGenerator();
         var curveOid = ECNamedCurveTable.GetOid(curve)
-            ?? throw new ArgumentException($"未知的EC曲线: {curve}", nameof(curve));
+            ?? throw new ArgumentException($"Unknown EC curve: {curve}.", nameof(curve));
         var generatorParameters = new Org.BouncyCastle.Crypto.Parameters.ECKeyGenerationParameters(
             curveOid, new SecureRandom());
         keyPairGenerator.Init(generatorParameters);
@@ -210,15 +210,28 @@ public class AsymmetricKeyPair
     /// </remarks>
     public static AsymmetricKeyPair GenerateDsa(int keySize = 2048)
     {
-        var keyPairGenerator = new DsaKeyPairGenerator();
+        if (keySize is not (1024 or 2048 or 3072))
+            throw new ArgumentOutOfRangeException(nameof(keySize), "DSA key size must be 1024, 2048, or 3072 bits.");
 
-        var parameterGenerator = new Org.BouncyCastle.Crypto.Generators.DsaParametersGenerator();
-        parameterGenerator.Init(keySize, 80, new SecureRandom());
+        // N 与配套哈希：1024 位用 SHA-1 (160)，2048/3072 位用 SHA-256 (256)。
+        var n = keySize switch
+        {
+            1024 => 160,
+            _ => 256,
+        };
+
+        IDigest digest = keySize switch
+        {
+            1024 => new Sha1Digest(),
+            _ => new Sha256Digest(),
+        };
+
+        var parameterGenerator = new DsaParametersGenerator(digest);
+        parameterGenerator.Init(new DsaParameterGenerationParameters(keySize, n, 80, new SecureRandom()));
         var dsaParams = parameterGenerator.GenerateParameters();
 
-        keyPairGenerator.Init(new Org.BouncyCastle.Crypto.Parameters.DsaKeyGenerationParameters(
-            new SecureRandom(),
-            dsaParams));
+        var keyPairGenerator = new DsaKeyPairGenerator();
+        keyPairGenerator.Init(new DsaKeyGenerationParameters(new SecureRandom(), dsaParams));
 
         var keyPair = keyPairGenerator.GenerateKeyPair();
         return new(keyPair);

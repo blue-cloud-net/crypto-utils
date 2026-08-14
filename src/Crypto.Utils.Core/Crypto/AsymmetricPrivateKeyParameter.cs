@@ -34,7 +34,7 @@ public class AsymmetricPrivateKeyParameter : AsymmetricKeyParameter
         Org.BouncyCastle.Crypto.AsymmetricKeyParameter privateKey) : base(privateKey)
     {
         if (!privateKey.IsPrivate)
-            throw new ArgumentException("提供的密钥不是私钥。", nameof(privateKey));
+            throw new ArgumentException("The provided key is not a private key.", nameof(privateKey));
     }
 
     /// <summary>
@@ -66,7 +66,7 @@ public class AsymmetricPrivateKeyParameter : AsymmetricKeyParameter
         if (_key is RsaPrivateCrtKeyParameters rsaPrivateKey)
         {
             // RSA: 从私钥的模数和公钥指数构造公钥
-            publicKey = new RsaKeyParameters(false, rsaPrivateKey.Modulus, rsaPrivateKey.Exponent);
+            publicKey = new RsaKeyParameters(false, rsaPrivateKey.Modulus, rsaPrivateKey.PublicExponent);
         }
         else if (_key is ECPrivateKeyParameters ecPrivateKey)
         {
@@ -82,7 +82,7 @@ public class AsymmetricPrivateKeyParameter : AsymmetricKeyParameter
         }
         else
         {
-            throw new NotSupportedException($"不支持从 {_key.GetType().Name} 类型的私钥提取公钥");
+            throw new NotSupportedException($"Extracting a public key from a private key of type {_key.GetType().Name} is not supported.");
         }
 
         return new AsymmetricPublicKeyParameter(publicKey);
@@ -287,11 +287,11 @@ public class AsymmetricPrivateKeyParameter : AsymmetricKeyParameter
         {
             Org.BouncyCastle.Crypto.AsymmetricCipherKeyPair keyPair => keyPair.Private,
             Org.BouncyCastle.Crypto.AsymmetricKeyParameter key => key,
-            _ => throw new InvalidOperationException("无法从 PEM 中解析私钥")
+            _ => throw new InvalidOperationException("Unable to parse the private key from PEM.")
         };
 
         if (privateKey == null || !privateKey.IsPrivate)
-            throw new InvalidOperationException("PEM 中不包含有效的私钥");
+            throw new InvalidOperationException("The PEM does not contain a valid private key.");
 
         return new AsymmetricPrivateKeyParameter(privateKey);
     }
