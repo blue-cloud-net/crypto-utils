@@ -39,7 +39,7 @@ public class AsymmetricPublicKeyParameter : AsymmetricKeyParameter
         Org.BouncyCastle.Crypto.AsymmetricKeyParameter publicKey) : base(publicKey)
     {
         if (publicKey.IsPrivate)
-            throw new ArgumentException("提供的密钥不是公钥", nameof(publicKey));
+            throw new ArgumentException("The provided key is not a public key.", nameof(publicKey));
     }
 
     /// <summary>
@@ -118,11 +118,11 @@ public class AsymmetricPublicKeyParameter : AsymmetricKeyParameter
         var publicKey = obj switch
         {
             Org.BouncyCastle.Crypto.AsymmetricKeyParameter key when !key.IsPrivate => key,
-            _ => throw new InvalidOperationException("无法从 PEM 中解析公钥")
+            _ => throw new InvalidOperationException("Unable to parse the public key from PEM.")
         };
 
         if (publicKey == null)
-            throw new InvalidOperationException("PEM 中不包含有效的公钥");
+            throw new InvalidOperationException("The PEM does not contain a valid public key.");
 
         return new AsymmetricPublicKeyParameter(publicKey);
     }

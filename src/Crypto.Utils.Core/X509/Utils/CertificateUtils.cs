@@ -37,7 +37,7 @@ public static class CertificateUtils
             var cert = pemObj as Org.BouncyCastle.X509.X509Certificate;
             if (cert is null)
             {
-                throw new InvalidOperationException("无法解析 PEM 格式的证书");
+                throw new InvalidOperationException("Unable to parse the certificate from PEM.");
             }
 
             // 包装为自定义 Certificate 对象并返回

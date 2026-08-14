@@ -404,11 +404,11 @@ public abstract class AsymmetricKeyParameter
         {
             Org.BouncyCastle.Crypto.AsymmetricCipherKeyPair keyPair => keyPair.Private,
             Org.BouncyCastle.Crypto.AsymmetricKeyParameter keyParam => keyParam,
-            _ => throw new InvalidOperationException("无法从 PEM 中解析密钥")
+            _ => throw new InvalidOperationException("Unable to parse the key from PEM.")
         };
 
         if (key == null)
-            throw new InvalidOperationException("PEM 中不包含有效的密钥");
+            throw new InvalidOperationException("The PEM does not contain a valid key.");
 
         return FromBouncyCastleKey(key);
     }
@@ -451,7 +451,7 @@ public abstract class AsymmetricKeyParameter
             // 两种格式都失败
         }
 
-        throw new InvalidOperationException("无法从 DER 中解析密钥，格式不是有效的。");
+        throw new InvalidOperationException("Unable to parse the key from DER; the format is invalid.");
     }
 
     /// <summary>

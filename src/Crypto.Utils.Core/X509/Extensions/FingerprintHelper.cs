@@ -46,7 +46,7 @@ public static class FingerprintHelper
                 hash = SM3.HashData(data);
                 break;
             default:
-                throw new ArgumentException($"不支持的哈希算法: {algorithm}");
+                throw new ArgumentException($"Unsupported hash algorithm: {algorithm}.");
         }
 
         return format ? FormatFingerprint(hash) : Convert.ToHexString(hash);
