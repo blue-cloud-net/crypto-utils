@@ -7,13 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="NUnit" />
-        <PackageReference Include="NUnit3TestAdapter" />
-        <PackageReference Include="NUnit.Analyzers">
+        <PackageReference Include="Microsoft.NET.Test.Sdk" />
+        <PackageReference Include="xunit" />
+        <PackageReference Include="xunit.runner.visualstudio">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" />
         <PackageReference Include="FluentAssertions" />
         <PackageReference Include="coverlet.collector">
             <PrivateAssets>all</PrivateAssets>
@@ -23,7 +22,11 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\src\Crypto.Utils.Core\Crypto.Utils.Core.csproj"/>
-        <ProjectReference Include="..\Crypto.Utils.TestUtils\Crypto.Utils.TestUtils.csproj"/>
+        <ProjectReference Include="..\Crypto.Utils.TestSupport\Crypto.Utils.TestSupport.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="CliWrap" />
     </ItemGroup>
 
 </Project>

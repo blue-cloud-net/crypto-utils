@@ -22,8 +22,8 @@
     <Project Path="src/Crypto.Utils.Core/Crypto.Utils.Core.csproj" />
     <Project Path="src/Crypto.Utils.Host/Crypto.Utils.Host.csproj" />
   </Folder>
-  <Folder Name="/test/">
-    <Project Path="test/Crypto.Utils.Core.Tests/Crypto.Utils.Core.Tests.csproj" />
-    <Project Path="test/Crypto.Utils.TestUtils/Crypto.Utils.TestUtils.csproj" />
+  <Folder Name="/tests/">
+    <Project Path="tests/Crypto.Utils.Core.Tests/Crypto.Utils.Core.Tests.csproj" />
+    <Project Path="tests/Crypto.Utils.TestSupport/Crypto.Utils.TestSupport.csproj" />
   </Folder>
 </Solution>

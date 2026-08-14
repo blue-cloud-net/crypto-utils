@@ -1,6 +1,5 @@
 using Crypto.Utils.Crypto.Sm;
 using FluentAssertions;
-using NUnit.Framework;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -9,12 +8,11 @@ namespace Crypto.Utils.Core.Tests.Crypto.Sm;
 /// <summary>
 /// SM4 类的单元测试
 /// </summary>
-[TestFixture]
 public class SM4Tests
 {
     #region 1. 构造函数和基本属性测试
 
-    [Test]
+    [Fact]
     public void Constructor_ShouldInitializeWithCorrectKeySize()
     {
         // Arrange & Act
@@ -24,7 +22,7 @@ public class SM4Tests
         sm4.KeySize.Should().Be(128, "SM4 uses 128-bit key");
     }
 
-    [Test]
+    [Fact]
     public void Constructor_ShouldInitializeWithCorrectBlockSize()
     {
         // Arrange & Act
@@ -34,7 +32,7 @@ public class SM4Tests
         sm4.BlockSize.Should().Be(128, "SM4 uses 128-bit block");
     }
 
-    [Test]
+    [Fact]
     public void Constructor_ShouldSetLegalKeySizes()
     {
         // Arrange & Act
@@ -48,7 +46,7 @@ public class SM4Tests
         sm4.LegalKeySizes[0].SkipSize.Should().Be(0);
     }
 
-    [Test]
+    [Fact]
     public void Constructor_ShouldSetLegalBlockSizes()
     {
         // Arrange & Act
@@ -62,7 +60,7 @@ public class SM4Tests
         sm4.LegalBlockSizes[0].SkipSize.Should().Be(0);
     }
 
-    [Test]
+    [Fact]
     public void Constructor_ShouldGenerateRandomKeyAndIV()
     {
         // Arrange & Act
@@ -75,7 +73,7 @@ public class SM4Tests
         sm4.IV.Length.Should().Be(16, "SM4 IV should be 16 bytes");
     }
 
-    [Test]
+    [Fact]
     public void Constructor_ShouldSetDefaultMode()
     {
         // Arrange & Act
@@ -85,7 +83,7 @@ public class SM4Tests
         sm4.Mode.Should().Be(CipherMode.CBC);
     }
 
-    [Test]
+    [Fact]
     public void Constructor_ShouldSetDefaultPadding()
     {
         // Arrange & Act
@@ -99,7 +97,7 @@ public class SM4Tests
 
     #region 2. 静态工厂方法测试
 
-    [Test]
+    [Fact]
     public void Create_ShouldReturnNewInstance()
     {
         // Act
@@ -110,7 +108,7 @@ public class SM4Tests
         sm4.Should().BeOfType<SM4>();
     }
 
-    [Test]
+    [Fact]
     public void Create_MultipleCalls_ShouldReturnDifferentInstances()
     {
         // Act
@@ -125,7 +123,7 @@ public class SM4Tests
 
     #region 3. 密钥和 IV 生成测试
 
-    [Test]
+    [Fact]
     public void GenerateKey_ShouldCreateValidKey()
     {
         // Arrange
@@ -139,7 +137,7 @@ public class SM4Tests
         sm4.Key.Length.Should().Be(16);
     }
 
-    [Test]
+    [Fact]
     public void GenerateKey_MultipleCalls_ShouldCreateDifferentKeys()
     {
         // Arrange
@@ -155,7 +153,7 @@ public class SM4Tests
         key1.Should().NotEqual(key2);
     }
 
-    [Test]
+    [Fact]
     public void GenerateIV_ShouldCreateValidIV()
     {
         // Arrange
@@ -169,7 +167,7 @@ public class SM4Tests
         sm4.IV.Length.Should().Be(16);
     }
 
-    [Test]
+    [Fact]
     public void GenerateIV_MultipleCalls_ShouldCreateDifferentIVs()
     {
         // Arrange
@@ -189,7 +187,7 @@ public class SM4Tests
 
     #region 4. 密钥和 IV 属性测试
 
-    [Test]
+    [Fact]
     public void Key_SetValidKey_ShouldSucceed()
     {
         // Arrange
@@ -204,7 +202,7 @@ public class SM4Tests
         sm4.Key.Should().Equal(customKey);
     }
 
-    [Test]
+    [Fact]
     public void Key_SetNullKey_ShouldThrowArgumentNullException()
     {
         // Arrange
@@ -215,7 +213,7 @@ public class SM4Tests
         action.Should().Throw<ArgumentNullException>();
     }
 
-    [Test]
+    [Fact]
     public void Key_SetInvalidLengthKey_ShouldThrowCryptographicException()
     {
         // Arrange
@@ -227,7 +225,7 @@ public class SM4Tests
         action.Should().Throw<CryptographicException>();
     }
 
-    [Test]
+    [Fact]
     public void IV_SetValidIV_ShouldSucceed()
     {
         // Arrange
@@ -242,7 +240,7 @@ public class SM4Tests
         sm4.IV.Should().Equal(customIV);
     }
 
-    [Test]
+    [Fact]
     public void IV_SetNullIV_ShouldThrowArgumentNullException()
     {
         // Arrange
@@ -253,7 +251,7 @@ public class SM4Tests
         action.Should().Throw<ArgumentNullException>();
     }
 
-    [Test]
+    [Fact]
     public void IV_SetInvalidLengthIV_ShouldThrowCryptographicException()
     {
         // Arrange
@@ -269,12 +267,12 @@ public class SM4Tests
 
     #region 5. 加密模式测试
 
-    [Test]
-    [TestCase(CipherMode.ECB)]
-    [TestCase(CipherMode.CBC)]
-    [TestCase(CipherMode.CFB)]
-    [TestCase(CipherMode.OFB)]
-    [TestCase(CipherMode.CTS)]
+    [Theory]
+    [InlineData(CipherMode.ECB)]
+    [InlineData(CipherMode.CBC)]
+    [InlineData(CipherMode.CFB)]
+    [InlineData(CipherMode.OFB)]
+    [InlineData(CipherMode.CTS)]
     public void Mode_SetSupportedMode_ShouldSucceed(CipherMode mode)
     {
         // Arrange
@@ -287,7 +285,7 @@ public class SM4Tests
         sm4.Mode.Should().Be(mode);
     }
 
-    [Test]
+    [Fact]
     public void Mode_SetUnsupportedMode_ShouldThrowCryptographicException()
     {
         // Arrange
@@ -302,12 +300,12 @@ public class SM4Tests
 
     #region 6. 填充模式测试
 
-    [Test]
-    [TestCase(PaddingMode.None)]
-    [TestCase(PaddingMode.PKCS7)]
-    [TestCase(PaddingMode.Zeros)]
-    [TestCase(PaddingMode.ANSIX923)]
-    [TestCase(PaddingMode.ISO10126)]
+    [Theory]
+    [InlineData(PaddingMode.None)]
+    [InlineData(PaddingMode.PKCS7)]
+    [InlineData(PaddingMode.Zeros)]
+    [InlineData(PaddingMode.ANSIX923)]
+    [InlineData(PaddingMode.ISO10126)]
     public void Padding_SetSupportedPadding_ShouldSucceed(PaddingMode padding)
     {
         // Arrange
@@ -320,7 +318,7 @@ public class SM4Tests
         sm4.Padding.Should().Be(padding);
     }
 
-    [Test]
+    [Fact]
     public void Padding_SetUnsupportedPadding_ShouldThrowCryptographicException()
     {
         // Arrange
@@ -335,7 +333,7 @@ public class SM4Tests
 
     #region 7. 基本加密解密测试 (CBC)
 
-    [Test]
+    [Fact]
     public void EncryptDecrypt_CBC_WithValidData_ShouldSucceed()
     {
         // Arrange
@@ -368,7 +366,7 @@ public class SM4Tests
         decrypted.Should().Equal(plaintext);
     }
 
-    [Test]
+    [Fact]
     public void Encrypt_CBC_WithEmptyData_ShouldReturnPaddingOnly()
     {
         // Arrange
@@ -391,7 +389,7 @@ public class SM4Tests
         ciphertext.Length.Should().Be(16, "Should be one block with padding");
     }
 
-    [Test]
+    [Fact]
     public void EncryptDecrypt_CBC_WithLargeData_ShouldSucceed()
     {
         // Arrange
@@ -429,7 +427,7 @@ public class SM4Tests
 
     #region 8. ECB 模式测试
 
-    [Test]
+    [Fact]
     public void EncryptDecrypt_ECB_WithValidData_ShouldSucceed()
     {
         // Arrange
@@ -462,7 +460,7 @@ public class SM4Tests
         decrypted.Should().Equal(plaintext);
     }
 
-    [Test]
+    [Fact]
     public void ECB_SamePlaintext_ShouldProduceSameCiphertext()
     {
         // Arrange
@@ -498,7 +496,7 @@ public class SM4Tests
 
     #region 9. 不同填充模式测试
 
-    [Test]
+    [Fact]
     public void EncryptDecrypt_PKCS7Padding_ShouldSucceed()
     {
         // Arrange
@@ -510,7 +508,7 @@ public class SM4Tests
         decrypted.Should().Equal(plaintext);
     }
 
-    [Test]
+    [Fact]
     public void EncryptDecrypt_ZerosPadding_ShouldSucceed()
     {
         // Arrange
@@ -524,7 +522,7 @@ public class SM4Tests
         decrypted.Take(plaintext.Length).Should().Equal(plaintext);
     }
 
-    [Test]
+    [Fact]
     public void EncryptDecrypt_ANSIX923Padding_ShouldSucceed()
     {
         // Arrange
@@ -536,7 +534,7 @@ public class SM4Tests
         decrypted.Should().Equal(plaintext);
     }
 
-    [Test]
+    [Fact]
     public void EncryptDecrypt_ISO10126Padding_ShouldSucceed()
     {
         // Arrange
@@ -548,7 +546,7 @@ public class SM4Tests
         decrypted.Should().Equal(plaintext);
     }
 
-    [Test]
+    [Fact]
     public void Encrypt_NoPadding_WithNonBlockAlignedData_ShouldThrow()
     {
         // Arrange
@@ -572,7 +570,7 @@ public class SM4Tests
 
     #region 10. 密钥和 IV 验证测试
 
-    [Test]
+    [Fact]
     public void CreateEncryptor_WithNullKey_ShouldThrowArgumentNullException()
     {
         // Arrange
@@ -583,7 +581,7 @@ public class SM4Tests
         action.Should().Throw<ArgumentNullException>();
     }
 
-    [Test]
+    [Fact]
     public void CreateEncryptor_WithInvalidKeyLength_ShouldThrowArgumentException()
     {
         // Arrange
@@ -596,7 +594,7 @@ public class SM4Tests
             .WithMessage("*not a valid size*");
     }
 
-    [Test]
+    [Fact]
     public void CreateEncryptor_CBC_WithNullIV_ShouldThrowArgumentNullException()
     {
         // Arrange
@@ -607,7 +605,7 @@ public class SM4Tests
         action.Should().Throw<ArgumentNullException>();
     }
 
-    [Test]
+    [Fact]
     public void CreateEncryptor_ECB_WithNullIV_ShouldSucceed()
     {
         // Arrange
@@ -620,7 +618,7 @@ public class SM4Tests
         encryptor.Should().NotBeNull();
     }
 
-    [Test]
+    [Fact]
     public void CreateEncryptor_WithInvalidIVLength_ShouldThrowArgumentException()
     {
         // Arrange
@@ -637,7 +635,7 @@ public class SM4Tests
 
     #region 11. 密钥重用测试
 
-    [Test]
+    [Fact]
     public void EncryptDecrypt_ReuseKey_ShouldProduceDifferentCiphertexts()
     {
         // Arrange
@@ -657,7 +655,7 @@ public class SM4Tests
         ciphertext1.Should().NotEqual(ciphertext2, "Different IV should produce different ciphertext");
     }
 
-    [Test]
+    [Fact]
     public void EncryptDecrypt_WithSameKeyAndIV_ShouldBeReversible()
     {
         // Arrange
@@ -696,7 +694,7 @@ public class SM4Tests
 
     #region 12. 标准测试向量验证
 
-    [Test]
+    [Fact]
     public void Encrypt_StandardTestVector_ShouldMatchExpected()
     {
         // Arrange - GB/T 32907-2016 标准测试向量
@@ -723,7 +721,7 @@ public class SM4Tests
         ciphertext.Should().Equal(expectedCiphertext);
     }
 
-    [Test]
+    [Fact]
     public void Decrypt_StandardTestVector_ShouldMatchExpected()
     {
         // Arrange - GB/T 32907-2016 标准测试向量
@@ -754,7 +752,7 @@ public class SM4Tests
 
     #region 13. Dispose 和资源管理测试
 
-    [Test]
+    [Fact]
     public void Dispose_ShouldClearSensitiveData()
     {
         // Arrange
@@ -768,7 +766,7 @@ public class SM4Tests
         originalKey.Should().NotEqual(sm4.Key);
     }
 
-    [Test]
+    [Fact]
     public void Dispose_MultipleCalls_ShouldNotThrow()
     {
         // Arrange
@@ -784,7 +782,7 @@ public class SM4Tests
         action.Should().NotThrow();
     }
 
-    [Test]
+    [Fact]
     public void UsingPattern_ShouldAutomaticallyDispose()
     {
         byte[]? ciphertext = null;
@@ -808,14 +806,14 @@ public class SM4Tests
 
     #region 14. 边界和异常情况测试
 
-    [Test]
-    [TestCase(1)]
-    [TestCase(15)]
-    [TestCase(16)]
-    [TestCase(17)]
-    [TestCase(31)]
-    [TestCase(32)]
-    [TestCase(100)]
+    [Theory]
+    [InlineData(1)]
+    [InlineData(15)]
+    [InlineData(16)]
+    [InlineData(17)]
+    [InlineData(31)]
+    [InlineData(32)]
+    [InlineData(100)]
     public void EncryptDecrypt_VariousDataSizes_ShouldSucceed(int dataSize)
     {
         // Arrange
@@ -828,7 +826,7 @@ public class SM4Tests
         decrypted.Should().Equal(plaintext);
     }
 
-    [Test]
+    [Fact]
     public void EncryptDecrypt_BinaryData_ShouldSucceed()
     {
         // Arrange
@@ -844,7 +842,7 @@ public class SM4Tests
         decrypted.Should().Equal(plaintext);
     }
 
-    [Test]
+    [Fact]
     public void EncryptDecrypt_AllZeros_ShouldSucceed()
     {
         // Arrange
@@ -856,7 +854,7 @@ public class SM4Tests
         decrypted.Should().Equal(plaintext);
     }
 
-    [Test]
+    [Fact]
     public void EncryptDecrypt_AllOnes_ShouldSucceed()
     {
         // Arrange
@@ -872,8 +870,8 @@ public class SM4Tests
 
     #region 15. 并发测试
 
-    [Test]
-    public void ConcurrentEncryption_WithDifferentInstances_ShouldBeSafe()
+    [Fact]
+    public async Task ConcurrentEncryption_WithDifferentInstances_ShouldBeSafe()
     {
         // Arrange
         var plaintext = Encoding.UTF8.GetBytes("concurrent test");
@@ -899,7 +897,7 @@ public class SM4Tests
             }));
         }
 
-        var results = Task.WhenAll(tasks).Result;
+        var results = await Task.WhenAll(tasks);
 
         // Assert
         results.Should().AllSatisfy(ciphertext =>

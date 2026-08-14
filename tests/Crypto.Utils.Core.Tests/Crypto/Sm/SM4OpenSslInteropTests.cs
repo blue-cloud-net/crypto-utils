@@ -1,7 +1,6 @@
 using Crypto.Utils.Crypto.Sm;
-using Crypto.Utils.TestUtils;
+using Crypto.Utils.TestSupport;
 using FluentAssertions;
-using NUnit.Framework;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -11,13 +10,18 @@ namespace Crypto.Utils.Core.Tests.Crypto.Sm;
 /// SM4 与 OpenSSL 互操作性测试
 /// 需要系统安装 OpenSSL 且支持 SM4
 /// </summary>
-[TestFixture]
-[Category("Integration")]
-[Category("OpenSSL")]
-public class SM4OpenSslInteropTests
+[Trait("Category", "Integration")]
+[Trait("Category", "Tongsuo")]
+public class SM4OpenSslInteropTests : IDisposable
 {
-    private OpenSslWrapper _openssl = null!;
     private string _tempDir = null!;
+
+    public SM4OpenSslInteropTests()
+    {
+        CliToolGuard.EnsureToolAvailable(TongsuoCli.BinaryPath);
+        _tempDir = Path.Combine(Path.GetTempPath(), $"sm4_test_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(_tempDir);
+    }
 
     /// <summary>
     /// 使用 SM4 加密数据的辅助方法
@@ -45,28 +49,7 @@ public class SM4OpenSslInteropTests
         return result.ToArray();
     }
 
-    [OneTimeSetUp]
-    public async Task OneTimeSetUp()
-    {
-        _openssl = new OpenSslWrapper();
-
-        // 检查 OpenSSL 是否支持 SM4
-        var isSupported = await _openssl.IsSm4SupportedAsync();
-        if (!isSupported)
-        {
-            Assert.Ignore("OpenSSL does not support SM4. Skipping tests.");
-        }
-    }
-
-    [SetUp]
-    public void SetUp()
-    {
-        _tempDir = Path.Combine(Path.GetTempPath(), $"sm4_test_{Guid.NewGuid():N}");
-        Directory.CreateDirectory(_tempDir);
-    }
-
-    [TearDown]
-    public void TearDown()
+    public void Dispose()
     {
         if (Directory.Exists(_tempDir))
         {
@@ -83,11 +66,11 @@ public class SM4OpenSslInteropTests
 
     #region 标准测试向量测试
 
-    [Test]
-    [TestCase("0123456789abcdeffedcba9876543210", "0123456789abcdeffedcba9876543210",
-        "681edf34d206965e86b3e94f536e4246", Description = "标准测试向量 - GB/T 32907-2016")]
-    [TestCase("0123456789abcdeffedcba9876543210", "fedcba98765432100123456789abcdef",
-        "f0a2b07e64dd2c2590f93e4edd90fbb4", Description = "另一个测试向量")]
+    [Theory]
+    [InlineData("0123456789abcdeffedcba9876543210", "0123456789abcdeffedcba9876543210",
+        "681edf34d206965e86b3e94f536e4246")]
+    [InlineData("0123456789abcdeffedcba9876543210", "fedcba98765432100123456789abcdef",
+        "f0a2b07e64dd2c2590f93e4edd90fbb4")]
     public async Task EncryptDecrypt_WithStandardTestVectors_MatchesOpenSSL(
         string keyHex, string plaintextHex, string expectedCiphertextHex)
     {
@@ -124,7 +107,7 @@ public class SM4OpenSslInteropTests
             "SM4 encryption should match standard test vector");
 
         // Act - OpenSSL 加密
-        var opensslResult = await _openssl.ExecuteCommandAsync(
+        var opensslResult = await TongsuoCli.ExecuteCommandAsync(
             $"enc -sm4-ecb -nopad -K {keyHex} -in \"{plaintextPath}\" -out \"{ciphertextPath}\"");
 
         opensslResult.ExitCode.Should().Be(0, "OpenSSL encryption should succeed");
@@ -139,7 +122,7 @@ public class SM4OpenSslInteropTests
 
     #region ECB 模式测试
 
-    [Test]
+    [Fact]
     public async Task EncryptECB_SimpleText_MatchesOpenSSL()
     {
         // Arrange
@@ -172,7 +155,7 @@ public class SM4OpenSslInteropTests
 
         // OpenSSL 解密
         var keyHex = Convert.ToHexString(key);
-        var decryptResult = await _openssl.ExecuteCommandAsync(
+        var decryptResult = await TongsuoCli.ExecuteCommandAsync(
             $"enc -d -sm4-ecb -nopad -K {keyHex} -in \"{ciphertextPath}\" -out \"{decryptedPath}\"");
 
         decryptResult.ExitCode.Should().Be(0, "OpenSSL decryption should succeed");
@@ -183,7 +166,7 @@ public class SM4OpenSslInteropTests
             "OpenSSL should decrypt C# encrypted data correctly");
     }
 
-    [Test]
+    [Fact]
     public async Task DecryptECB_OpenSSLEncrypted_Success()
     {
         // Arrange
@@ -204,7 +187,7 @@ public class SM4OpenSslInteropTests
 
         // Act - OpenSSL 加密
         var keyHex = Convert.ToHexString(key);
-        var encryptResult = await _openssl.ExecuteCommandAsync(
+        var encryptResult = await TongsuoCli.ExecuteCommandAsync(
             $"enc -sm4-ecb -nopad -K {keyHex} -in \"{plaintextPath}\" -out \"{ciphertextPath}\"");
 
         encryptResult.ExitCode.Should().Be(0, "OpenSSL encryption should succeed");
@@ -227,7 +210,7 @@ public class SM4OpenSslInteropTests
 
     #region CBC 模式测试
 
-    [Test]
+    [Fact]
     public async Task EncryptCBC_SimpleText_MatchesOpenSSL()
     {
         // Arrange
@@ -262,7 +245,7 @@ public class SM4OpenSslInteropTests
         // OpenSSL 解密
         var keyHex = Convert.ToHexString(key);
         var ivHex = Convert.ToHexString(iv);
-        var decryptResult = await _openssl.ExecuteCommandAsync(
+        var decryptResult = await TongsuoCli.ExecuteCommandAsync(
             $"enc -d -sm4-cbc -nopad -K {keyHex} -iv {ivHex} -in \"{ciphertextPath}\" -out \"{decryptedPath}\"");
 
         decryptResult.ExitCode.Should().Be(0, "OpenSSL decryption should succeed");
@@ -273,7 +256,7 @@ public class SM4OpenSslInteropTests
             "OpenSSL should decrypt C# encrypted data correctly");
     }
 
-    [Test]
+    [Fact]
     public async Task DecryptCBC_OpenSSLEncrypted_Success()
     {
         // Arrange
@@ -297,7 +280,7 @@ public class SM4OpenSslInteropTests
         // Act - OpenSSL 加密
         var keyHex = Convert.ToHexString(key);
         var ivHex = Convert.ToHexString(iv);
-        var encryptResult = await _openssl.ExecuteCommandAsync(
+        var encryptResult = await TongsuoCli.ExecuteCommandAsync(
             $"enc -sm4-cbc -nopad -K {keyHex} -iv {ivHex} -in \"{plaintextPath}\" -out \"{ciphertextPath}\"");
 
         encryptResult.ExitCode.Should().Be(0, "OpenSSL encryption should succeed");
@@ -321,7 +304,7 @@ public class SM4OpenSslInteropTests
 
     #region PKCS7 填充测试
 
-    [Test]
+    [Fact]
     public async Task EncryptECB_WithPKCS7Padding_MatchesOpenSSL()
     {
         // Arrange
@@ -347,7 +330,7 @@ public class SM4OpenSslInteropTests
 
         // OpenSSL 解密
         var keyHex = Convert.ToHexString(key);
-        var decryptResult = await _openssl.ExecuteCommandAsync(
+        var decryptResult = await TongsuoCli.ExecuteCommandAsync(
             $"enc -d -sm4-ecb -K {keyHex} -in \"{ciphertextPath}\" -out \"{decryptedPath}\"");
 
         decryptResult.ExitCode.Should().Be(0, "OpenSSL decryption should succeed");
@@ -358,7 +341,7 @@ public class SM4OpenSslInteropTests
             "OpenSSL should decrypt C# PKCS7-padded data correctly");
     }
 
-    [Test]
+    [Fact]
     public async Task DecryptCBC_WithPKCS7Padding_OpenSSLEncrypted_Success()
     {
         // Arrange
@@ -377,7 +360,7 @@ public class SM4OpenSslInteropTests
         // Act - OpenSSL 加密
         var keyHex = Convert.ToHexString(key);
         var ivHex = Convert.ToHexString(iv);
-        var encryptResult = await _openssl.ExecuteCommandAsync(
+        var encryptResult = await TongsuoCli.ExecuteCommandAsync(
             $"enc -sm4-cbc -K {keyHex} -iv {ivHex} -in \"{plaintextPath}\" -out \"{ciphertextPath}\"");
 
         encryptResult.ExitCode.Should().Be(0, "OpenSSL encryption should succeed");
@@ -401,7 +384,7 @@ public class SM4OpenSslInteropTests
 
     #region 大数据测试
 
-    [Test]
+    [Fact]
     public async Task EncryptDecrypt_LargeData_MatchesOpenSSL()
     {
         // Arrange
@@ -417,7 +400,7 @@ public class SM4OpenSslInteropTests
 
         var plaintextPath = Path.Combine(_tempDir, "plaintext.bin");
         var ciphertextPath = Path.Combine(_tempDir, "ciphertext_cs.bin");
-        var opensslCiphertextPath = Path.Combine(_tempDir, "ciphertext_openssl.bin");
+        var opensslCiphertextPath = Path.Combine(_tempDir, "ciphertextTongsuoCli.bin");
 
         await File.WriteAllBytesAsync(plaintextPath, plaintext);
 
@@ -434,7 +417,7 @@ public class SM4OpenSslInteropTests
         // OpenSSL 加密
         var keyHex = Convert.ToHexString(key);
         var ivHex = Convert.ToHexString(iv);
-        var opensslResult = await _openssl.ExecuteCommandAsync(
+        var opensslResult = await TongsuoCli.ExecuteCommandAsync(
             $"enc -sm4-cbc -K {keyHex} -iv {ivHex} -in \"{plaintextPath}\" -out \"{opensslCiphertextPath}\"");
 
         opensslResult.ExitCode.Should().Be(0, "OpenSSL encryption should succeed");
@@ -449,7 +432,7 @@ public class SM4OpenSslInteropTests
 
     #region 边界条件测试
 
-    [Test]
+    [Fact]
     public async Task Encrypt_EmptyData_MatchesOpenSSL()
     {
         // Arrange
@@ -477,7 +460,7 @@ public class SM4OpenSslInteropTests
         // OpenSSL 加密
         var keyHex = Convert.ToHexString(key);
         var ivHex = Convert.ToHexString(iv);
-        var opensslResult = await _openssl.ExecuteCommandAsync(
+        var opensslResult = await TongsuoCli.ExecuteCommandAsync(
             $"enc -sm4-cbc -K {keyHex} -iv {ivHex} -in \"{plaintextPath}\" -out \"{ciphertextPath}\"");
 
         opensslResult.ExitCode.Should().Be(0, "OpenSSL encryption should succeed");
@@ -490,7 +473,7 @@ public class SM4OpenSslInteropTests
             "C# and OpenSSL should produce identical ciphertext for empty data");
     }
 
-    [Test]
+    [Fact]
     public async Task Encrypt_ExactBlockSize_MatchesOpenSSL()
     {
         // Arrange
@@ -519,7 +502,7 @@ public class SM4OpenSslInteropTests
         // OpenSSL 加密
         var keyHex = Convert.ToHexString(key);
         var ivHex = Convert.ToHexString(iv);
-        var opensslResult = await _openssl.ExecuteCommandAsync(
+        var opensslResult = await TongsuoCli.ExecuteCommandAsync(
             $"enc -sm4-cbc -K {keyHex} -iv {ivHex} -in \"{plaintextPath}\" -out \"{ciphertextPath}\"");
 
         opensslResult.ExitCode.Should().Be(0, "OpenSSL encryption should succeed");

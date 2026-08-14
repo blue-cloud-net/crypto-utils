@@ -1,7 +1,6 @@
 using Crypto.Utils.Crypto.Sm;
-using Crypto.Utils.TestUtils;
+using Crypto.Utils.TestSupport;
 using FluentAssertions;
-using NUnit.Framework;
 using System.Text;
 
 namespace Crypto.Utils.Core.Tests.Crypto.Sm;
@@ -10,36 +9,20 @@ namespace Crypto.Utils.Core.Tests.Crypto.Sm;
 /// SM3 与 OpenSSL 互操作性测试
 /// 需要系统安装 OpenSSL 且支持 SM3
 /// </summary>
-[TestFixture]
-[Category("Integration")]
-[Category("OpenSSL")]
-public class SM3OpenSslInteropTests
+[Trait("Category", "Integration")]
+[Trait("Category", "Tongsuo")]
+public class SM3OpenSslInteropTests : IDisposable
 {
-    private OpenSslWrapper _openssl = null!;
     private string _tempDir = null!;
 
-    [OneTimeSetUp]
-    public async Task OneTimeSetUp()
+    public SM3OpenSslInteropTests()
     {
-        _openssl = new OpenSslWrapper();
-
-        // 检查 OpenSSL 版本
-        var versionResult = await _openssl.GetVersionAsync();
-        if (!versionResult.IsSuccess)
-        {
-            Assert.Ignore("OpenSSL is not available. Skipping tests.");
-        }
-    }
-
-    [SetUp]
-    public void SetUp()
-    {
+        CliToolGuard.EnsureToolAvailable(TongsuoCli.BinaryPath);
         _tempDir = Path.Combine(Path.GetTempPath(), $"sm3_test_{Guid.NewGuid():N}");
         Directory.CreateDirectory(_tempDir);
     }
 
-    [TearDown]
-    public void TearDown()
+    public void Dispose()
     {
         if (Directory.Exists(_tempDir))
         {
@@ -56,9 +39,9 @@ public class SM3OpenSslInteropTests
 
     #region 标准测试向量验证
 
-    [Test]
-    [TestCase("", "1AB21D8355CFA17F8E61194831E81A8F22BEC8C728FEFB747ED035EB5082AA2B")]
-    [TestCase("abc", "66C7F0F462EEEDD9D1F2D46BDC10E4E24167C4875CF2F7A2297DA02B8F4BA8E0")]
+    [Theory]
+    [InlineData("", "1AB21D8355CFA17F8E61194831E81A8F22BEC8C728FEFB747ED035EB5082AA2B")]
+    [InlineData("abc", "66C7F0F462EEEDD9D1F2D46BDC10E4E24167C4875CF2F7A2297DA02B8F4BA8E0")]
     public async Task StandardTestVector_ShouldMatchOpenSSL(string input, string expectedHex)
     {
         // Arrange
@@ -70,14 +53,10 @@ public class SM3OpenSslInteropTests
         var sm3Hash = SM3.HashData(data);
 
         // Act - 使用 OpenSSL 计算哈希
-        var opensslResult = await _openssl.ExecuteCommandAsync($"dgst -sm3 -hex \"{dataPath}\"");
+        var opensslResult = await TongsuoCli.ExecuteCommandAsync($"dgst -sm3 -hex \"{dataPath}\"");
 
         // Assert
-        if (!opensslResult.IsSuccess)
-        {
-            Assert.Ignore($"OpenSSL does not support SM3. Error: {opensslResult.StandardError}");
-            return;
-        }
+        opensslResult.IsSuccess.Should().BeTrue($"tongsuo should support SM3. Error: {opensslResult.FullOutput}");
 
         var expectedHash = Convert.FromHexString(expectedHex);
         sm3Hash.Should().Equal(expectedHash, "SM3 hash should match standard test vector");
@@ -92,7 +71,7 @@ public class SM3OpenSslInteropTests
 
     #region 哈希一致性测试
 
-    [Test]
+    [Fact]
     public async Task HashData_ShouldMatchOpenSSL()
     {
         // Arrange
@@ -104,13 +83,9 @@ public class SM3OpenSslInteropTests
         var sm3Hash = SM3.HashData(testData);
 
         // Act - 使用 OpenSSL 计算哈希
-        var opensslResult = await _openssl.ExecuteCommandAsync($"dgst -sm3 -binary -out \"{_tempDir}/hash.bin\" \"{dataPath}\"");
+        var opensslResult = await TongsuoCli.ExecuteCommandAsync($"dgst -sm3 -binary -out \"{_tempDir}/hash.bin\" \"{dataPath}\"");
 
-        if (!opensslResult.IsSuccess)
-        {
-            Assert.Ignore($"OpenSSL does not support SM3. Error: {opensslResult.StandardError}");
-            return;
-        }
+        opensslResult.IsSuccess.Should().BeTrue($"tongsuo should support SM3. Error: {opensslResult.FullOutput}");
 
         var opensslHash = await File.ReadAllBytesAsync(Path.Combine(_tempDir, "hash.bin"));
 
@@ -118,7 +93,7 @@ public class SM3OpenSslInteropTests
         sm3Hash.Should().Equal(opensslHash, "SM3 hash should match OpenSSL hash");
     }
 
-    [Test]
+    [Fact]
     public async Task HashData_LargeData_ShouldMatchOpenSSL()
     {
         // Arrange
@@ -131,13 +106,9 @@ public class SM3OpenSslInteropTests
         var sm3Hash = SM3.HashData(testData);
 
         // Act - 使用 OpenSSL 计算哈希
-        var opensslResult = await _openssl.ExecuteCommandAsync($"dgst -sm3 -binary -out \"{_tempDir}/hash.bin\" \"{dataPath}\"");
+        var opensslResult = await TongsuoCli.ExecuteCommandAsync($"dgst -sm3 -binary -out \"{_tempDir}/hash.bin\" \"{dataPath}\"");
 
-        if (!opensslResult.IsSuccess)
-        {
-            Assert.Ignore($"OpenSSL does not support SM3. Error: {opensslResult.StandardError}");
-            return;
-        }
+        opensslResult.IsSuccess.Should().BeTrue($"tongsuo should support SM3. Error: {opensslResult.FullOutput}");
 
         var opensslHash = await File.ReadAllBytesAsync(Path.Combine(_tempDir, "hash.bin"));
 
@@ -145,7 +116,7 @@ public class SM3OpenSslInteropTests
         sm3Hash.Should().Equal(opensslHash, "SM3 hash should match OpenSSL hash for large data");
     }
 
-    [Test]
+    [Fact]
     public async Task HashData_EmptyData_ShouldMatchOpenSSL()
     {
         // Arrange
@@ -157,13 +128,9 @@ public class SM3OpenSslInteropTests
         var sm3Hash = SM3.HashData(testData);
 
         // Act - 使用 OpenSSL 计算哈希
-        var opensslResult = await _openssl.ExecuteCommandAsync($"dgst -sm3 -binary -out \"{_tempDir}/hash.bin\" \"{dataPath}\"");
+        var opensslResult = await TongsuoCli.ExecuteCommandAsync($"dgst -sm3 -binary -out \"{_tempDir}/hash.bin\" \"{dataPath}\"");
 
-        if (!opensslResult.IsSuccess)
-        {
-            Assert.Ignore($"OpenSSL does not support SM3. Error: {opensslResult.StandardError}");
-            return;
-        }
+        opensslResult.IsSuccess.Should().BeTrue($"tongsuo should support SM3. Error: {opensslResult.FullOutput}");
 
         var opensslHash = await File.ReadAllBytesAsync(Path.Combine(_tempDir, "hash.bin"));
 
@@ -175,7 +142,7 @@ public class SM3OpenSslInteropTests
 
     #region 流哈希测试
 
-    [Test]
+    [Fact]
     public async Task HashStream_ShouldMatchOpenSSL()
     {
         // Arrange
@@ -191,13 +158,9 @@ public class SM3OpenSslInteropTests
         }
 
         // Act - 使用 OpenSSL 计算哈希
-        var opensslResult = await _openssl.ExecuteCommandAsync($"dgst -sm3 -binary -out \"{_tempDir}/hash.bin\" \"{dataPath}\"");
+        var opensslResult = await TongsuoCli.ExecuteCommandAsync($"dgst -sm3 -binary -out \"{_tempDir}/hash.bin\" \"{dataPath}\"");
 
-        if (!opensslResult.IsSuccess)
-        {
-            Assert.Ignore($"OpenSSL does not support SM3. Error: {opensslResult.StandardError}");
-            return;
-        }
+        opensslResult.IsSuccess.Should().BeTrue($"tongsuo should support SM3. Error: {opensslResult.FullOutput}");
 
         var opensslHash = await File.ReadAllBytesAsync(Path.Combine(_tempDir, "hash.bin"));
 
@@ -209,7 +172,7 @@ public class SM3OpenSslInteropTests
 
     #region 增量哈希测试
 
-    [Test]
+    [Fact]
     public async Task IncrementalHash_ShouldMatchOpenSSL()
     {
         // Arrange
@@ -234,13 +197,9 @@ public class SM3OpenSslInteropTests
         }
 
         // Act - 使用 OpenSSL 计算哈希
-        var opensslResult = await _openssl.ExecuteCommandAsync($"dgst -sm3 -binary -out \"{_tempDir}/hash.bin\" \"{dataPath}\"");
+        var opensslResult = await TongsuoCli.ExecuteCommandAsync($"dgst -sm3 -binary -out \"{_tempDir}/hash.bin\" \"{dataPath}\"");
 
-        if (!opensslResult.IsSuccess)
-        {
-            Assert.Ignore($"OpenSSL does not support SM3. Error: {opensslResult.StandardError}");
-            return;
-        }
+        opensslResult.IsSuccess.Should().BeTrue($"tongsuo should support SM3. Error: {opensslResult.FullOutput}");
 
         var opensslHash = await File.ReadAllBytesAsync(Path.Combine(_tempDir, "hash.bin"));
 
@@ -252,11 +211,11 @@ public class SM3OpenSslInteropTests
 
     #region 不同数据类型测试
 
-    [Test]
-    [TestCase("Hello World")]
-    [TestCase("中文测试")]
-    [TestCase("Special chars: !@#$%^&*()")]
-    [TestCase("Numbers: 0123456789")]
+    [Theory]
+    [InlineData("Hello World")]
+    [InlineData("中文测试")]
+    [InlineData("Special chars: !@#$%^&*()")]
+    [InlineData("Numbers: 0123456789")]
     public async Task HashData_VariousStrings_ShouldMatchOpenSSL(string input)
     {
         // Arrange
@@ -268,13 +227,9 @@ public class SM3OpenSslInteropTests
         var sm3Hash = SM3.HashData(testData);
 
         // Act - 使用 OpenSSL 计算哈希
-        var opensslResult = await _openssl.ExecuteCommandAsync($"dgst -sm3 -binary -out \"{_tempDir}/hash.bin\" \"{dataPath}\"");
+        var opensslResult = await TongsuoCli.ExecuteCommandAsync($"dgst -sm3 -binary -out \"{_tempDir}/hash.bin\" \"{dataPath}\"");
 
-        if (!opensslResult.IsSuccess)
-        {
-            Assert.Ignore($"OpenSSL does not support SM3. Error: {opensslResult.StandardError}");
-            return;
-        }
+        opensslResult.IsSuccess.Should().BeTrue($"tongsuo should support SM3. Error: {opensslResult.FullOutput}");
 
         var opensslHash = await File.ReadAllBytesAsync(Path.Combine(_tempDir, "hash.bin"));
 
@@ -282,7 +237,7 @@ public class SM3OpenSslInteropTests
         sm3Hash.Should().Equal(opensslHash, $"SM3 hash should match OpenSSL hash for input: {input}");
     }
 
-    [Test]
+    [Fact]
     public async Task HashData_BinaryData_ShouldMatchOpenSSL()
     {
         // Arrange
@@ -298,13 +253,9 @@ public class SM3OpenSslInteropTests
         var sm3Hash = SM3.HashData(testData);
 
         // Act - 使用 OpenSSL 计算哈希
-        var opensslResult = await _openssl.ExecuteCommandAsync($"dgst -sm3 -binary -out \"{_tempDir}/hash.bin\" \"{dataPath}\"");
+        var opensslResult = await TongsuoCli.ExecuteCommandAsync($"dgst -sm3 -binary -out \"{_tempDir}/hash.bin\" \"{dataPath}\"");
 
-        if (!opensslResult.IsSuccess)
-        {
-            Assert.Ignore($"OpenSSL does not support SM3. Error: {opensslResult.StandardError}");
-            return;
-        }
+        opensslResult.IsSuccess.Should().BeTrue($"tongsuo should support SM3. Error: {opensslResult.FullOutput}");
 
         var opensslHash = await File.ReadAllBytesAsync(Path.Combine(_tempDir, "hash.bin"));
 
@@ -316,7 +267,7 @@ public class SM3OpenSslInteropTests
 
     #region 性能和稳定性测试
 
-    [Test]
+    [Fact]
     public async Task HashData_MultipleRuns_ShouldBeConsistent()
     {
         // Arrange
@@ -332,13 +283,9 @@ public class SM3OpenSslInteropTests
         }
 
         // Act - 使用 OpenSSL 计算哈希
-        var opensslResult = await _openssl.ExecuteCommandAsync($"dgst -sm3 -binary -out \"{_tempDir}/hash.bin\" \"{dataPath}\"");
+        var opensslResult = await TongsuoCli.ExecuteCommandAsync($"dgst -sm3 -binary -out \"{_tempDir}/hash.bin\" \"{dataPath}\"");
 
-        if (!opensslResult.IsSuccess)
-        {
-            Assert.Ignore($"OpenSSL does not support SM3. Error: {opensslResult.StandardError}");
-            return;
-        }
+        opensslResult.IsSuccess.Should().BeTrue($"tongsuo should support SM3. Error: {opensslResult.FullOutput}");
 
         var opensslHash = await File.ReadAllBytesAsync(Path.Combine(_tempDir, "hash.bin"));
 

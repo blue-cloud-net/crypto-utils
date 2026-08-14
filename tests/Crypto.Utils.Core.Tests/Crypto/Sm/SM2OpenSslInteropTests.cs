@@ -1,9 +1,6 @@
-using CliWrap;
-using CliWrap.Buffered;
 using Crypto.Utils.Crypto.Sm;
-using Crypto.Utils.TestUtils;
+using Crypto.Utils.TestSupport;
 using FluentAssertions;
-using NUnit.Framework;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -13,36 +10,20 @@ namespace Crypto.Utils.Core.Tests.Crypto.Sm;
 /// SM2 与 OpenSSL 互操作性测试
 /// 需要系统安装 OpenSSL 且支持 SM2
 /// </summary>
-[TestFixture]
-[Category("Integration")]
-[Category("OpenSSL")]
-public class SM2OpenSslInteropTests
+[Trait("Category", "Integration")]
+[Trait("Category", "Tongsuo")]
+public class SM2OpenSslInteropTests : IDisposable
 {
-    private OpenSslWrapper _openssl = null!;
     private string _tempDir = null!;
 
-    [OneTimeSetUp]
-    public async Task OneTimeSetUp()
+    public SM2OpenSslInteropTests()
     {
-        _openssl = new OpenSslWrapper();
-
-        // 检查 OpenSSL 是否支持 SM2
-        var isSupported = await _openssl.IsSm2SupportedAsync();
-        if (!isSupported)
-        {
-            Assert.Ignore("OpenSSL does not support SM2. Skipping tests.");
-        }
-    }
-
-    [SetUp]
-    public void SetUp()
-    {
+        CliToolGuard.EnsureToolAvailable(TongsuoCli.BinaryPath);
         _tempDir = Path.Combine(Path.GetTempPath(), $"sm2_test_{Guid.NewGuid():N}");
         Directory.CreateDirectory(_tempDir);
     }
 
-    [TearDown]
-    public void TearDown()
+    public void Dispose()
     {
         if (Directory.Exists(_tempDir))
         {
@@ -59,7 +40,7 @@ public class SM2OpenSslInteropTests
 
     #region OpenSSL 公钥识别测试
 
-    [Test]
+    [Fact]
     public async Task InteroperabilityWithOpenSSL_PublicKey_ShouldBeRecognized()
     {
         // Arrange
@@ -71,14 +52,14 @@ public class SM2OpenSslInteropTests
         await File.WriteAllBytesAsync(publicKeyPath, publicKeyDer);
 
         // Act - 使用 OpenSSL 查看密钥信息
-        var result = await _openssl.ViewKeyInfoAsync(publicKeyPath, isPublicKey: true);
+        var result = await TongsuoCli.ViewKeyInfoAsync(publicKeyPath, isPublicKey: true);
 
         // Assert
         result.IsSuccess.Should().BeTrue($"OpenSSL should recognize the public key. Error: {result.StandardError}");
         result.StandardOutput.Should().Contain("SM2", "Key should be identified as SM2");
     }
 
-    [Test]
+    [Fact]
     public async Task InteroperabilityWithOpenSSL_PrivateKey_ShouldBeRecognized()
     {
         // Arrange
@@ -90,7 +71,7 @@ public class SM2OpenSslInteropTests
         await File.WriteAllBytesAsync(privateKeyPath, privateKeyDer);
 
         // Act - 使用 OpenSSL 查看密钥信息
-        var result = await _openssl.ViewKeyInfoAsync(privateKeyPath, isPublicKey: false);
+        var result = await TongsuoCli.ViewKeyInfoAsync(privateKeyPath, isPublicKey: false);
 
         // Assert
         result.IsSuccess.Should().BeTrue($"OpenSSL should recognize the private key. Error: {result.StandardError}");
@@ -101,7 +82,7 @@ public class SM2OpenSslInteropTests
 
     #region 从 OpenSSL 导入密钥测试
 
-    [Test]
+    [Fact]
     public async Task ImportFromOpenSSL_PublicKey_ShouldSucceed()
     {
         // Arrange - 使用 OpenSSL 生成密钥对
@@ -109,10 +90,10 @@ public class SM2OpenSslInteropTests
         var publicKeyPem = Path.Combine(_tempDir, "public_key.pem");
         var publicKeyDer = Path.Combine(_tempDir, "public_key.der");
 
-        var genResult = await _openssl.GenerateSm2KeyPairAsync(privateKeyPem, publicKeyPem);
+        var genResult = await TongsuoCli.GenerateSm2KeyPairAsync(privateKeyPem, publicKeyPem);
         genResult.IsSuccess.Should().BeTrue($"Failed to generate SM2 key pair. Error: {genResult.StandardError}");
 
-        var convertResult = await _openssl.ConvertPublicKeyPemToDerAsync(publicKeyPem, publicKeyDer);
+        var convertResult = await TongsuoCli.ConvertPublicKeyPemToDerAsync(publicKeyPem, publicKeyDer);
         convertResult.IsSuccess.Should().BeTrue($"Failed to convert public key to DER. Error: {convertResult.StandardError}");
 
         var publicKeyBytes = await File.ReadAllBytesAsync(publicKeyDer);
@@ -129,17 +110,17 @@ public class SM2OpenSslInteropTests
         exportedKey.Should().Equal(publicKeyBytes);
     }
 
-    [Test]
+    [Fact]
     public async Task ImportFromOpenSSL_PrivateKey_ShouldSucceed()
     {
         // Arrange - 使用 OpenSSL 生成密钥对
         var privateKeyPem = Path.Combine(_tempDir, "private_key.pem");
         var privateKeyDer = Path.Combine(_tempDir, "private_key.der");
 
-        var genResult = await _openssl.GenerateSm2KeyPairAsync(privateKeyPem);
+        var genResult = await TongsuoCli.GenerateSm2KeyPairAsync(privateKeyPem);
         genResult.IsSuccess.Should().BeTrue($"Failed to generate SM2 key pair. Error: {genResult.StandardError}");
 
-        var convertResult = await _openssl.ConvertPrivateKeyPemToDerAsync(privateKeyPem, privateKeyDer);
+        var convertResult = await TongsuoCli.ConvertPrivateKeyPemToDerAsync(privateKeyPem, privateKeyDer);
         convertResult.IsSuccess.Should().BeTrue($"Failed to convert private key to DER. Error: {convertResult.StandardError}");
 
         var privateKeyBytes = await File.ReadAllBytesAsync(privateKeyDer);
@@ -161,7 +142,7 @@ public class SM2OpenSslInteropTests
 
     #region 签名互操作性测试
 
-    [Test]
+    [Fact]
     public async Task InteroperabilityWithOpenSSL_SignWithSM2_VerifyWithOpenSSL()
     {
         // Arrange - 生成密钥对
@@ -187,13 +168,13 @@ public class SM2OpenSslInteropTests
         await File.WriteAllBytesAsync(signaturePath, signature);
 
         // 使用 OpenSSL 验证签名
-        var verifyResult = await _openssl.VerifyWithSm2Async(dataPath, signaturePath, publicKeyPath);
+        var verifyResult = await TongsuoCli.VerifyWithSm2Async(dataPath, signaturePath, publicKeyPath);
 
         // Assert
         verifyResult.IsSuccess.Should().BeTrue($"OpenSSL verification failed. Output: {verifyResult.FullOutput}");
     }
 
-    [Test]
+    [Fact]
     public async Task InteroperabilityWithOpenSSL_SignWithOpenSSL_VerifyWithSM2()
     {
         // Arrange - 使用 OpenSSL 生成密钥对
@@ -202,11 +183,11 @@ public class SM2OpenSslInteropTests
         var privateKeyDer = Path.Combine(_tempDir, "private_key.der");
         var publicKeyDer = Path.Combine(_tempDir, "public_key.der");
 
-        var genResult = await _openssl.GenerateSm2KeyPairAsync(privateKeyPem, publicKeyPem);
+        var genResult = await TongsuoCli.GenerateSm2KeyPairAsync(privateKeyPem, publicKeyPem);
         genResult.IsSuccess.Should().BeTrue($"Failed to generate keys. Error: {genResult.StandardError}");
 
-        await _openssl.ConvertPrivateKeyPemToDerAsync(privateKeyPem, privateKeyDer);
-        await _openssl.ConvertPublicKeyPemToDerAsync(publicKeyPem, publicKeyDer);
+        await TongsuoCli.ConvertPrivateKeyPemToDerAsync(privateKeyPem, privateKeyDer);
+        await TongsuoCli.ConvertPublicKeyPemToDerAsync(publicKeyPem, publicKeyDer);
 
         // 准备测试数据
         var testData = Encoding.UTF8.GetBytes("Hello SM2!");
@@ -215,7 +196,7 @@ public class SM2OpenSslInteropTests
 
         // Act - 使用 OpenSSL 签名
         var signaturePath = Path.Combine(_tempDir, "signature.der");
-        var signResult = await _openssl.SignWithSm2Async(dataPath, privateKeyPem, signaturePath);
+        var signResult = await TongsuoCli.SignWithSm2Async(dataPath, privateKeyPem, signaturePath);
         signResult.IsSuccess.Should().BeTrue($"OpenSSL signing failed. Error: {signResult.StandardError}");
 
         // 使用 SM2 类验证
@@ -230,7 +211,7 @@ public class SM2OpenSslInteropTests
         verifyResult.Should().BeTrue("SM2 should verify OpenSSL signature");
     }
 
-    [Test]
+    [Fact]
     public async Task InteroperabilityWithOpenSSL_SignVerifyWithUserId()
     {
         // Arrange
@@ -256,7 +237,7 @@ public class SM2OpenSslInteropTests
         await File.WriteAllBytesAsync(signaturePath, signature);
 
         // 使用 OpenSSL 带 userId 验证
-        var verifyResult = await _openssl.VerifyWithSm2Async(dataPath, signaturePath, publicKeyPath, userId);
+        var verifyResult = await TongsuoCli.VerifyWithSm2Async(dataPath, signaturePath, publicKeyPath, userId);
 
         // Assert
         verifyResult.IsSuccess.Should().BeTrue($"OpenSSL verification with userId failed. Output: {verifyResult.FullOutput}");
@@ -266,7 +247,7 @@ public class SM2OpenSslInteropTests
 
     #region 加密解密互操作性测试
 
-    [Test]
+    [Fact]
     public async Task InteroperabilityWithOpenSSL_EncryptWithSM2_DecryptWithOpenSSL()
     {
         // Arrange - 生成密钥对
@@ -285,8 +266,8 @@ public class SM2OpenSslInteropTests
         await File.WriteAllBytesAsync(privateKeyPath, privateKeyDer);
 
         // 转换为 PEM 格式供 OpenSSL 使用
-        await _openssl.ConvertPublicKeyDerToPemAsync(publicKeyPath, publicKeyPem);
-        await _openssl.ConvertPrivateKeyDerToPemAsync(privateKeyPath, privateKeyPem);
+        await TongsuoCli.ConvertPublicKeyDerToPemAsync(publicKeyPath, publicKeyPem);
+        await TongsuoCli.ConvertPrivateKeyDerToPemAsync(privateKeyPath, privateKeyPem);
 
         // 准备测试数据
         var plaintext = Encoding.UTF8.GetBytes("Secret message");
@@ -300,7 +281,7 @@ public class SM2OpenSslInteropTests
 
         // 使用 OpenSSL 解密
         var decryptedPath = Path.Combine(_tempDir, "decrypted.txt");
-        var decryptResult = await _openssl.DecryptWithSm2Async(ciphertextPath, decryptedPath, privateKeyPem);
+        var decryptResult = await TongsuoCli.DecryptWithSm2Async(ciphertextPath, decryptedPath, privateKeyPem);
 
         // Assert
         decryptResult.IsSuccess.Should().BeTrue($"OpenSSL decryption failed. Error: {decryptResult.StandardError}");
@@ -309,7 +290,7 @@ public class SM2OpenSslInteropTests
         decryptedData.Should().Equal(plaintext, "Decrypted data should match original plaintext");
     }
 
-    [Test]
+    [Fact]
     public async Task InteroperabilityWithOpenSSL_EncryptWithOpenSSL_DecryptWithSM2()
     {
         // Arrange - 使用 OpenSSL 生成密钥对
@@ -318,11 +299,11 @@ public class SM2OpenSslInteropTests
         var privateKeyDer = Path.Combine(_tempDir, "private_key.der");
         var publicKeyDer = Path.Combine(_tempDir, "public_key.der");
 
-        var genResult = await _openssl.GenerateSm2KeyPairAsync(privateKeyPem, publicKeyPem);
+        var genResult = await TongsuoCli.GenerateSm2KeyPairAsync(privateKeyPem, publicKeyPem);
         genResult.IsSuccess.Should().BeTrue($"Failed to generate keys. Error: {genResult.StandardError}");
 
-        await _openssl.ConvertPrivateKeyPemToDerAsync(privateKeyPem, privateKeyDer);
-        await _openssl.ConvertPublicKeyPemToDerAsync(publicKeyPem, publicKeyDer);
+        await TongsuoCli.ConvertPrivateKeyPemToDerAsync(privateKeyPem, privateKeyDer);
+        await TongsuoCli.ConvertPublicKeyPemToDerAsync(publicKeyPem, publicKeyDer);
 
         // 准备测试数据
         var plaintext = Encoding.UTF8.GetBytes("Secret message from OpenSSL");
@@ -331,7 +312,7 @@ public class SM2OpenSslInteropTests
 
         // Act - 使用 OpenSSL 加密
         var ciphertextPath = Path.Combine(_tempDir, "ciphertext.bin");
-        var encryptResult = await _openssl.EncryptWithSm2Async(plaintextPath, ciphertextPath, publicKeyPem);
+        var encryptResult = await TongsuoCli.EncryptWithSm2Async(plaintextPath, ciphertextPath, publicKeyPem);
         encryptResult.IsSuccess.Should().BeTrue($"OpenSSL encryption failed. Error: {encryptResult.StandardError}");
 
         // 使用 SM2 类解密

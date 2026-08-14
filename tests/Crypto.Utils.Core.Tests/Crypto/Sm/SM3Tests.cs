@@ -1,6 +1,5 @@
 using Crypto.Utils.Crypto.Sm;
 using FluentAssertions;
-using NUnit.Framework;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -9,12 +8,11 @@ namespace Crypto.Utils.Core.Tests.Crypto.Sm;
 /// <summary>
 /// SM3 类的单元测试
 /// </summary>
-[TestFixture]
 public class SM3Tests
 {
     #region 1. 构造函数和基本属性测试
 
-    [Test]
+    [Fact]
     public void Constructor_ShouldInitializeWithCorrectHashSize()
     {
         // Arrange & Act
@@ -24,7 +22,7 @@ public class SM3Tests
         sm3.HashSize.Should().Be(256, "SM3 produces 256-bit hash");
     }
 
-    [Test]
+    [Fact]
     public void Constructor_ShouldSetCorrectBlockSizes()
     {
         // Arrange & Act
@@ -39,7 +37,7 @@ public class SM3Tests
 
     #region 2. 静态工厂方法测试
 
-    [Test]
+    [Fact]
     public void Create_ShouldReturnNewInstance()
     {
         // Act
@@ -50,7 +48,7 @@ public class SM3Tests
         sm3.Should().BeOfType<SM3>();
     }
 
-    [Test]
+    [Fact]
     public void Create_MultipleCalls_ShouldReturnDifferentInstances()
     {
         // Act
@@ -65,7 +63,7 @@ public class SM3Tests
 
     #region 3. 基本哈希计算测试
 
-    [Test]
+    [Fact]
     public void ComputeHash_WithEmptyData_ShouldReturnValidHash()
     {
         // Arrange
@@ -84,7 +82,7 @@ public class SM3Tests
         hash.Should().Equal(expectedHash);
     }
 
-    [Test]
+    [Fact]
     public void ComputeHash_WithNullData_ShouldThrowArgumentNullException()
     {
         // Arrange
@@ -95,7 +93,7 @@ public class SM3Tests
         action.Should().Throw<ArgumentNullException>();
     }
 
-    [Test]
+    [Fact]
     public void ComputeHash_WithValidData_ShouldReturnExpectedHash()
     {
         // Arrange
@@ -114,7 +112,7 @@ public class SM3Tests
         hash.Should().Equal(expectedHash);
     }
 
-    [Test]
+    [Fact]
     public void ComputeHash_SameData_ShouldProduceSameHash()
     {
         // Arrange
@@ -129,7 +127,7 @@ public class SM3Tests
         hash1.Should().Equal(hash2, "Same input should produce same hash");
     }
 
-    [Test]
+    [Fact]
     public void ComputeHash_DifferentData_ShouldProduceDifferentHash()
     {
         // Arrange
@@ -149,7 +147,7 @@ public class SM3Tests
 
     #region 4. 静态方法 HashData 测试
 
-    [Test]
+    [Fact]
     public void HashData_ByteArray_WithNullData_ShouldThrowArgumentNullException()
     {
         // Act & Assert
@@ -157,7 +155,7 @@ public class SM3Tests
         action.Should().Throw<ArgumentNullException>();
     }
 
-    [Test]
+    [Fact]
     public void HashData_ByteArray_WithValidData_ShouldReturnExpectedHash()
     {
         // Arrange
@@ -171,7 +169,7 @@ public class SM3Tests
         hash.Should().Equal(expectedHash);
     }
 
-    [Test]
+    [Fact]
     public void HashData_Span_WithEmptyData_ShouldReturnValidHash()
     {
         // Arrange
@@ -186,7 +184,7 @@ public class SM3Tests
         hash.Should().Equal(expectedHash);
     }
 
-    [Test]
+    [Fact]
     public void HashData_SpanToSpan_WithValidData_ShouldWriteToDestination()
     {
         // Arrange
@@ -202,7 +200,7 @@ public class SM3Tests
         destination.Should().Equal(expectedHash);
     }
 
-    [Test]
+    [Fact]
     public void HashData_SpanToSpan_WithShortDestination_ShouldThrowArgumentException()
     {
         // Arrange
@@ -215,7 +213,7 @@ public class SM3Tests
             .WithMessage("*too short*");
     }
 
-    [Test]
+    [Fact]
     public void TryHashData_WithValidDestination_ShouldReturnTrue()
     {
         // Arrange
@@ -230,7 +228,7 @@ public class SM3Tests
         bytesWritten.Should().Be(32);
     }
 
-    [Test]
+    [Fact]
     public void TryHashData_WithShortDestination_ShouldReturnFalse()
     {
         // Arrange
@@ -249,7 +247,7 @@ public class SM3Tests
 
     #region 5. 流哈希计算测试
 
-    [Test]
+    [Fact]
     public void HashData_Stream_WithNullStream_ShouldThrowArgumentNullException()
     {
         // Act & Assert
@@ -257,7 +255,7 @@ public class SM3Tests
         action.Should().Throw<ArgumentNullException>();
     }
 
-    [Test]
+    [Fact]
     public void HashData_Stream_WithValidStream_ShouldReturnExpectedHash()
     {
         // Arrange
@@ -272,7 +270,7 @@ public class SM3Tests
         hash.Should().Equal(expectedHash);
     }
 
-    [Test]
+    [Fact]
     public void HashData_Stream_WithNonReadableStream_ShouldThrowArgumentException()
     {
         // Arrange
@@ -284,7 +282,7 @@ public class SM3Tests
             .WithMessage("*not support reading*");
     }
 
-    [Test]
+    [Fact]
     public void HashData_StreamToSpan_WithValidStream_ShouldWriteToDestination()
     {
         // Arrange
@@ -301,7 +299,7 @@ public class SM3Tests
         destination.Should().Equal(expectedHash);
     }
 
-    [Test]
+    [Fact]
     public void HashData_LargeStream_ShouldHandleCorrectly()
     {
         // Arrange
@@ -321,7 +319,7 @@ public class SM3Tests
 
     #region 6. 异步流哈希计算测试
 
-    [Test]
+    [Fact]
     public async Task HashDataAsync_WithNullStream_ShouldThrowArgumentNullException()
     {
         // Act & Assert
@@ -329,7 +327,7 @@ public class SM3Tests
         await action.Should().ThrowAsync<ArgumentNullException>();
     }
 
-    [Test]
+    [Fact]
     public async Task HashDataAsync_WithValidStream_ShouldReturnExpectedHash()
     {
         // Arrange
@@ -344,7 +342,7 @@ public class SM3Tests
         hash.Should().Equal(expectedHash);
     }
 
-    [Test]
+    [Fact]
     public async Task HashDataAsync_WithNonReadableStream_ShouldThrowArgumentException()
     {
         // Arrange
@@ -356,7 +354,7 @@ public class SM3Tests
             .WithMessage("*not support reading*");
     }
 
-    [Test]
+    [Fact]
     public async Task HashDataAsync_ToMemory_WithValidStream_ShouldWriteToDestination()
     {
         // Arrange
@@ -373,7 +371,7 @@ public class SM3Tests
         destination.Should().Equal(expectedHash);
     }
 
-    [Test]
+    [Fact]
     public async Task HashDataAsync_WithCancellation_ShouldRespectCancellationToken()
     {
         // Arrange
@@ -391,7 +389,7 @@ public class SM3Tests
 
     #region 7. 增量哈希计算测试
 
-    [Test]
+    [Fact]
     public void Initialize_ShouldResetHashState()
     {
         // Arrange
@@ -409,7 +407,7 @@ public class SM3Tests
         hash.Should().Equal(expectedHash);
     }
 
-    [Test]
+    [Fact]
     public void TransformBlock_ShouldProcessMultipleBlocks()
     {
         // Arrange
@@ -433,10 +431,10 @@ public class SM3Tests
 
     #region 8. 标准测试向量验证
 
-    [Test]
-    [TestCase("", "1AB21D8355CFA17F8E61194831E81A8F22BEC8C728FEFB747ED035EB5082AA2B")]
-    [TestCase("abc", "66C7F0F462EEEDD9D1F2D46BDC10E4E24167C4875CF2F7A2297DA02B8F4BA8E0")]
-    [TestCase("abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd",
+    [Theory]
+    [InlineData("", "1AB21D8355CFA17F8E61194831E81A8F22BEC8C728FEFB747ED035EB5082AA2B")]
+    [InlineData("abc", "66C7F0F462EEEDD9D1F2D46BDC10E4E24167C4875CF2F7A2297DA02B8F4BA8E0")]
+    [InlineData("abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd",
               "DEBE9FF92275B8A138604889C18E5A4D6FDB70E5387E5765293DCBA39C0C5732")]
     public void HashData_StandardTestVectors_ShouldMatchExpected(string input, string expectedHex)
     {
@@ -455,7 +453,7 @@ public class SM3Tests
 
     #region 9. 边界情况测试
 
-    [Test]
+    [Fact]
     public void HashData_VeryLargeData_ShouldHandleCorrectly()
     {
         // Arrange
@@ -470,7 +468,7 @@ public class SM3Tests
         hash.Length.Should().Be(32);
     }
 
-    [Test]
+    [Fact]
     public void HashData_SingleByte_ShouldProduceValidHash()
     {
         // Arrange
@@ -484,7 +482,7 @@ public class SM3Tests
         hash.Length.Should().Be(32);
     }
 
-    [Test]
+    [Fact]
     public void HashData_AllZeros_ShouldProduceValidHash()
     {
         // Arrange
@@ -498,7 +496,7 @@ public class SM3Tests
         hash.Length.Should().Be(32);
     }
 
-    [Test]
+    [Fact]
     public void HashData_AllOnes_ShouldProduceValidHash()
     {
         // Arrange
@@ -516,7 +514,7 @@ public class SM3Tests
 
     #region 10. Dispose 和资源管理测试
 
-    [Test]
+    [Fact]
     public void Dispose_ShouldClearResources()
     {
         // Arrange
@@ -532,7 +530,7 @@ public class SM3Tests
         action.Should().Throw<ObjectDisposedException>();
     }
 
-    [Test]
+    [Fact]
     public void Dispose_MultipleCalls_ShouldNotThrow()
     {
         // Arrange
@@ -548,7 +546,7 @@ public class SM3Tests
         action.Should().NotThrow();
     }
 
-    [Test]
+    [Fact]
     public void UsingPattern_ShouldAutomaticallyDispose()
     {
         byte[]? hash = null;
@@ -567,8 +565,8 @@ public class SM3Tests
 
     #region 11. 并发测试
 
-    [Test]
-    public void ConcurrentHashing_WithDifferentInstances_ShouldBeSafe()
+    [Fact]
+    public async Task ConcurrentHashing_WithDifferentInstances_ShouldBeSafe()
     {
         // Arrange
         var data = Encoding.UTF8.GetBytes("concurrent test");
@@ -584,7 +582,7 @@ public class SM3Tests
             }));
         }
 
-        var results = Task.WhenAll(tasks).Result;
+        var results = await Task.WhenAll(tasks);
 
         // Assert
         results.Should().AllSatisfy(hash =>

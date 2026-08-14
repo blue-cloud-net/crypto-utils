@@ -1,6 +1,5 @@
 using Crypto.Utils.Crypto.Sm;
 using FluentAssertions;
-using NUnit.Framework;
 using System.Security.Cryptography;
 
 namespace Crypto.Utils.Core.Tests.Crypto.Sm;
@@ -8,12 +7,11 @@ namespace Crypto.Utils.Core.Tests.Crypto.Sm;
 /// <summary>
 /// SM2 类的单元测试
 /// </summary>
-[TestFixture]
 public class SM2Tests
 {
     #region 1. 构造函数和基本属性测试
 
-    [Test]
+    [Fact]
     public void Constructor_ShouldInitializeWithCorrectKeySize()
     {
         // Arrange & Act
@@ -23,7 +21,7 @@ public class SM2Tests
         sm2.KeySize.Should().Be(256);
     }
 
-    [Test]
+    [Fact]
     public void Constructor_ShouldSetLegalKeySizes()
     {
         // Arrange & Act
@@ -41,7 +39,7 @@ public class SM2Tests
 
     #region 2. 密钥生成测试
 
-    [Test]
+    [Fact]
     public void GenerateKeyPair_ShouldCreateValidKeyPair()
     {
         // Arrange
@@ -60,7 +58,7 @@ public class SM2Tests
         privateKey.Length.Should().BeGreaterThan(0);
     }
 
-    [Test]
+    [Fact]
     public void GenerateKeyPair_ShouldGenerateDifferentKeys()
     {
         // Arrange
@@ -85,7 +83,7 @@ public class SM2Tests
 
     #region 3. 公钥导出和导入测试
 
-    [Test]
+    [Fact]
     public void ExportPublicKey_WithoutKeyPair_ShouldThrowException()
     {
         // Arrange
@@ -97,7 +95,7 @@ public class SM2Tests
             .WithMessage("*not initialized*");
     }
 
-    [Test]
+    [Fact]
     public void ExportPublicKey_ShouldReturnValidSpki()
     {
         // Arrange
@@ -117,7 +115,7 @@ public class SM2Tests
         importAction.Should().NotThrow();
     }
 
-    [Test]
+    [Fact]
     public void ImportPublicKey_WithValidSpki_ShouldSucceed()
     {
         // Arrange
@@ -134,7 +132,7 @@ public class SM2Tests
         importedPublicKey.Should().Equal(originalPublicKey);
     }
 
-    [Test]
+    [Fact]
     public void ImportPublicKey_WithNull_ShouldThrowArgumentNullException()
     {
         // Arrange
@@ -145,7 +143,7 @@ public class SM2Tests
         action.Should().Throw<ArgumentNullException>();
     }
 
-    [Test]
+    [Fact]
     public void ImportPublicKey_WithEmptyData_ShouldThrowArgumentException()
     {
         // Arrange
@@ -157,7 +155,7 @@ public class SM2Tests
             .WithMessage("*cannot be empty*");
     }
 
-    [Test]
+    [Fact]
     public void ImportPublicKey_WithInvalidData_ShouldThrowException()
     {
         // Arrange
@@ -169,7 +167,7 @@ public class SM2Tests
         action.Should().Throw<Exception>();
     }
 
-    [Test]
+    [Fact]
     public void ImportPublicKey_ShouldClearPrivateKey()
     {
         // Arrange
@@ -194,7 +192,7 @@ public class SM2Tests
 
     #region 4. 私钥导出和导入测试
 
-    [Test]
+    [Fact]
     public void ExportPrivateKey_WithoutKeyPair_ShouldThrowException()
     {
         // Arrange
@@ -206,7 +204,7 @@ public class SM2Tests
             .WithMessage("*not initialized*");
     }
 
-    [Test]
+    [Fact]
     public void ExportPrivateKey_ShouldReturnValidPkcs8()
     {
         // Arrange
@@ -226,7 +224,7 @@ public class SM2Tests
         importAction.Should().NotThrow();
     }
 
-    [Test]
+    [Fact]
     public void ImportPrivateKey_WithValidPkcs8_ShouldSucceed()
     {
         // Arrange
@@ -247,7 +245,7 @@ public class SM2Tests
         importedPublicKey.Should().Equal(originalPublicKey);
     }
 
-    [Test]
+    [Fact]
     public void ImportPrivateKey_WithNull_ShouldThrowArgumentNullException()
     {
         // Arrange
@@ -258,7 +256,7 @@ public class SM2Tests
         action.Should().Throw<ArgumentNullException>();
     }
 
-    [Test]
+    [Fact]
     public void ImportPrivateKey_WithEmptyData_ShouldThrowArgumentException()
     {
         // Arrange
@@ -270,7 +268,7 @@ public class SM2Tests
             .WithMessage("*cannot be empty*");
     }
 
-    [Test]
+    [Fact]
     public void ImportPrivateKey_WithInvalidData_ShouldThrowException()
     {
         // Arrange
@@ -282,7 +280,7 @@ public class SM2Tests
         action.Should().Throw<Exception>();
     }
 
-    [Test]
+    [Fact]
     public void ImportPrivateKey_ShouldRestorePublicKey()
     {
         // Arrange
@@ -307,7 +305,7 @@ public class SM2Tests
 
     #region 5. 密钥兼容性测试
 
-    [Test]
+    [Fact]
     public void ExportImportRoundTrip_PublicKey_ShouldPreserveKey()
     {
         // Arrange
@@ -324,7 +322,7 @@ public class SM2Tests
         publicKey2.Should().Equal(publicKey1);
     }
 
-    [Test]
+    [Fact]
     public void ExportImportRoundTrip_PrivateKey_ShouldPreserveKey()
     {
         // Arrange
@@ -345,7 +343,7 @@ public class SM2Tests
 
     #region 6. 签名测试
 
-    [Test]
+    [Fact]
     public void SignData_WithoutPrivateKey_ShouldThrowException()
     {
         // Arrange
@@ -364,7 +362,7 @@ public class SM2Tests
             .WithMessage("*Private key*");
     }
 
-    [Test]
+    [Fact]
     public void SignData_WithNullData_ShouldThrowArgumentNullException()
     {
         // Arrange
@@ -376,7 +374,7 @@ public class SM2Tests
         action.Should().Throw<ArgumentNullException>();
     }
 
-    [Test]
+    [Fact]
     public void SignData_WithValidData_ShouldReturnSignature()
     {
         // Arrange
@@ -392,7 +390,7 @@ public class SM2Tests
         signature.Length.Should().BeGreaterThan(0);
     }
 
-    [Test]
+    [Fact]
     public void SignData_WithEmptyData_ShouldThrowArgumentException()
     {
         // Arrange
@@ -405,7 +403,7 @@ public class SM2Tests
             .WithMessage("*cannot be empty*");
     }
 
-    [Test]
+    [Fact]
     public void SignData_SameDataDifferentSignatures()
     {
         // Arrange
@@ -425,7 +423,7 @@ public class SM2Tests
         signature2.Length.Should().BeGreaterThan(0);
     }
 
-    [Test]
+    [Fact]
     public void SignData_WithUserId_ShouldUseUserId()
     {
         // Arrange
@@ -444,7 +442,7 @@ public class SM2Tests
         // 注意：由于签名有随机性，这里不直接比较是否相等
     }
 
-    [Test]
+    [Fact]
     public void SignData_DifferentUserId_ShouldProduceDifferentSignatures()
     {
         // Arrange
@@ -468,7 +466,7 @@ public class SM2Tests
 
     #region 7. 验签测试
 
-    [Test]
+    [Fact]
     public void VerifyData_WithoutPublicKey_ShouldThrowException()
     {
         // Arrange
@@ -482,7 +480,7 @@ public class SM2Tests
             .WithMessage("*Public key*");
     }
 
-    [Test]
+    [Fact]
     public void VerifyData_WithNullData_ShouldThrowArgumentNullException()
     {
         // Arrange
@@ -495,7 +493,7 @@ public class SM2Tests
         action.Should().Throw<ArgumentNullException>();
     }
 
-    [Test]
+    [Fact]
     public void VerifyData_WithNullSignature_ShouldThrowArgumentNullException()
     {
         // Arrange
@@ -508,7 +506,7 @@ public class SM2Tests
         action.Should().Throw<ArgumentNullException>();
     }
 
-    [Test]
+    [Fact]
     public void VerifyData_WithEmptyData_ShouldThrowArgumentException()
     {
         // Arrange
@@ -523,7 +521,7 @@ public class SM2Tests
             .WithMessage("*cannot be empty*");
     }
 
-    [Test]
+    [Fact]
     public void VerifyData_WithEmptySignature_ShouldThrowArgumentException()
     {
         // Arrange
@@ -537,7 +535,7 @@ public class SM2Tests
             .WithMessage("*cannot be empty*");
     }
 
-    [Test]
+    [Fact]
     public void VerifyData_WithValidSignature_ShouldReturnTrue()
     {
         // Arrange
@@ -553,7 +551,7 @@ public class SM2Tests
         result.Should().BeTrue();
     }
 
-    [Test]
+    [Fact]
     public void VerifyData_WithModifiedData_ShouldReturnFalse()
     {
         // Arrange
@@ -571,7 +569,7 @@ public class SM2Tests
         result.Should().BeFalse();
     }
 
-    [Test]
+    [Fact]
     public void VerifyData_WithModifiedSignature_ShouldReturnFalse()
     {
         // Arrange
@@ -591,7 +589,7 @@ public class SM2Tests
         result.Should().BeFalse();
     }
 
-    [Test]
+    [Fact]
     public void VerifyData_WithDifferentKey_ShouldReturnFalse()
     {
         // Arrange
@@ -610,7 +608,7 @@ public class SM2Tests
         result.Should().BeFalse();
     }
 
-    [Test]
+    [Fact]
     public void VerifyData_WithUserId_ShouldMatchSigningUserId()
     {
         // Arrange
@@ -628,7 +626,7 @@ public class SM2Tests
         result.Should().BeTrue();
     }
 
-    [Test]
+    [Fact]
     public void VerifyData_MismatchedUserId_ShouldReturnFalse()
     {
         // Arrange
@@ -647,7 +645,7 @@ public class SM2Tests
         result.Should().BeFalse();
     }
 
-    [Test]
+    [Fact]
     public void VerifyData_WithPublicKeyOnly_ShouldSucceed()
     {
         // Arrange
@@ -670,7 +668,7 @@ public class SM2Tests
 
     #region 8. 签名验签集成测试
 
-    [Test]
+    [Fact]
     public void SignAndVerify_CompleteWorkflow_ShouldSucceed()
     {
         // Arrange
@@ -686,7 +684,7 @@ public class SM2Tests
         result.Should().BeTrue();
     }
 
-    [Test]
+    [Fact]
     public void SignAndVerify_WithExportImport_ShouldSucceed()
     {
         // Arrange
@@ -705,7 +703,7 @@ public class SM2Tests
         result.Should().BeTrue();
     }
 
-    [Test]
+    [Fact]
     public void SignAndVerify_LargeData_ShouldSucceed()
     {
         // Arrange
@@ -726,7 +724,7 @@ public class SM2Tests
 
     #region 9. 加密测试
 
-    [Test]
+    [Fact]
     public void Encrypt_WithoutPublicKey_ShouldThrowException()
     {
         // Arrange
@@ -739,7 +737,7 @@ public class SM2Tests
             .WithMessage("*Public key*");
     }
 
-    [Test]
+    [Fact]
     public void Encrypt_WithNullPlaintext_ShouldThrowArgumentNullException()
     {
         // Arrange
@@ -751,7 +749,7 @@ public class SM2Tests
         action.Should().Throw<ArgumentNullException>();
     }
 
-    [Test]
+    [Fact]
     public void Encrypt_WithValidPlaintext_ShouldReturnCiphertext()
     {
         // Arrange
@@ -768,7 +766,7 @@ public class SM2Tests
         ciphertext.Should().NotEqual(plaintext);
     }
 
-    [Test]
+    [Fact]
     public void Encrypt_WithEmptyData_ShouldThrowArgumentException()
     {
         // Arrange
@@ -781,7 +779,7 @@ public class SM2Tests
             .WithMessage("*cannot be empty*");
     }
 
-    [Test]
+    [Fact]
     public void Encrypt_SamePlaintext_ShouldProduceDifferentCiphertexts()
     {
         // Arrange
@@ -797,7 +795,7 @@ public class SM2Tests
         ciphertext1.Should().NotEqual(ciphertext2);
     }
 
-    [Test]
+    [Fact]
     public void Encrypt_WithPublicKeyOnly_ShouldSucceed()
     {
         // Arrange
@@ -821,7 +819,7 @@ public class SM2Tests
 
     #region 10. 解密测试
 
-    [Test]
+    [Fact]
     public void Decrypt_WithoutPrivateKey_ShouldThrowException()
     {
         // Arrange
@@ -840,7 +838,7 @@ public class SM2Tests
             .WithMessage("*Private key*");
     }
 
-    [Test]
+    [Fact]
     public void Decrypt_WithNullCiphertext_ShouldThrowArgumentNullException()
     {
         // Arrange
@@ -852,7 +850,7 @@ public class SM2Tests
         action.Should().Throw<ArgumentNullException>();
     }
 
-    [Test]
+    [Fact]
     public void Decrypt_WithEmptyCiphertext_ShouldThrowArgumentException()
     {
         // Arrange
@@ -865,7 +863,7 @@ public class SM2Tests
             .WithMessage("*cannot be empty*");
     }
 
-    [Test]
+    [Fact]
     public void Decrypt_WithValidCiphertext_ShouldReturnPlaintext()
     {
         // Arrange
@@ -881,7 +879,7 @@ public class SM2Tests
         decryptedPlaintext.Should().Equal(originalPlaintext);
     }
 
-    [Test]
+    [Fact]
     public void Decrypt_WithInvalidCiphertext_ShouldThrowException()
     {
         // Arrange
@@ -894,7 +892,7 @@ public class SM2Tests
         action.Should().Throw<Exception>();
     }
 
-    [Test]
+    [Fact]
     public void Decrypt_WithModifiedCiphertext_ShouldThrowOrReturnInvalid()
     {
         // Arrange
@@ -912,7 +910,7 @@ public class SM2Tests
         action.Should().Throw<Exception>();
     }
 
-    [Test]
+    [Fact]
     public void Decrypt_WithDifferentKey_ShouldThrowOrReturnInvalid()
     {
         // Arrange
@@ -933,7 +931,7 @@ public class SM2Tests
 
     #region 11. 加密解密集成测试
 
-    [Test]
+    [Fact]
     public void EncryptDecrypt_CompleteWorkflow_ShouldSucceed()
     {
         // Arrange
@@ -949,7 +947,7 @@ public class SM2Tests
         decryptedPlaintext.Should().Equal(originalPlaintext);
     }
 
-    [Test]
+    [Fact]
     public void EncryptDecrypt_WithExportImport_ShouldSucceed()
     {
         // Arrange
@@ -973,10 +971,10 @@ public class SM2Tests
         decryptedPlaintext.Should().Equal(originalPlaintext);
     }
 
-    [Test]
-    [TestCase(1)]
-    [TestCase(32)]
-    [TestCase(100)]
+    [Theory]
+    [InlineData(1)]
+    [InlineData(32)]
+    [InlineData(100)]
     public void EncryptDecrypt_VariousDataSizes_ShouldSucceed(int dataSize)
     {
         // Arrange
@@ -993,7 +991,7 @@ public class SM2Tests
         decryptedPlaintext.Should().Equal(plaintext);
     }
 
-    [Test]
+    [Fact]
     public void EncryptDecrypt_BinaryData_ShouldSucceed()
     {
         // Arrange
@@ -1013,7 +1011,7 @@ public class SM2Tests
 
     #region 12. Dispose 和资源管理测试
 
-    [Test]
+    [Fact]
     public void Dispose_ShouldClearKeys()
     {
         // Arrange
@@ -1031,7 +1029,7 @@ public class SM2Tests
         privateKeyAction.Should().Throw<CryptographicException>();
     }
 
-    [Test]
+    [Fact]
     public void Dispose_MultipleCalls_ShouldNotThrow()
     {
         // Arrange
@@ -1049,7 +1047,7 @@ public class SM2Tests
         action.Should().NotThrow();
     }
 
-    [Test]
+    [Fact]
     public void UsingPattern_ShouldAutomaticallyDispose()
     {
         SM2? sm2Reference = null;
@@ -1070,7 +1068,7 @@ public class SM2Tests
 
     #region 13. 静态方法测试
 
-    [Test]
+    [Fact]
     public void Create_ShouldReturnNewInstance()
     {
         // Act
@@ -1081,7 +1079,7 @@ public class SM2Tests
         sm2.Should().BeOfType<SM2>();
     }
 
-    [Test]
+    [Fact]
     public void Create_MultipleCalls_ShouldReturnDifferentInstances()
     {
         // Act
@@ -1096,10 +1094,10 @@ public class SM2Tests
 
     #region 14. 边界和异常情况测试
 
-    [Test]
-    [TestCase(10)]
-    [TestCase(50)]
-    [TestCase(90)]
+    [Theory]
+    [InlineData(10)]
+    [InlineData(50)]
+    [InlineData(90)]
     public void MaxDataSize_Encryption_ShouldSucceed(int dataSize)
     {
         // Arrange
@@ -1120,7 +1118,7 @@ public class SM2Tests
         action.Should().NotThrow();
     }
 
-    [Test]
+    [Fact]
     public void ConcurrentAccess_ShouldBeSafe()
     {
         // Arrange

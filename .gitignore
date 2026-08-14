@@ -234,7 +234,7 @@ _Pvt_Extensions
 .idea/
 wwwroot/
 
-test/data/keys/*.pem
-test/data/keys/*.der
+# 测试素材：由 scripts/generate-test-*.sh 在测试运行时生成，不纳入版本控制
+tests/data/
 
 **/.vshistory/
