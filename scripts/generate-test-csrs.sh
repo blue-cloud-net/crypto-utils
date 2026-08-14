@@ -191,9 +191,10 @@ echo ""
 echo -e "${YELLOW}[5/6] 生成 SM2 密钥的 CSR...${NC}"
 
 if [ -f "$KEYS_DIR/sm2-pkcs8.pem" ]; then
+    TONGSUO="${TONGSUO_PATH:-/opt/tongsuo/bin/tongsuo}"
     # 基本 CSR - SM2
     echo "  - 基本 CSR (SM2, CN=sm2-test.example.cn)"
-    if openssl req -new -key "$KEYS_DIR/sm2-pkcs8.pem" \
+    if "$TONGSUO" req -new -key "$KEYS_DIR/sm2-pkcs8.pem" \
         -out "$OUTPUT_DIR/sm2-basic.csr" \
         -subj "/C=CN/ST=Beijing/L=Beijing/O=SM2 Test Corp/OU=国密部门/CN=sm2-test.example.cn/emailAddress=sm2@example.cn" 2>/dev/null; then
         echo -e "    ${GREEN}✓${NC} sm2-basic.csr"
@@ -205,7 +206,7 @@ if [ -f "$KEYS_DIR/sm2-pkcs8.pem" ]; then
     echo "  - 带 SAN 的 CSR (SM2, 多个国密域名)"
     generate_config "sm2-multi.example.cn" "国密科技公司" "研发中心" "CN" "北京" "北京" "sm2-multi@example.cn" \
 "subjectAltName = DNS:sm2-multi.example.cn,DNS:www.sm2-multi.example.cn,DNS:api.sm2-multi.example.cn"
-    if openssl req -new -key "$KEYS_DIR/sm2-pkcs8.pem" \
+    if "$TONGSUO" req -new -key "$KEYS_DIR/sm2-pkcs8.pem" \
         -out "$OUTPUT_DIR/sm2-san.csr" \
         -config "$OUTPUT_DIR/temp_openssl.cnf" 2>/dev/null; then
         echo -e "    ${GREEN}✓${NC} sm2-san.csr"

@@ -119,36 +119,29 @@ echo -e "    ${GREEN}✓${NC} ec-p521-public.pem"
 echo ""
 
 # ============================================
-# SM2 密钥生成 (需要 OpenSSL 支持 SM2)
+# SM2 密钥生成 (使用 tongsuo)
 # ============================================
 echo -e "${YELLOW}[5/5] 生成 SM2 密钥...${NC}"
+TONGSUO="${TONGSUO_PATH:-/opt/tongsuo/bin/tongsuo}"
 
-# 检查 OpenSSL 是否支持 SM2
-if openssl ecparam -list_curves 2>/dev/null | grep -q "SM2"; then
-    echo "  - SM2 (SEC1 PEM)"
-    openssl ecparam -name SM2 -genkey -noout -out "$OUTPUT_DIR/sm2-sec1.pem"
-    echo -e "    ${GREEN}✓${NC} sm2-sec1.pem"
-
+if [ -x "$TONGSUO" ]; then
     echo "  - SM2 (PKCS#8 PEM)"
-    openssl pkcs8 -topk8 -nocrypt -in "$OUTPUT_DIR/sm2-sec1.pem" -out "$OUTPUT_DIR/sm2-pkcs8.pem"
+    "$TONGSUO" genpkey -algorithm EC -pkeyopt ec_paramgen_curve:SM2 -out "$OUTPUT_DIR/sm2-pkcs8.pem"
     echo -e "    ${GREEN}✓${NC} sm2-pkcs8.pem"
 
+    echo "  - SM2 (SEC1 PEM)"
+    "$TONGSUO" ec -in "$OUTPUT_DIR/sm2-pkcs8.pem" -out "$OUTPUT_DIR/sm2-sec1.pem" 2>/dev/null
+    echo -e "    ${GREEN}✓${NC} sm2-sec1.pem"
+
     echo "  - SM2 公钥"
-    # SM2 公钥提取需要特殊处理，使用 pkey 命令
-    if openssl pkey -in "$OUTPUT_DIR/sm2-sec1.pem" -pubout -out "$OUTPUT_DIR/sm2-public.pem" 2>/dev/null; then
-        echo -e "    ${GREEN}✓${NC} sm2-public.pem"
-    else
-        # 如果 pkey 失败，尝试使用 ec 命令并忽略错误
-        openssl ec -in "$OUTPUT_DIR/sm2-sec1.pem" -pubout -out "$OUTPUT_DIR/sm2-public.pem" 2>/dev/null || \
-        echo -e "    ${YELLOW}⚠${NC}  sm2-public.pem (生成可能不完整)"
-    fi
+    "$TONGSUO" pkey -in "$OUTPUT_DIR/sm2-pkcs8.pem" -pubout -out "$OUTPUT_DIR/sm2-public.pem" 2>/dev/null
+    echo -e "    ${GREEN}✓${NC} sm2-public.pem"
 
     echo "  - SM2 (DER)"
-    openssl pkcs8 -topk8 -nocrypt -in "$OUTPUT_DIR/sm2-sec1.pem" -outform DER -out "$OUTPUT_DIR/sm2-pkcs8.der"
+    "$TONGSUO" pkcs8 -topk8 -nocrypt -in "$OUTPUT_DIR/sm2-pkcs8.pem" -outform DER -out "$OUTPUT_DIR/sm2-pkcs8.der"
     echo -e "    ${GREEN}✓${NC} sm2-pkcs8.der"
 else
-    echo -e "  ${YELLOW}⚠${NC}  OpenSSL 不支持 SM2 曲线，跳过 SM2 密钥生成"
-    echo "  提示: 需要 OpenSSL 1.1.1+ 或带有国密支持的版本"
+    echo -e "  ${YELLOW}⚠${NC}  tongsuo 不可用，跳过 SM2 密钥生成（可设置 TONGSUO_PATH）"
 fi
 
 echo ""
