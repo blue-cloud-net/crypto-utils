@@ -60,6 +60,46 @@ public class AesCryptoTests
         decrypted.Should().Equal(plaintext);
     }
 
+    [Theory]
+    [InlineData(CipherMode.CFB)]
+    [InlineData(CipherMode.OFB)]
+    public void CfbOfb_EncryptDecrypt_ShouldRoundTrip(CipherMode mode)
+    {
+        // Arrange - CFB/OFB 以 128 位全块处理，明文填充到块大小整数倍。
+        var key = RandomNumberGenerator.GetBytes(32);
+        var iv = RandomNumberGenerator.GetBytes(AesCrypto.BlockSizeInBytes);
+        var raw = "AES-CFB/OFB 加解密测试"u8.ToArray();
+        var plaintext = new byte[((raw.Length + 15) / 16) * 16];
+        raw.CopyTo(plaintext, 0);
+
+        // Act
+        byte[] ciphertext;
+        using (var aes = new AesCrypto { Key = key, IV = iv, Mode = mode, Padding = PaddingMode.None })
+        using (var encryptor = aes.CreateEncryptor())
+        using (var ms = new MemoryStream())
+        using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
+        {
+            cs.Write(plaintext, 0, plaintext.Length);
+            cs.FlushFinalBlock();
+            ciphertext = ms.ToArray();
+        }
+
+        byte[] decrypted;
+        using (var aes = new AesCrypto { Key = key, IV = iv, Mode = mode, Padding = PaddingMode.None })
+        using (var decryptor = aes.CreateDecryptor())
+        using (var ms = new MemoryStream(ciphertext))
+        using (var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read))
+        using (var result = new MemoryStream())
+        {
+            cs.CopyTo(result);
+            decrypted = result.ToArray();
+        }
+
+        // Assert
+        ciphertext.Should().NotEqual(plaintext);
+        decrypted.Should().Equal(plaintext);
+    }
+
     [Fact]
     public void Gcm_EncryptDecrypt_ShouldRoundTrip()
     {

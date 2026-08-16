@@ -129,7 +129,15 @@ public sealed class AesCrypto : SymmetricAlgorithm
             throw new ArgumentException($"IV must be {BlockSizeInBytes} bytes.", nameof(iv));
 
         IBlockCipher engine = new AesEngine();
-        IBlockCipher cbcCipher = new CbcBlockCipher(engine);
+
+        // 按 Mode 选择分组模式：CBC / CFB-128 / OFB-128。
+        IBlockCipher cipher = ModeValue switch
+        {
+            CipherMode.CBC => new CbcBlockCipher(engine),
+            CipherMode.CFB => new CfbBlockCipher(engine, BlockSizeInBits),
+            CipherMode.OFB => new OfbBlockCipher(engine, BlockSizeInBits),
+            _ => throw new CryptographicException($"Unsupported cipher mode: {ModeValue}."),
+        };
 
         IBlockCipherPadding? padding = PaddingValue switch
         {
@@ -142,8 +150,8 @@ public sealed class AesCrypto : SymmetricAlgorithm
         };
 
         var buffered = padding is not null
-            ? new PaddedBufferedBlockCipher(cbcCipher, padding)
-            : new BufferedBlockCipher(cbcCipher);
+            ? new PaddedBufferedBlockCipher(cipher, padding)
+            : new BufferedBlockCipher(cipher);
 
         buffered.Init(forEncryption, new ParametersWithIV(new KeyParameter(key), iv));
         return new AesCbcTransform(buffered, BlockSizeInBytes);
