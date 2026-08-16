@@ -282,16 +282,23 @@ public static class OpenSslCli
     /// <param name="caKeyPath">CA 私钥路径。</param>
     /// <param name="caCertPath">CA 证书路径。</param>
     /// <param name="configPath">生成的 ca 配置文件路径。</param>
+    /// <param name="revokedSerialHex">预置的已吊销证书序列号（十六进制，可选）。</param>
     public static async Task SetupCaDatabaseAsync(
         string caDir,
         string caKeyPath,
         string caCertPath,
         string configPath,
+        string? revokedSerialHex = null,
         CancellationToken cancellationToken = default)
     {
         Directory.CreateDirectory(caDir);
         Directory.CreateDirectory(Path.Combine(caDir, "newcerts"));
-        await File.WriteAllTextAsync(Path.Combine(caDir, "index.txt"), string.Empty, cancellationToken);
+
+        // index.txt：可选预置一条吊销记录（OpenSSL 格式：R\t<expiry>\t<revocation>\t<serial hex>\t<filename>\t<DN>，日期为 YYMMDDHHMMSSZ）。
+        var indexContent = string.IsNullOrEmpty(revokedSerialHex)
+            ? string.Empty
+            : $"R\t370101000000Z\t260101000000Z\t{revokedSerialHex}\tunknown\t/CN=revoked\n";
+        await File.WriteAllTextAsync(Path.Combine(caDir, "index.txt"), indexContent, cancellationToken);
         await File.WriteAllTextAsync(Path.Combine(caDir, "index.txt.attr"), "unique_subject = no\n", cancellationToken);
         await File.WriteAllTextAsync(Path.Combine(caDir, "serial"), "01\n", cancellationToken);
 
@@ -308,6 +315,7 @@ public static class OpenSslCli
             serial = {caDir}/serial
             default_md = sha256
             default_days = 365
+            default_crl_days = 30
             policy = policy_any
             x509_extensions = usr_cert
 

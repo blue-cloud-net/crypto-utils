@@ -123,13 +123,23 @@ public class CertificateRevocationList
     /// <returns>如果序列号在撤销列表中返回 true，否则返回 false</returns>
     public bool IsRevoked(string serialNumber)
     {
+        ArgumentNullException.ThrowIfNull(serialNumber);
+
         var revokedCerts = _bcCrl.GetRevokedCertificates();
         if (revokedCerts == null)
             return false;
 
+        // 归一化：去掉前导零，避免与 BigInteger.ToString(16)（不带前导零）比较失配。
+        // 例如 CRL 序列号 0x0F0F 对应 "f0f"，输入 "0F0F" 应匹配。
+        var normalized = serialNumber.TrimStart('0');
+        if (normalized.Length == 0)
+        {
+            normalized = "0";
+        }
+
         foreach (var entry in revokedCerts)
         {
-            if (entry.SerialNumber.ToString(16).Equals(serialNumber, StringComparison.OrdinalIgnoreCase))
+            if (entry.SerialNumber.ToString(16).Equals(normalized, StringComparison.OrdinalIgnoreCase))
                 return true;
         }
 

@@ -252,6 +252,82 @@ public static class TongsuoCli
 
     #endregion
 
+    #region SM2 CRL
+
+    /// <summary>
+    /// 在指定目录中初始化最小 SM2 CA 数据库（index.txt / serial / newcerts / ca 配置），供 <see cref="GenerateSm2CrlAsync"/> 使用。
+    /// SM2 CRL 使用 SM3 摘要，故配置文件 default_md=sm3。
+    /// </summary>
+    /// <param name="caDir">CA 目录（会被创建）。</param>
+    /// <param name="caKeyPath">CA 私钥路径。</param>
+    /// <param name="caCertPath">CA 证书路径。</param>
+    /// <param name="configPath">生成的 ca 配置文件路径。</param>
+    /// <param name="revokedSerialHex">预置的已吊销证书序列号（十六进制，可选）。</param>
+    public static async Task SetupSm2CaDatabaseAsync(
+        string caDir,
+        string caKeyPath,
+        string caCertPath,
+        string configPath,
+        string? revokedSerialHex = null,
+        CancellationToken cancellationToken = default)
+    {
+        Directory.CreateDirectory(caDir);
+        Directory.CreateDirectory(Path.Combine(caDir, "newcerts"));
+
+        // index.txt：可选预置一条吊销记录（OpenSSL 格式：R\t<expiry>\t<revocation>\t<serial hex>\t<filename>\t<DN>，日期为 YYMMDDHHMMSSZ）。
+        var indexContent = string.IsNullOrEmpty(revokedSerialHex)
+            ? string.Empty
+            : $"R\t370101000000Z\t260101000000Z\t{revokedSerialHex}\tunknown\t/CN=revoked\n";
+        await File.WriteAllTextAsync(Path.Combine(caDir, "index.txt"), indexContent, cancellationToken);
+        await File.WriteAllTextAsync(Path.Combine(caDir, "index.txt.attr"), "unique_subject = no\n", cancellationToken);
+        await File.WriteAllTextAsync(Path.Combine(caDir, "serial"), "01\n", cancellationToken);
+
+        var config = $"""
+            [ ca ]
+            default_ca = CA_default
+
+            [ CA_default ]
+            dir = {caDir}
+            database = {caDir}/index.txt
+            new_certs_dir = {caDir}/newcerts
+            certificate = {caCertPath}
+            private_key = {caKeyPath}
+            serial = {caDir}/serial
+            default_md = sm3
+            default_days = 365
+            default_crl_days = 30
+            policy = policy_any
+
+            [ policy_any ]
+            commonName = supplied
+
+            """;
+        await File.WriteAllTextAsync(configPath, config, cancellationToken);
+    }
+
+    /// <summary>
+    /// 使用已初始化的 CA 数据库生成 SM2 CRL（tongsuo ca -gencrl）。
+    /// </summary>
+    public static Task<OpenSslResult> GenerateSm2CrlAsync(
+        string configPath,
+        string crlPath,
+        CancellationToken cancellationToken = default)
+        => ExecuteAsync($"ca -config \"{configPath}\" -gencrl -out \"{crlPath}\"", cancellationToken: cancellationToken);
+
+    /// <summary>
+    /// 查看 CRL 详细信息（crl -text）。
+    /// </summary>
+    public static Task<OpenSslResult> CrlInfoAsync(
+        string crlPath,
+        string format = "PEM",
+        CancellationToken cancellationToken = default)
+    {
+        var informArg = format.Equals("DER", StringComparison.OrdinalIgnoreCase) ? "-inform DER" : "";
+        return ExecuteAsync($"crl {informArg} -in \"{crlPath}\" -text -noout", cancellationToken: cancellationToken);
+    }
+
+    #endregion
+
     #region 格式转换
 
     /// <summary>

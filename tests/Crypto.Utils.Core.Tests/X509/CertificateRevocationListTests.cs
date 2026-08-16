@@ -45,6 +45,27 @@ public class CertificateRevocationListTests
     }
 
     [Fact]
+    public void IsRevoked_WithLeadingZeroSerial_ShouldMatch()
+    {
+        // Arrange - 生成包含前导零序列号（0x0F0F）的 CRL
+        var keyPair = AsymmetricKeyPair.GenerateRsa(2048);
+        var thisUpdate = DateTime.UtcNow;
+        var crl = CertificateRevocationList.Generate(
+            "/C=CN/O=Test Org/CN=Test CA",
+            keyPair.PrivateKey,
+            [("0F0F", thisUpdate, CertificateRevocationReason.KeyCompromise)],
+            thisUpdate,
+            thisUpdate.AddDays(30),
+            "SHA256WITHRSA");
+
+        // Act & Assert - 大小写与前导零均不影响匹配
+        crl.IsRevoked("0F0F").Should().BeTrue();
+        crl.IsRevoked("0f0f").Should().BeTrue();
+        crl.IsRevoked("F0F").Should().BeTrue();
+        crl.IsRevoked("1F0F").Should().BeFalse();
+    }
+
+    [Fact]
     public void IsExpired_ShouldBeFalseForFreshCrl()
     {
         // Arrange

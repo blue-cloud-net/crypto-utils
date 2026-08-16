@@ -34,6 +34,8 @@ internal static class TestDataGenerator
         Path.Combine("csrs", "rsa-2048-basic.csr"),
         Path.Combine("csrs", "dsa-2048-basic.csr"),
         Path.Combine("crls", "test.crl"),
+        Path.Combine("crls", "ec.crl"),
+        Path.Combine("crls", "dsa.crl"),
         Path.Combine("pfx", "key-and-cert.pfx"),
     ];
 
