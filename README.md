@@ -4,7 +4,7 @@
   <img src="https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet" alt=".NET 8.0"/>
   <img src="https://img.shields.io/badge/Vue-3.x-4FC08D?logo=vue.js" alt="Vue 3"/>
   <img src="https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript" alt="TypeScript"/>
-  <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License"/>
+  <img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License"/>
 </p>
 
 ## 📖 项目简介
@@ -124,7 +124,7 @@ docker-compose up -d
 
 ## 📄 开源协议
 
-本项目采用 [MIT License](LICENSE) 开源协议。
+本项目采用 [Apache License 2.0](LICENSE) 开源协议。
 
 ## 🌟 致谢
 
