@@ -146,6 +146,110 @@ public class RsaEcdsaOpenSslInteropTests : IDisposable
         verified.Should().BeTrue();
     }
 
+    [Fact]
+    public async Task Rsa_Pkcs1_CodeSign_OpenSslVerify_ShouldSucceed()
+    {
+        CliToolGuard.EnsureToolAvailable(OpenSslCli.BinaryPath);
+
+        // Arrange
+        var data = "RSA PKCS1 sign from code"u8.ToArray();
+        var dataPath = Path.Combine(_tempDir, "data.txt");
+        var sigPath = Path.Combine(_tempDir, "sig.bin");
+        await File.WriteAllBytesAsync(dataPath, data);
+
+        using var rsa = new RsaCrypto();
+        rsa.ImportPrivateKey(AsymmetricPrivateKeyParameter.FromPem(File.ReadAllText(TestData.Keys(RsaPrivPem))).ToDer());
+
+        // Act - 代码签名（PKCS#1 v1.5）
+        var signature = rsa.SignData(data, "SHA-256", usePss: false);
+        await File.WriteAllBytesAsync(sigPath, signature);
+
+        // openssl 验证
+        var verify = await OpenSslCli.VerifyDataAsync(dataPath, sigPath, TestData.Keys(RsaPubPem), usePss: false);
+
+        // Assert
+        verify.IsSuccess.Should().BeTrue(verify.FullOutput);
+    }
+
+    [Fact]
+    public async Task Rsa_Pss_OpenSslSign_CodeVerify_ShouldSucceed()
+    {
+        CliToolGuard.EnsureToolAvailable(OpenSslCli.BinaryPath);
+
+        // Arrange
+        var data = "RSA PSS sign from openssl"u8.ToArray();
+        var dataPath = Path.Combine(_tempDir, "data.txt");
+        var sigPath = Path.Combine(_tempDir, "sig.bin");
+        await File.WriteAllBytesAsync(dataPath, data);
+
+        // Act - openssl 签名（PSS-SHA256）
+        var sign = await OpenSslCli.SignDataAsync(dataPath, TestData.Keys(RsaPrivPem), sigPath, usePss: true);
+        sign.IsSuccess.Should().BeTrue(sign.FullOutput);
+        var signature = await File.ReadAllBytesAsync(sigPath);
+
+        // 代码验证
+        using var rsa = new RsaCrypto();
+        rsa.ImportPrivateKey(AsymmetricPrivateKeyParameter.FromPem(File.ReadAllText(TestData.Keys(RsaPrivPem))).ToDer());
+        var verified = rsa.VerifyData(data, signature, "SHA-256", usePss: true);
+
+        // Assert
+        verified.Should().BeTrue();
+    }
+
+    [Theory]
+    [InlineData("SHA-384")]
+    [InlineData("SHA-512")]
+    public async Task Rsa_Pss_CodeSign_OpenSslVerify_ShouldSucceed_ForHash(string hashAlgorithm)
+    {
+        CliToolGuard.EnsureToolAvailable(OpenSslCli.BinaryPath);
+
+        // Arrange
+        var data = System.Text.Encoding.UTF8.GetBytes($"RSA PSS sign from code ({hashAlgorithm})");
+        var dataPath = Path.Combine(_tempDir, "data.txt");
+        var sigPath = Path.Combine(_tempDir, "sig.bin");
+        await File.WriteAllBytesAsync(dataPath, data);
+
+        using var rsa = new RsaCrypto();
+        rsa.ImportPrivateKey(AsymmetricPrivateKeyParameter.FromPem(File.ReadAllText(TestData.Keys(RsaPrivPem))).ToDer());
+
+        // Act - 代码签名（PSS + 指定哈希）
+        var signature = rsa.SignData(data, hashAlgorithm, usePss: true);
+        await File.WriteAllBytesAsync(sigPath, signature);
+
+        // openssl 验证
+        var verify = await OpenSslCli.VerifyDataAsync(dataPath, sigPath, TestData.Keys(RsaPubPem), hashAlgorithm, usePss: true);
+
+        // Assert
+        verify.IsSuccess.Should().BeTrue(verify.FullOutput);
+    }
+
+    [Theory]
+    [InlineData("SHA-384")]
+    [InlineData("SHA-512")]
+    public async Task Rsa_Pss_OpenSslSign_CodeVerify_ShouldSucceed_ForHash(string hashAlgorithm)
+    {
+        CliToolGuard.EnsureToolAvailable(OpenSslCli.BinaryPath);
+
+        // Arrange
+        var data = System.Text.Encoding.UTF8.GetBytes($"RSA PSS sign from openssl ({hashAlgorithm})");
+        var dataPath = Path.Combine(_tempDir, "data.txt");
+        var sigPath = Path.Combine(_tempDir, "sig.bin");
+        await File.WriteAllBytesAsync(dataPath, data);
+
+        // Act - openssl 签名（PSS + 指定哈希）
+        var sign = await OpenSslCli.SignDataAsync(dataPath, TestData.Keys(RsaPrivPem), sigPath, hashAlgorithm, usePss: true);
+        sign.IsSuccess.Should().BeTrue(sign.FullOutput);
+        var signature = await File.ReadAllBytesAsync(sigPath);
+
+        // 代码验证
+        using var rsa = new RsaCrypto();
+        rsa.ImportPrivateKey(AsymmetricPrivateKeyParameter.FromPem(File.ReadAllText(TestData.Keys(RsaPrivPem))).ToDer());
+        var verified = rsa.VerifyData(data, signature, hashAlgorithm, usePss: true);
+
+        // Assert
+        verified.Should().BeTrue();
+    }
+
     #endregion
 
     #region ECDSA 签名验签

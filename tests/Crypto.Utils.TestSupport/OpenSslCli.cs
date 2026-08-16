@@ -447,7 +447,8 @@ public static class OpenSslCli
         CancellationToken cancellationToken = default)
     {
         var hash = hashAlgorithm.ToLowerInvariant().Replace("-", string.Empty);
-        var sigopt = usePss ? " -sigopt rsa_padding_mode:pss" : "";
+        // PSS 显式指定 salt 长度为摘要长度，与代码侧（RFC 4055 默认）保持一致，确保双向互操作。
+        var sigopt = usePss ? " -sigopt rsa_padding_mode:pss -sigopt rsa_pss_saltlen:digest" : "";
         return ExecuteAsync(
             $"dgst -{hash} -sign \"{privateKeyPath}\"{sigopt} -out \"{signaturePath}\" \"{dataPath}\"",
             cancellationToken: cancellationToken);
