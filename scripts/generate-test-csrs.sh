@@ -186,6 +186,20 @@ echo -e "    ${GREEN}✓${NC} ec-p521-sha512.csr"
 echo ""
 
 # ============================================
+# DSA 密钥的 CSR
+# ============================================
+echo -e "${YELLOW}生成 DSA 密钥的 CSR...${NC}"
+
+# 基本 CSR - DSA 2048
+echo "  - 基本 CSR (DSA 2048, CN=dsa-csr.example.com)"
+openssl req -new -key "$KEYS_DIR/dsa-2048-private.pem" \
+    -out "$OUTPUT_DIR/dsa-2048-basic.csr" \
+    -subj "/C=CN/O=DSA Test Corp/OU=Security/CN=dsa-csr.example.com/emailAddress=dsa@example.com" 2>/dev/null
+echo -e "    ${GREEN}✓${NC} dsa-2048-basic.csr"
+
+echo ""
+
+# ============================================
 # SM2 密钥的 CSR (国密)
 # ============================================
 echo -e "${YELLOW}[5/6] 生成 SM2 密钥的 CSR...${NC}"
