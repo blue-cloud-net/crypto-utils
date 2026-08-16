@@ -141,9 +141,22 @@ openssl x509 -req -in "$OUTPUT_DIR/leaf.csr" \
 echo "  ✓ leaf.crt"
 
 # ============================================
-# 5. 清理
+# 5. DSA 自签名证书
 # ============================================
-echo "[5/5] 清理临时文件..."
+echo "[5/6] DSA 自签名证书 (含扩展)..."
+write_req_ext "keyUsage = critical,digitalSignature"
+
+openssl req -x509 -new -key "$KEYS_DIR/dsa-2048-private.pem" \
+    -out "$OUTPUT_DIR/dsa-2048-selfsigned.pem" \
+    -days 365 -set_serial 0x5001 \
+    -subj "/C=CN/O=DSA Corp/CN=dsa-test.example.com" \
+    -config "$OUTPUT_DIR/temp_req_ext.cnf" 2>/dev/null
+echo "  ✓ dsa-2048-selfsigned.pem"
+
+# ============================================
+# 6. 清理
+# ============================================
+echo "[6/6] 清理临时文件..."
 rm -f "$OUTPUT_DIR"/temp_*.cnf
 
 echo "完成。"

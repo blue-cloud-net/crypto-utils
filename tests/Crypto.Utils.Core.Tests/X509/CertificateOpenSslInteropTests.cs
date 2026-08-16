@@ -226,5 +226,234 @@ public class CertificateOpenSslInteropTests : IDisposable
         result.StandardOutput.Should().Contain("Digital Signature");
     }
 
+    [Fact]
+    public async Task Fixture_Sm2Cert_CodeAndTongsuo_ShouldAgreeOnKeyFields()
+    {
+        CliToolGuard.EnsureToolAvailable(TongsuoCli.BinaryPath);
+
+        // 同一素材
+        var fixturePath = TestData.Certs("sm2-selfsigned-ext.pem");
+
+        // 代码解析
+        var cert = Certificate.FromPem(File.ReadAllText(fixturePath));
+
+        // tongsuo 解析
+        var result = await TongsuoCli.X509InfoAsync(fixturePath);
+        result.IsSuccess.Should().BeTrue(result.FullOutput);
+
+        // 双方一致
+        result.StandardOutput.Should().Contain("CN=sm2-test.example.cn");
+        result.StandardOutput.Should().Contain("DNS:sm2-test.example.cn");
+        result.StandardOutput.Should().Contain("Digital Signature");
+        result.StandardOutput.Should().Contain("TLS Web Server Authentication");
+
+        cert.Subject.Should().Contain("CN=sm2-test.example.cn");
+        cert.SerialNumber.Should().Be("4001");
+        cert.KeyUsages.Should().HaveFlag(KeyUsage.DigitalSignature);
+        cert.ExtendedKeyUsages.Should().HaveFlag(ExtendedKeyUsage.ServerAuthentication);
+    }
+
+    #endregion
+
+    #region EC（openssl）
+
+    [Fact]
+    public async Task OpenSslGeneratedEcCert_ShouldBeParsedByCode()
+    {
+        CliToolGuard.EnsureToolAvailable(OpenSslCli.BinaryPath);
+
+        // Arrange - openssl 运行时生成 EC 密钥与含扩展自签名证书
+        var keyPath = Path.Combine(_tempDir, "ec-key.pem");
+        var certPath = Path.Combine(_tempDir, "ec-cert.pem");
+
+        var genKey = await OpenSslCli.GenerateEcKeyAsync(keyPath);
+        genKey.IsSuccess.Should().BeTrue(genKey.FullOutput);
+
+        var genCert = await OpenSslCli.GenerateSelfSignedCertificateAsync(
+            keyPath,
+            certPath,
+            "/CN=ec-interop.example.com",
+            days: 365,
+            subjectAlternativeNames: "DNS:ec-interop.example.com,DNS:www.ec-interop.example.com",
+            keyUsage: "critical,digitalSignature",
+            extendedKeyUsage: "serverAuth",
+            includeSki: true,
+            serialHex: "AAAA");
+        genCert.IsSuccess.Should().BeTrue(genCert.FullOutput);
+
+        // Act - 代码解析
+        var cert = Certificate.FromPem(await File.ReadAllTextAsync(certPath));
+
+        // Assert - 与生成参数一致
+        cert.Subject.Should().Contain("CN=ec-interop.example.com");
+        cert.SerialNumber.Should().Be("AAAA");
+        cert.SignatureAlgorithmName.Should().BeEquivalentTo("SHA256WITHECDSA");
+        cert.KeyUsages.Should().HaveFlag(KeyUsage.DigitalSignature);
+        cert.ExtendedKeyUsages.Should().HaveFlag(ExtendedKeyUsage.ServerAuthentication);
+        cert.SubjectAlternativeNames.Should().Contain(n => n.Value == "ec-interop.example.com");
+        cert.SubjectAlternativeNames.Should().Contain(n => n.Value == "www.ec-interop.example.com");
+        cert.SubjectKeyIdentifier.Should().NotBeNullOrEmpty();
+        cert.ValidityPeriod.Should().BeCloseTo(TimeSpan.FromDays(365), TimeSpan.FromHours(1));
+    }
+
+    [Fact]
+    public async Task CodeGeneratedEcCert_ShouldBeParsedByOpenSsl()
+    {
+        CliToolGuard.EnsureToolAvailable(OpenSslCli.BinaryPath);
+
+        // Arrange - 代码生成 EC 自签名证书
+        var keyPair = AsymmetricKeyPair.GenerateEc("secp256r1");
+        var cert = Certificate.GenerateSelfSigned(
+            "/C=CN/O=Interop Corp/CN=ec-b2o.example.com",
+            keyPair.PrivateKey,
+            DateTime.UtcNow.AddDays(-1),
+            DateTime.UtcNow.AddDays(364),
+            "8889",
+            "SHA256WITHECDSA",
+            new X509ExtensionOptions
+            {
+                KeyUsages = KeyUsage.DigitalSignature,
+                ExtendedKeyUsages = ExtendedKeyUsage.ServerAuthentication,
+                SubjectAlternativeNames = [new GeneralName(GeneralNameType.DnsName, "ec-b2o.example.com")],
+                IncludeSubjectKeyIdentifier = true,
+                IncludeAuthorityKeyIdentifier = true,
+            });
+
+        var certPath = Path.Combine(_tempDir, "ec-b2o.pem");
+        await File.WriteAllTextAsync(certPath, cert.ToPem());
+
+        // Act - openssl 解析
+        var result = await OpenSslCli.X509InfoAsync(certPath);
+
+        // Assert - 输出包含预期字段
+        result.IsSuccess.Should().BeTrue(result.FullOutput);
+        result.StandardOutput.Should().Contain("CN = ec-b2o.example.com");
+        result.StandardOutput.Should().Contain("id-ecPublicKey");
+        result.StandardOutput.Should().Contain("NIST CURVE: P-256");
+        result.StandardOutput.Should().Contain("DNS:ec-b2o.example.com");
+        result.StandardOutput.Should().Contain("Digital Signature");
+    }
+
+    [Fact]
+    public async Task Fixture_EcCert_CodeAndOpenSsl_ShouldAgreeOnKeyFields()
+    {
+        CliToolGuard.EnsureToolAvailable(OpenSslCli.BinaryPath);
+
+        // 同一素材
+        var fixturePath = TestData.Certs("ec-p256-selfsigned-ext.pem");
+
+        // 代码解析
+        var cert = Certificate.FromPem(File.ReadAllText(fixturePath));
+
+        // openssl 解析
+        var result = await OpenSslCli.X509InfoAsync(fixturePath);
+        result.IsSuccess.Should().BeTrue(result.FullOutput);
+
+        // 双方一致
+        result.StandardOutput.Should().Contain("CN = ec-test.example.com");
+        result.StandardOutput.Should().Contain("DNS:ec-test.example.com");
+        result.StandardOutput.Should().Contain("Digital Signature");
+        result.StandardOutput.Should().Contain("TLS Web Server Authentication");
+
+        cert.Subject.Should().Contain("CN=ec-test.example.com");
+        cert.SerialNumber.Should().Be("2001");
+        cert.KeyUsages.Should().HaveFlag(KeyUsage.DigitalSignature);
+        cert.ExtendedKeyUsages.Should().HaveFlag(ExtendedKeyUsage.ServerAuthentication);
+    }
+
+    #endregion
+
+    #region DSA（openssl）
+
+    [Fact]
+    public async Task OpenSslGeneratedDsaCert_ShouldBeParsedByCode()
+    {
+        CliToolGuard.EnsureToolAvailable(OpenSslCli.BinaryPath);
+
+        // Arrange - openssl 运行时生成 DSA 密钥与自签名证书
+        var keyPath = Path.Combine(_tempDir, "dsa-key.pem");
+        var certPath = Path.Combine(_tempDir, "dsa-cert.pem");
+
+        var genKey = await OpenSslCli.GenerateDsaKeyAsync(keyPath);
+        genKey.IsSuccess.Should().BeTrue(genKey.FullOutput);
+
+        var genCert = await OpenSslCli.GenerateSelfSignedCertificateAsync(
+            keyPath,
+            certPath,
+            "/CN=dsa-interop.example.com",
+            days: 365,
+            keyUsage: "critical,digitalSignature",
+            includeSki: true,
+            serialHex: "D501");
+        genCert.IsSuccess.Should().BeTrue(genCert.FullOutput);
+
+        // Act - 代码解析
+        var cert = Certificate.FromPem(await File.ReadAllTextAsync(certPath));
+
+        // Assert - 与生成参数一致
+        cert.Subject.Should().Contain("CN=dsa-interop.example.com");
+        cert.SerialNumber.Should().Be("D501");
+        cert.SignatureAlgorithmName.Should().Contain("DSA");
+        cert.KeyUsages.Should().HaveFlag(KeyUsage.DigitalSignature);
+        cert.SubjectKeyIdentifier.Should().NotBeNullOrEmpty();
+        cert.ValidityPeriod.Should().BeCloseTo(TimeSpan.FromDays(365), TimeSpan.FromHours(1));
+    }
+
+    [Fact]
+    public async Task CodeGeneratedDsaCert_ShouldBeParsedByOpenSsl()
+    {
+        CliToolGuard.EnsureToolAvailable(OpenSslCli.BinaryPath);
+
+        // Arrange - 代码生成 DSA 自签名证书
+        var keyPair = AsymmetricKeyPair.GenerateDsa(2048);
+        var cert = Certificate.GenerateSelfSigned(
+            "/C=CN/O=DSA Corp/CN=dsa-b2o.example.com",
+            keyPair.PrivateKey,
+            DateTime.UtcNow.AddDays(-1),
+            DateTime.UtcNow.AddDays(364),
+            "8890",
+            "SHA256WITHDSA",
+            new X509ExtensionOptions
+            {
+                KeyUsages = KeyUsage.DigitalSignature,
+                IncludeSubjectKeyIdentifier = true,
+            });
+
+        var certPath = Path.Combine(_tempDir, "dsa-b2o.pem");
+        await File.WriteAllTextAsync(certPath, cert.ToPem());
+
+        // Act - openssl 解析
+        var result = await OpenSslCli.X509InfoAsync(certPath);
+
+        // Assert - 输出包含预期字段
+        result.IsSuccess.Should().BeTrue(result.FullOutput);
+        result.StandardOutput.Should().Contain("CN = dsa-b2o.example.com");
+        result.StandardOutput.Should().Contain("Digital Signature");
+    }
+
+    [Fact]
+    public async Task Fixture_DsaCert_CodeAndOpenSsl_ShouldAgreeOnKeyFields()
+    {
+        CliToolGuard.EnsureToolAvailable(OpenSslCli.BinaryPath);
+
+        // 同一素材
+        var fixturePath = TestData.Certs("dsa-2048-selfsigned.pem");
+
+        // 代码解析
+        var cert = Certificate.FromPem(File.ReadAllText(fixturePath));
+
+        // openssl 解析
+        var result = await OpenSslCli.X509InfoAsync(fixturePath);
+        result.IsSuccess.Should().BeTrue(result.FullOutput);
+
+        // 双方一致
+        result.StandardOutput.Should().Contain("CN = dsa-test.example.com");
+        result.StandardOutput.Should().Contain("Digital Signature");
+
+        cert.Subject.Should().Contain("CN=dsa-test.example.com");
+        cert.SerialNumber.Should().Be("5001");
+        cert.KeyUsages.Should().HaveFlag(KeyUsage.DigitalSignature);
+    }
+
     #endregion
 }

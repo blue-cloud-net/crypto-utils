@@ -30,6 +30,7 @@ internal static class TestDataGenerator
         Path.Combine("keys", "rsa-2048-pkcs1.pem"),
         Path.Combine("keys", "ec-p256-pkcs8.pem"),
         Path.Combine("certs", "rsa-2048-selfsigned-ext.pem"),
+        Path.Combine("certs", "dsa-2048-selfsigned.pem"),
         Path.Combine("csrs", "rsa-2048-basic.csr"),
         Path.Combine("crls", "test.crl"),
         Path.Combine("pfx", "key-and-cert.pfx"),

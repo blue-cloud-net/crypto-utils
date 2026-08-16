@@ -677,6 +677,12 @@ public class Certificate
             var q = ecPrivate.Parameters.G.Multiply(ecPrivate.D);
             bcPublicKey = new ECPublicKeyParameters(q, ecPrivate.Parameters);
         }
+        else if (bcPrivateKey is DsaPrivateKeyParameters dsaPrivate)
+        {
+            // DSA: 计算公钥 Y = G^X mod P
+            var y = dsaPrivate.Parameters.G.ModPow(dsaPrivate.X, dsaPrivate.Parameters.P);
+            bcPublicKey = new DsaPublicKeyParameters(y, dsaPrivate.Parameters);
+        }
         else
         {
             throw new NotSupportedException($"Unsupported private key type: {bcPrivateKey.GetType().Name}.");
