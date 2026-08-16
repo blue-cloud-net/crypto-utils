@@ -65,8 +65,8 @@
 
 ### Core 增强（可选/后续）
 
-- [ ] AES 更多模式互操作测试（CFB / OFB 与 openssl 对照）
-- [ ] RSA-PSS 不同哈希组合的 OpenSSL 交叉验证（SHA-384/512）
+- [x] AES 更多模式互操作测试（CFB / OFB 与 openssl 对照，含 CBC）
+- [x] RSA-PSS 不同哈希组合的 OpenSSL 交叉验证（SHA-384/512）
 - [ ] 大文件/流式哈希性能基准（`SM3.HashDataAsync` 等）
 - [ ] `X509ExtensionOptions` 扩展更多字段（如 `CertificatePolicies`、AIA 的 OCSP/CA Issuers）
 
