@@ -302,6 +302,104 @@ public class SM4OpenSslInteropTests : IDisposable
 
     #endregion
 
+    #region CFB / OFB 模式测试
+
+    [Theory]
+    [InlineData(CipherMode.CFB, "sm4-cfb")]
+    [InlineData(CipherMode.OFB, "sm4-ofb")]
+    public async Task EncryptStreamMode_SimpleText_MatchesOpenSSL(CipherMode mode, string encCipher)
+    {
+        // Arrange
+        using var tempSm4 = new SM4();
+        tempSm4.GenerateKey();
+        tempSm4.GenerateIV();
+        var key = tempSm4.Key;
+        var iv = tempSm4.IV;
+        var plaintext = "Hello, SM4! Stream mode test message."u8.ToArray();
+
+        // 填充到块大小的倍数（CFB/OFB 以 128 位全块处理）
+        var paddedLength = ((plaintext.Length + 15) / 16) * 16;
+        var paddedPlaintext = new byte[paddedLength];
+        Array.Copy(plaintext, paddedPlaintext, plaintext.Length);
+
+        var plaintextPath = Path.Combine(_tempDir, "plaintext.bin");
+        var ciphertextPath = Path.Combine(_tempDir, "ciphertext.bin");
+        var decryptedPath = Path.Combine(_tempDir, "decrypted.bin");
+
+        await File.WriteAllBytesAsync(plaintextPath, paddedPlaintext);
+
+        // Act - C# 加密
+        using var sm4 = new SM4();
+        sm4.Key = key;
+        sm4.IV = iv;
+        sm4.Mode = mode;
+        sm4.Padding = PaddingMode.None;
+
+        var ciphertext = Sm4Encrypt(sm4, paddedPlaintext);
+        await File.WriteAllBytesAsync(ciphertextPath, ciphertext);
+
+        // OpenSSL 解密
+        var keyHex = Convert.ToHexString(key);
+        var ivHex = Convert.ToHexString(iv);
+        var decryptResult = await TongsuoCli.ExecuteCommandAsync(
+            $"enc -d -{encCipher} -nopad -K {keyHex} -iv {ivHex} -in \"{ciphertextPath}\" -out \"{decryptedPath}\"");
+
+        decryptResult.ExitCode.Should().Be(0, "OpenSSL decryption should succeed");
+        var decrypted = await File.ReadAllBytesAsync(decryptedPath);
+
+        // Assert
+        decrypted.Should().Equal(paddedPlaintext,
+            "OpenSSL should decrypt C# encrypted data correctly");
+    }
+
+    [Theory]
+    [InlineData(CipherMode.CFB, "sm4-cfb")]
+    [InlineData(CipherMode.OFB, "sm4-ofb")]
+    public async Task DecryptStreamMode_OpenSSLEncrypted_Success(CipherMode mode, string encCipher)
+    {
+        // Arrange
+        using var tempSm4 = new SM4();
+        tempSm4.GenerateKey();
+        tempSm4.GenerateIV();
+        var key = tempSm4.Key;
+        var iv = tempSm4.IV;
+        var plaintext = "Test message for OpenSSL to C# stream mode."u8.ToArray();
+
+        // 填充到块大小的倍数
+        var paddedLength = ((plaintext.Length + 15) / 16) * 16;
+        var paddedPlaintext = new byte[paddedLength];
+        Array.Copy(plaintext, paddedPlaintext, plaintext.Length);
+
+        var plaintextPath = Path.Combine(_tempDir, "plaintext.bin");
+        var ciphertextPath = Path.Combine(_tempDir, "ciphertext.bin");
+
+        await File.WriteAllBytesAsync(plaintextPath, paddedPlaintext);
+
+        // Act - OpenSSL 加密
+        var keyHex = Convert.ToHexString(key);
+        var ivHex = Convert.ToHexString(iv);
+        var encryptResult = await TongsuoCli.ExecuteCommandAsync(
+            $"enc -{encCipher} -nopad -K {keyHex} -iv {ivHex} -in \"{plaintextPath}\" -out \"{ciphertextPath}\"");
+
+        encryptResult.ExitCode.Should().Be(0, "OpenSSL encryption should succeed");
+        var opensslCiphertext = await File.ReadAllBytesAsync(ciphertextPath);
+
+        // C# 解密
+        using var sm4 = new SM4();
+        sm4.Key = key;
+        sm4.IV = iv;
+        sm4.Mode = mode;
+        sm4.Padding = PaddingMode.None;
+
+        var decrypted = Sm4Decrypt(sm4, opensslCiphertext);
+
+        // Assert
+        decrypted.Should().Equal(paddedPlaintext,
+            "C# should decrypt OpenSSL encrypted data correctly");
+    }
+
+    #endregion
+
     #region PKCS7 填充测试
 
     [Fact]
