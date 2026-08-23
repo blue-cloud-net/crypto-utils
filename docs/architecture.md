@@ -15,13 +15,13 @@ Crypto Utils 是一个**无状态、无认证、无持久化**的纯工具型平
 ```
 ┌─────────────────────────────────────────────┐
 │           Crypto.Utils.UI (Vue 3 SPA)        │
-│           http://localhost:5173              │
+│           http://localhost:5178              │
 └───────────────────┬─────────────────────────┘
-                    │ HTTP (开发: SpaProxy 代理)
+                    │ HTTP (开发: Vite 代理 / SpaProxy)
 ┌───────────────────▼─────────────────────────┐
 │         Crypto.Utils.Host (ASP.NET Core)     │
-│           http://localhost:5000              │
-│  - 中间件注册（异常处理、HTTPS重定向）         │
+│           http://localhost:5072              │
+│  - 中间件注册（异常处理）                     │
 │  - 路由映射（Controllers + /health）          │
 │  - SpaProxy（开发环境）/ 静态文件（生产）      │
 └───────────────────┬─────────────────────────┘
@@ -108,51 +108,58 @@ Crypto.Utils.Api/
 
 ASP.NET Core Web 宿主，负责应用启动配置。
 
-- **开发模式**：启用 Swagger UI、注册异常处理中间件、SpaProxy（代理到 `:5173`）
+- **开发模式**：启用 Swagger UI、注册异常处理中间件、SpaProxy（代理到 `:5178`，由 Microsoft.AspNetCore.SpaProxy 的 HostingStartup 自动注册，读取构建生成的 `spa.proxy.json`）
 - **生产模式**：HSTS + 静态文件服务（服务编译后的 UI dist）
 - `/health` 健康检查端点（始终可用）
 
 ---
 
-## 前端结构（规划）
+## 前端结构（已实现）
 
-技术栈：Vue 3 + Vite + TypeScript + Element Plus + UnoCSS
+技术栈：Vue 3 + Vite + TypeScript + Element Plus + vue-i18n + Pinia + Vue Router + Axios
 
 ```
 Crypto.Utils.UI/src/
 ├── api/
 │   └── client/
-│       └── CloudApiClient.ts     # Axios 封装，处理 ApiResponse<T>
+│       └── CloudApiClient.ts     # Axios 封装，处理 ApiResponse<T>，失败抛 ApiError
+├── locales/
+│   ├── index.ts                  # vue-i18n 实例
+│   ├── zh-CN.ts                  # 中文语言包
+│   └── en-US.ts                  # English language pack
 ├── services/
-│   ├── interfaces/               # 服务接口（ICertificateService 等）
-│   ├── cloud/                    # 云端模式实现（调用后端 API）
-│   └── browser/                  # 浏览器模式实现（本地 WASM/node-forge，待开发）
-├── models/                       # 数据模型（按模块分目录）
-│   ├── certificate/
-│   ├── csr/
-│   ├── key/
-│   ├── https/
-│   └── network/
+│   ├── interfaces/               # IKeyService / ICertificateService / ICsrService
+│   ├── cloud/                    # Cloud{Module}Service（调用后端 API）
+│   ├── browser/                  # 占位（二期：Web Crypto + node-forge）
+│   └── ServiceFactory.ts         # 双模式工厂（Mode = cloud | browser）
+├── models/                       # 数据模型（common / key / certificate / csr）
 ├── views/                        # 页面组件（按路由模块）
-│   ├── certificate/
-│   ├── csr/
-│   ├── key/
-│   ├── https/
-│   └── devtools/
-├── components/                   # 通用组件（FileDropZone/CopyableText 等）
-└── stores/                       # Pinia 状态管理
+│   ├── HomeView.vue              # 首页（模块导航卡片）
+│   ├── key/                      # 生成 / 解析 / 格式转换
+│   ├── cert/                     # 解析 / 自签名生成
+│   └── csr/                      # 生成 / 解析
+├── components/                   # KeyTextArea / CopyableText / ResultPanel / DownloadButton / SampleFillButton / ModeBadge / ModeNotice
+├── layouts/AppLayout.vue         # 侧边栏 + 顶栏（模式/主题/语言切换）
+├── router/index.ts               # 路由（AppLayout 为父布局）
+├── stores/                       # useAppStore（模式）/ useThemeStore（主题）/ useLocaleStore（语言）
+└── utils/                        # download / format / samples
 ```
 
 ### 双模式服务层
 
 前端支持两种处理模式，通过 `ServiceFactory` 统一切换：
 
-| 模式      | 说明                              | 状态             |
-| --------- | --------------------------------- | ---------------- |
-| `cloud`   | 调用后端 REST API 处理            | 规划中（主模式） |
-| `browser` | 浏览器本地处理（node-forge/WASM） | 待开发           |
+| 模式      | 说明                              | 状态                       |
+| --------- | --------------------------------- | -------------------------- |
+| `cloud`   | 调用后端 REST API 处理            | ✅ 已实现（默认主模式）    |
+| `browser` | 浏览器本地处理（Web Crypto + node-forge） | ⏳ 二期实现（当前占位，抛 `BrowserNotImplementedError`） |
 
-服务接口（`ICertificateService`、`IKeyService`、`ICsrService`、`IHttpsService`、`INetworkService`）返回 `Promise<T>`，不包含 HTTP 层细节，Cloud / Browser 实现可互换。
+服务接口（`IKeyService`、`ICertificateService`、`ICsrService`）返回 `Promise<T>`，不包含 HTTP 层细节，Cloud / Browser 实现可互换。
+
+### 主题与国际化
+
+- **主题**：三态 `system / light / dark`，默认跟随系统（监听 `prefers-color-scheme`），localStorage 持久化；基于 `html.dark` + Element Plus 暗色 CSS 变量
+- **语言**：中英双语（vue-i18n），默认跟随浏览器语言，localStorage 持久化；Element Plus 内置文案随 `ElConfigProvider` 同步
 
 ---
 
@@ -170,16 +177,17 @@ Crypto.Utils.UI/src/
 | 格式转换 | `POST /api/format/*`     |
 | 健康检查 | `GET /health`            |
 
-### 前端页面（规划）
+### 前端页面（已实现）
 
 ```
-/                    # 首页
-/certificate/*       # 证书解析/生成/转换/验证/PFX
-/csr/*               # CSR 生成/解析/验证
-/key/*               # 密钥生成/转换/解析
-/https/*             # HTTPS 检测/提取/证书链补全
-/devtools/*          # JWT / 哈希 / 编解码 / UUID
-/network/*           # DNS 查询 / HTTP 工具
+/                    # 首页（模块导航卡片）
+/key/generate        # 生成密钥对（RSA/EC/SM2/DSA）
+/key/parse           # 解析密钥（算法/指纹/参数）
+/key/convert         # 格式转换（PEM↔DER / PKCS#1↔PKCS#8 / 私钥加解密）
+/cert/parse          # 解析证书（详情/扩展）
+/cert/self-signed    # 生成自签名证书（最简）
+/csr/generate        # 生成 CSR
+/csr/parse           # 解析 CSR
 ```
 
 ---
@@ -197,4 +205,9 @@ Crypto.Utils.UI/src/
 | FluentAssertions                   | 6.12.1 | 断言库                           |
 | CliWrap                            | 3.6.6  | OpenSSL 互操作测试               |
 | Vue                                | 3.5.x  | 前端框架                         |
-| Vite                               | —      | 前端构建工具                     |
+| Vite                               | 7.x    | 前端构建工具                     |
+| Element Plus                       | 2.14.x | 组件库（含暗色主题 CSS 变量）    |
+| vue-router                         | 4.x    | 前端路由                         |
+| pinia                              | 4.x    | 状态管理                         |
+| vue-i18n                           | 9.x    | 中英双语国际化                   |
+| axios                              | 1.x    | HTTP 客户端（CloudApiClient）    |

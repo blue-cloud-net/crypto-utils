@@ -63,29 +63,38 @@
 
 ### Crypto.Utils.Api 补全
 
-- [ ] `KeyService.ConvertPkcsFormatAsync`：PKCS#1 ↔ PKCS#8 格式转换
-- [ ] `KeyService.EncryptPrivateKeyAsync` / `DecryptPrivateKeyAsync`：私钥加密/解密
-- [ ] 补全其余 Service 实现逻辑（接入 Core 新增能力）
+- [x] `KeyService.ConvertPkcsFormatAsync`：PKCS#1 ↔ PKCS#8 格式转换
+- [x] `KeyService.EncryptPrivateKeyAsync` / `DecryptPrivateKeyAsync`：私钥加密/解密
+- [x] 补全其余 Service 实现逻辑（接入 Core 新增能力）
 
 ### 宿主
 
-- [ ] Host `Program.cs` 正式注册中间件与 Swagger
+- [x] Host `Program.cs` 正式注册中间件与 Swagger
 - [ ] Docker 容器化部署
 
 ---
 
-## Phase 2：前端基础
+## Phase 2：前端基础（Web 首期已完成）
 
-### 前端（全部待建）
+> Web 模块的独立计划与进度详见 [web-roadmap.md](web-roadmap.md) 与 [web-development-plan.md](web-development-plan.md)。
 
-- [ ] Element Plus 组件库集成
-- [ ] UnoCSS 样式配置
-- [ ] Vue Router 路由
-- [ ] Pinia 状态管理
-- [ ] Axios HTTP 客户端封装（`CloudApiClient`）
-- [ ] `ServiceFactory` 双模式工厂
-- [ ] 密钥管理页面（生成 / 解析 / 格式转换 / 加解密 / 签名验签）
-- [ ] 证书页面（解析 / 自签名生成）
+### 前端工程
+
+- [x] Element Plus 组件库集成
+- [x] Vue Router 路由（模块内多路由独立页面）
+- [x] Pinia 状态管理
+- [x] Axios HTTP 客户端封装（`CloudApiClient`）
+- [x] `ServiceFactory` 双模式工厂（cloud 实现 + browser 占位）
+- [x] vue-i18n 中英双语（默认随浏览器语言）
+- [x] 主题三态（system/light/dark，默认跟随系统）
+
+### 功能页面（cloud 模式）
+
+- [x] 密钥管理页面（生成 / 解析 / 格式转换 / PKCS 转换 / 私钥加解密）
+- [x] 证书页面（解析 / 自签名生成（最简））
+- [x] CSR 页面（生成 / 解析）
+- [ ] 浏览器本地运算（Browser Service，基于 Web Crypto + node-forge，二期）
+- [ ] 自签名证书高级扩展（KU/EKU/SAN/序列号，二期）
 
 ---
 
