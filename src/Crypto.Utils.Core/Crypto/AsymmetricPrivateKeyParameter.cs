@@ -1,3 +1,5 @@
+using Org.BouncyCastle.Asn1.Nist;
+
 namespace Crypto.Utils.Crypto;
 
 /// <summary>
@@ -208,6 +210,74 @@ public class AsymmetricPrivateKeyParameter : AsymmetricKeyParameter
         var pemWriter = new PemWriter(writer);
 
         pemWriter.WriteObject(_key, algorithm, password.ToCharArray(), new SecureRandom());
+        pemWriter.Writer.Flush();
+
+        return writer.ToString();
+    }
+
+    /// <summary>
+    /// 将私钥导出为加密的 PKCS#8 格式（<c>-----BEGIN ENCRYPTED PRIVATE KEY-----</c>）
+    /// </summary>
+    /// <param name="password">用于加密私钥的密码</param>
+    /// <param name="algorithm">
+    /// 加密算法，默认 "AES-256-CBC"。
+    /// 支持的算法：AES-128-CBC、AES-192-CBC、AES-256-CBC
+    /// </param>
+    /// <returns>加密的 PKCS#8 格式私钥字符串</returns>
+    /// <exception cref="ArgumentException">当 <paramref name="password"/> 为空或算法不支持时抛出</exception>
+    /// <remarks>
+    /// <para>
+    /// 此方法使用标准 PKCS#8 加密封装（RFC 5958 EncryptedPrivateKeyInfo），
+    /// 基于 PBES2 + PBKDF2（HMAC-SHA-256）派生密钥并加密私钥数据，与 OpenSSL 互操作。
+    /// </para>
+    /// <para>
+    /// <strong>输出示例：</strong>
+    /// <code>
+    /// -----BEGIN ENCRYPTED PRIVATE KEY-----
+    /// base64编码的加密私钥数据...
+    /// -----END ENCRYPTED PRIVATE KEY-----
+    /// </code>
+    /// </para>
+    /// <para>
+    /// <strong>格式参考：</strong>
+    /// </para>
+    /// <list type="bullet">
+    /// <item><description>加密 PKCS#8：<see href="https://datatracker.ietf.org/doc/html/rfc5958">RFC 5958 (Asymmetric Key Packages)</see></description></item>
+    /// <item><description>PBES2/PBKDF2 密钥派生：<see href="https://datatracker.ietf.org/doc/html/rfc8018">RFC 8018 (PKCS #5: Password-Based Cryptography)</see></description></item>
+    /// </list>
+    /// <para>
+    /// <strong>安全建议：</strong>使用强密码（至少 12 位，包含大小写字母、数字和特殊字符），推荐 AES-256-CBC。
+    /// </para>
+    /// </remarks>
+    public string ToPkcs8Encrypted(string password, string algorithm = "AES-256-CBC")
+    {
+        if (string.IsNullOrEmpty(password))
+            throw new ArgumentException("Password must not be empty.", nameof(password));
+
+        var cipherOid = algorithm.ToUpperInvariant() switch
+        {
+            "AES-128-CBC" => NistObjectIdentifiers.IdAes128Cbc,
+            "AES-192-CBC" => NistObjectIdentifiers.IdAes192Cbc,
+            "AES-256-CBC" => NistObjectIdentifiers.IdAes256Cbc,
+            _ => throw new ArgumentException($"Unsupported PKCS#8 encryption algorithm: {algorithm}", nameof(algorithm))
+        };
+
+        var random = new SecureRandom();
+        var salt = new byte[16];
+        random.NextBytes(salt);
+
+        var encryptedInfo = EncryptedPrivateKeyInfoFactory.CreateEncryptedPrivateKeyInfo(
+            cipherOid,
+            PkcsObjectIdentifiers.IdHmacWithSha256,
+            password.ToCharArray(),
+            salt,
+            iterationCount: 2048,
+            random,
+            _key);
+
+        using var writer = new StringWriter();
+        var pemWriter = new PemWriter(writer);
+        pemWriter.WriteObject(new Org.BouncyCastle.Utilities.IO.Pem.PemObject("ENCRYPTED PRIVATE KEY", encryptedInfo.GetEncoded()));
         pemWriter.Writer.Flush();
 
         return writer.ToString();

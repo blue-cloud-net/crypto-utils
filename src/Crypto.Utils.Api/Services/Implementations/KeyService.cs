@@ -182,16 +182,119 @@ public class KeyService : IKeyService
 
     public Task<KeyConvertResponse> ConvertPkcsFormatAsync(PkcsConvertRequest request)
     {
-        throw new NotImplementedException("PKCS 格式转换功能待实现");
+        try
+        {
+            ArgumentNullException.ThrowIfNull(request);
+            if (string.IsNullOrWhiteSpace(request.KeyData))
+            {
+                throw new ArgumentException("密钥数据不能为空");
+            }
+
+            var targetFormat = request.TargetFormat.ToUpperInvariant();
+            if (targetFormat != "PKCS1" && targetFormat != "PKCS8")
+            {
+                throw new ArgumentException($"不支持的 PKCS 目标格式: {request.TargetFormat}");
+            }
+
+            _logger.LogInformation("PKCS 格式转换: 目标格式={TargetFormat}", targetFormat);
+
+            // 支持解析未加密及加密的 PKCS#8 / PKCS#1 / SEC1 私钥（密码用于源数据解密）
+            var privateKey = AsymmetricPrivateKeyParameter.FromPem(request.KeyData, request.Password);
+
+            string convertedKey;
+            if (targetFormat == "PKCS8" && !string.IsNullOrEmpty(request.Password))
+            {
+                // 目标为加密 PKCS#8
+                convertedKey = privateKey.ToPkcs8Encrypted(request.Password);
+            }
+            else
+            {
+                // PKCS#1（RSA）/ SEC1（EC）/ 传统 DSA 或未加密 PKCS#8
+                convertedKey = privateKey.ToPem(pkcs8: targetFormat == "PKCS8");
+            }
+
+            _logger.LogInformation("PKCS 格式转换成功: 目标格式={TargetFormat}", targetFormat);
+
+            return Task.FromResult(new KeyConvertResponse
+            {
+                ConvertedKey = convertedKey,
+                Format = targetFormat
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "PKCS 格式转换失败: {Message}", ex.Message);
+            throw;
+        }
     }
 
     public Task<KeyConvertResponse> EncryptPrivateKeyAsync(KeyEncryptRequest request)
     {
-        throw new NotImplementedException("私钥加密功能待实现");
+        try
+        {
+            ArgumentNullException.ThrowIfNull(request);
+            if (string.IsNullOrWhiteSpace(request.PrivateKey))
+            {
+                throw new ArgumentException("私钥数据不能为空");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Password))
+            {
+                throw new ArgumentException("加密密码不能为空");
+            }
+
+            _logger.LogInformation("加密私钥: 算法={Algorithm}", request.Algorithm);
+
+            var privateKey = AsymmetricPrivateKeyParameter.FromPem(request.PrivateKey);
+            var encryptedKey = privateKey.ToPemEncrypted(request.Password, request.Algorithm);
+
+            _logger.LogInformation("私钥加密成功: 算法={Algorithm}", request.Algorithm);
+
+            return Task.FromResult(new KeyConvertResponse
+            {
+                ConvertedKey = encryptedKey,
+                Format = "ENCRYPTED-PEM"
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "私钥加密失败: {Message}", ex.Message);
+            throw;
+        }
     }
 
     public Task<KeyConvertResponse> DecryptPrivateKeyAsync(KeyDecryptRequest request)
     {
-        throw new NotImplementedException("私钥解密功能待实现");
+        try
+        {
+            ArgumentNullException.ThrowIfNull(request);
+            if (string.IsNullOrWhiteSpace(request.EncryptedPrivateKey))
+            {
+                throw new ArgumentException("加密的私钥数据不能为空");
+            }
+
+            if (string.IsNullOrWhiteSpace(request.Password))
+            {
+                throw new ArgumentException("解密密码不能为空");
+            }
+
+            _logger.LogInformation("解密私钥");
+
+            var privateKey = AsymmetricPrivateKeyParameter.FromPem(request.EncryptedPrivateKey, request.Password);
+            var decryptedKey = privateKey.ToPem();
+
+            _logger.LogInformation("私钥解密成功");
+
+            return Task.FromResult(new KeyConvertResponse
+            {
+                ConvertedKey = decryptedKey,
+                Format = "PEM"
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "私钥解密失败: {Message}", ex.Message);
+            throw;
+        }
     }
 }
