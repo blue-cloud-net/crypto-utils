@@ -7,6 +7,9 @@
         <NoWarn>$(NoWarn);1591</NoWarn>
         <SpaRoot>..\Crypto.Utils.UI\</SpaRoot>
         <SpaDistRoot>wwwroot\</SpaDistRoot>
+        <!-- 开发环境 SPA 代理：由 Microsoft.AspNetCore.SpaProxy 的 HostingStartup 读取 spa.proxy.json 自动注册 -->
+        <SpaProxyServerUrl>http://localhost:5178</SpaProxyServerUrl>
+        <SpaProxyLaunchCommand>pnpm run dev</SpaProxyLaunchCommand>
     </PropertyGroup>
 
     <ItemGroup>
