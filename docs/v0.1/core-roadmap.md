@@ -1,7 +1,8 @@
-# Crypto.Utils.Core 开发路线图
+# Crypto.Utils.Core 开发路线图（v0.1）
 
-> 本文件是 `Crypto.Utils.Core` 模块的独立计划与进度跟踪文档，与 `roadmap.md`（全项目）保持同步。
+> 本文件是 `Crypto.Utils.Core` 模块在 **v0.1** 版本的计划与进度记录，与 [roadmap.md](../roadmap.md)（全项目总览）保持同步。
 > 更新日期：2026-08-14
+> v0.1 已交付完毕；后续版本计划见 [v0.2](../v0.2/README.md) 与 [v1.x](../v1.x/README.md)。
 
 ## 定位
 
@@ -61,20 +62,10 @@
 
 ---
 
-## 待办计划
+## 后续版本
 
-### Core 增强（可选/后续）
-
-- [x] AES 更多模式互操作测试（CFB / OFB 与 openssl 对照，含 CBC）
-- [x] RSA-PSS 不同哈希组合的 OpenSSL 交叉验证（SHA-384/512）
-- [ ] 大文件/流式哈希性能基准（`SM3.HashDataAsync` 等）
-- [ ] `X509ExtensionOptions` 扩展更多字段（如 `CertificatePolicies`、AIA 的 OCSP/CA Issuers）
-
-### 依赖 Core 的下一阶段（属于 Api / Host / UI，非 Core）
-
-- [ ] `KeyService.ConvertPkcsFormatAsync`：PKCS#1 ↔ PKCS#8 格式转换（接入 Core 能力）
-- [ ] `KeyService.EncryptPrivateKeyAsync` / `DecryptPrivateKeyAsync`：私钥加密/解密
-- [ ] Api 层其余 Service 接入 Core 新增能力（扩展参数、PFX）
+- Core 模块在 v0.2 的计划（`X509ExtensionOptions` 增强、证书链 PKIX 升级、HTTPS 远程抓取、开发工具等）见 [v0.2 开发计划](../v0.2/development-plan.md)。
+- 长期待办与未来能力（大文件/流式哈希性能基准等）见 [v1.x 规划](../v1.x/README.md)。
 
 ---
 

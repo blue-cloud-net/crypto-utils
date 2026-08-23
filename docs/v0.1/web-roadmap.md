@@ -1,7 +1,8 @@
-# Crypto.Utils Web 开发路线图
+# Crypto.Utils Web 开发路线图（v0.1）
 
-> 本文件是 Web（前端）+ Api 收尾的独立计划与进度跟踪文档，与 `roadmap.md`（全项目）保持同步。
+> 本文件是 Web（前端）+ Api 收尾在 **v0.1** 版本的计划与进度记录，与 [roadmap.md](../roadmap.md)（全项目总览）保持同步。
 > 更新日期：2026-08-16
+> v0.1 已交付完毕；后续版本计划见 [v0.2](../v0.2/README.md) 与 [v1.x](../v1.x/README.md)。
 
 ## 定位
 
@@ -45,28 +46,10 @@ Web 是平台的浏览器端 SPA（Vue 3 + Vite + TypeScript + Element Plus）�
 
 ---
 
-## 待办计划
+## 后续版本
 
-### Web 二期
-
-- [ ] **Browser 本地运算**：基于 Web Crypto API + node-forge 实现 `Browser{Module}Service`（替换 `ServiceFactory` 占位）
-- [ ] SM2/SM3/SM4 浏览器端支持（需 WASM 方案，首期仅云端）
-- [ ] PFX / PKCS#12 页面（合成 / 提取 / 密码保护）
-- [ ] CA 签发三种模式（sign-csr / sign-publickey / sign-generate）
-- [ ] 证书链构建与验证页面
-- [ ] CRL 完整支持页面（生成 / 解析 / 吊销检查）
-- [ ] 自签名证书高级扩展（KU / EKU / SAN / 序列号）
-- [ ] CSR 扩展字段（SAN / KU / EKU）
-- [ ] HTTPS 证书在线检测与提取
-- [ ] 开发工具集（JWT / 哈希 / 编解码 / UUID）
-- [ ] UnoCSS（如无原子化 CSS 需求可后置）
-- [ ] 移动端响应式细化
-
-### 工程（可选/后续）
-
-- [ ] 新增 `tests/Crypto.Utils.Api.Tests`（PKCS 转换 / 私钥加解密往返自动化）
-- [ ] 前端按需引入 Element Plus 组件（减小首屏体积，当前全量导入）
-- [ ] `docker compose` 容器化部署（后端静态托管 UI dist）
+- Web 在 v0.2 的页面任务（PFX 页面、CA 签发、证书链、自签名高级扩展、CSR 扩展与验证、HTTPS 检测、开发工具集、Api 测试项目）见 [v0.2 开发计划](../v0.2/development-plan.md)。
+- **Browser 本地运算**、SM 浏览器端 WASM 及工程优化（UnoCSS、移动端响应式、Element Plus 按需引入、docker compose）见 [v1.x 规划](../v1.x/README.md)。
 
 ---
 
