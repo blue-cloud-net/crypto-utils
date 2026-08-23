@@ -16,10 +16,11 @@
 
 | 文档                                                 | 说明                                       |
 | ---------------------------------------------------- | ------------------------------------------ |
-| [architecture.md](../docs/architecture.md)           | 系统分层、后端/前端结构、依赖清单          |
-| [development-guide.md](../docs/development-guide.md) | 命名规范、API 设计规则、测试规范、安全要求 |
-| [roadmap.md](../docs/roadmap.md)                     | 当前完成状态、各阶段开发计划               |
-| [api-reference.md](../docs/api-reference.md)         | 所有端点的请求/响应字段说明                |
+| [roadmap.md](../docs/roadmap.md)                     | 全项目版本化总览（v0.1/v0.2/v1.x）         |
+| [架构](../docs/architecture.md)                      | 系统分层、后端/前端结构、依赖清单          |
+| [开发规范](../docs/development-guide.md)             | 命名规范、API 设计规则、测试规范、安全要求 |
+| [API 参考](../docs/api-reference.md)                 | 所有端点的请求/响应字段说明                |
+| [v0.2 规划](../docs/v0.2/README.md)                  | 核心功能完整化（进行中）                   |
 
 ## 关键约定
 

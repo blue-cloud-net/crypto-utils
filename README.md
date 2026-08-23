@@ -104,19 +104,23 @@ docker-compose up -d
 
 ## 📚 文档
 
-- [API 设计文档](docs/API设计文档.md)
-- [UI 设计文档](docs/UI设计文档.md)
-- [项目路线图](docs/Roadmap.md)
+- [项目路线图（总览）](docs/roadmap.md)
+- [v0.1 交付记录](docs/v0.1/)
+- [v0.2 规划](docs/v0.2/README.md)
+- [v1.x 规划](docs/v1.x/README.md)
+- [API 参考](docs/api-reference.md)
+- [系统架构](docs/architecture.md)
+- [开发规范](docs/development-guide.md)
 
 ## 🗺️ 开发路线
 
-项目按照四个阶段逐步完善：
-1. **第一阶段**：基础设施与核心功能（密钥、证书基础操作）
-2. **第二阶段**：功能扩展（CSR、证书链、PFX、CRL）
-3. **第三阶段**：商密算法与高级特性（SM2/SM3/SM4、HTTPS 工具）
-4. **第四阶段**：生态完善（批量处理、监控、SDK、CLI）
+平台按版本迭代：
 
-详见 [Roadmap.md](docs/Roadmap.md)
+1. **v0.1**：基础功能（密钥、证书、CSR 基础操作）— 已交付
+2. **v0.2**：核心功能完整化（CSR 完整、CA 签发、PFX、证书链、HTTPS 检测、开发工具）
+3. **v1.x**：浏览器本地运算（Browser / SM WASM）与扩展功能
+
+详见 [Roadmap.md](docs/roadmap.md)
 
 ## 🤝 贡献
 

@@ -5,10 +5,15 @@
     <Platform Name="x86" />
   </Configurations>
   <Folder Name="/docs/">
+    <File Path="docs\roadmap.md" />
     <File Path="docs\api-reference.md" />
     <File Path="docs\architecture.md" />
     <File Path="docs\development-guide.md" />
-    <File Path="docs\roadmap.md" />
+    <File Path="docs\v0.1\core-roadmap.md" />
+    <File Path="docs\v0.1\web-roadmap.md" />
+    <File Path="docs\v0.2\README.md" />
+    <File Path="docs\v0.2\development-plan.md" />
+    <File Path="docs\v1.x\README.md" />
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
